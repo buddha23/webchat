@@ -1,0 +1,120 @@
+2014-06-19 13:31:37,375 INFO   - main: 10秒后启动采集
+2014-06-19 13:31:47,552 INFO  system.LoadConfig - loadDemoConfig: Load demo config fail!null
+2014-06-19 13:33:44,357 INFO   - main: 10秒后启动采集
+2014-06-19 13:35:03,015 INFO  system.LoadConfig - loadDemoConfig: Load demo config fail!null
+2014-06-19 13:35:34,307 INFO   - main: 10秒后启动采集
+2014-06-19 13:35:44,453 INFO  system.LoadConfig - loadDemoConfig: Load demo config fail!null
+2014-06-19 13:36:10,009 INFO   - main: 10秒后启动采集
+2014-06-19 13:36:20,177 INFO  system.LoadConfig - loadDemoConfig: Load demo config fail!null
+2014-06-19 13:36:51,177 INFO   - main: 10秒后启动采集
+2014-06-19 13:37:30,715 INFO  system.LoadConfig - loadDemoConfig: Load demo config fail!null
+java.lang.NullPointerException
+	at system.LoadConfig.loadDemoConfig(LoadConfig.java:66)
+	at crawler.timerManager.SearchTask.run(SearchTask.java:13)
+	at java.util.TimerThread.mainLoop(Unknown Source)
+	at java.util.TimerThread.run(Unknown Source)
+2014-06-19 13:38:48,104 INFO   - main: 10秒后启动采集
+2014-06-19 13:38:58,252 INFO  system.LoadConfig - loadDemoConfig: Load demo config fail!null
+java.lang.NullPointerException
+	at system.LoadConfig.loadDemoConfig(LoadConfig.java:68)
+	at crawler.timerManager.SearchTask.run(SearchTask.java:13)
+	at java.util.TimerThread.mainLoop(Unknown Source)
+	at java.util.TimerThread.run(Unknown Source)
+2014-06-19 13:41:50,616 INFO   - main: 10秒后启动采集
+2014-06-19 13:42:00,776 INFO  system.LoadConfig - loadDemoConfig: Load demo config fail!null
+java.lang.NullPointerException
+	at system.LoadConfig.loadDemoConfig(LoadConfig.java:69)
+	at crawler.timerManager.SearchTask.run(SearchTask.java:13)
+	at java.util.TimerThread.mainLoop(Unknown Source)
+	at java.util.TimerThread.run(Unknown Source)
+2014-06-19 13:43:16,214 INFO   - main: 10秒后启动采集
+2014-06-19 13:43:26,383 INFO  system.LoadConfig - loadDemoConfig: Load demo config fail!null
+java.lang.NullPointerException
+	at system.LoadConfig.loadDemoConfig(LoadConfig.java:65)
+	at crawler.timerManager.SearchTask.run(SearchTask.java:13)
+	at java.util.TimerThread.mainLoop(Unknown Source)
+	at java.util.TimerThread.run(Unknown Source)
+2014-06-19 13:43:36,175 INFO   - main: 10秒后启动采集
+2014-06-19 13:45:15,564 INFO  system.LoadConfig - loadDemoConfig: Load demo config fail!null
+java.lang.NullPointerException
+	at system.LoadConfig.loadDemoConfig(LoadConfig.java:65)
+	at crawler.timerManager.SearchTask.run(SearchTask.java:13)
+	at java.util.TimerThread.mainLoop(Unknown Source)
+	at java.util.TimerThread.run(Unknown Source)
+2014-06-19 13:45:50,109 INFO  system.LoadConfig - loadDemoConfig: Load demo config fail!null
+java.lang.NullPointerException
+	at system.LoadConfig.loadDemoConfig(LoadConfig.java:65)
+	at crawler.timerManager.SearchTask.run(SearchTask.java:13)
+	at java.util.TimerThread.mainLoop(Unknown Source)
+	at java.util.TimerThread.run(Unknown Source)
+2014-06-19 13:46:59,541 INFO   - main: 10秒后启动采集
+2014-06-19 13:47:09,688 ERROR util.XmlUtil - loadXML: load config fail!unknown protocol: e Nested exception: unknown protocol: e
+org.dom4j.DocumentException: unknown protocol: e Nested exception: unknown protocol: e
+	at org.dom4j.io.SAXReader.read(SAXReader.java:458)
+	at org.dom4j.io.SAXReader.read(SAXReader.java:317)
+	at util.XmlUtil.loadXML(XmlUtil.java:71)
+	at system.LoadConfig.loadDemoConfig(LoadConfig.java:60)
+	at crawler.timerManager.SearchTask.run(SearchTask.java:13)
+	at java.util.TimerThread.mainLoop(Unknown Source)
+	at java.util.TimerThread.run(Unknown Source)
+Nested exception: 
+java.net.MalformedURLException: unknown protocol: e
+	at java.net.URL.<init>(Unknown Source)
+	at java.net.URL.<init>(Unknown Source)
+	at java.net.URL.<init>(Unknown Source)
+	at org.apache.xerces.impl.XMLEntityManager.setupCurrentEntity(Unknown Source)
+	at org.apache.xerces.impl.XMLVersionDetector.determineDocVersion(Unknown Source)
+	at org.apache.xerces.parsers.XML11Configuration.parse(Unknown Source)
+	at org.apache.xerces.parsers.XML11Configuration.parse(Unknown Source)
+	at org.apache.xerces.parsers.XMLParser.parse(Unknown Source)
+	at org.apache.xerces.parsers.AbstractSAXParser.parse(Unknown Source)
+	at org.apache.xerces.jaxp.SAXParserImpl$JAXPSAXParser.parse(Unknown Source)
+	at org.dom4j.io.SAXReader.read(SAXReader.java:439)
+	at org.dom4j.io.SAXReader.read(SAXReader.java:317)
+	at util.XmlUtil.loadXML(XmlUtil.java:71)
+	at system.LoadConfig.loadDemoConfig(LoadConfig.java:60)
+	at crawler.timerManager.SearchTask.run(SearchTask.java:13)
+	at java.util.TimerThread.mainLoop(Unknown Source)
+	at java.util.TimerThread.run(Unknown Source)
+2014-06-19 13:47:09,690 INFO  system.LoadConfig - loadDemoConfig: Load demo config fail!null
+java.lang.NullPointerException
+	at system.LoadConfig.loadDemoConfig(LoadConfig.java:65)
+	at crawler.timerManager.SearchTask.run(SearchTask.java:13)
+	at java.util.TimerThread.mainLoop(Unknown Source)
+	at java.util.TimerThread.run(Unknown Source)
+2014-06-19 13:49:09,552 ERROR util.XmlUtil - loadXML: load config fail!unknown protocol: e Nested exception: unknown protocol: e
+org.dom4j.DocumentException: unknown protocol: e Nested exception: unknown protocol: e
+	at org.dom4j.io.SAXReader.read(SAXReader.java:458)
+	at org.dom4j.io.SAXReader.read(SAXReader.java:317)
+	at util.XmlUtil.loadXML(XmlUtil.java:71)
+	at system.LoadConfig.loadDemoConfig(LoadConfig.java:60)
+	at crawler.timerManager.SearchTask.run(SearchTask.java:13)
+	at java.util.TimerThread.mainLoop(Unknown Source)
+	at java.util.TimerThread.run(Unknown Source)
+Nested exception: 
+java.net.MalformedURLException: unknown protocol: e
+	at java.net.URL.<init>(Unknown Source)
+	at java.net.URL.<init>(Unknown Source)
+	at java.net.URL.<init>(Unknown Source)
+	at org.apache.xerces.impl.XMLEntityManager.setupCurrentEntity(Unknown Source)
+	at org.apache.xerces.impl.XMLVersionDetector.determineDocVersion(Unknown Source)
+	at org.apache.xerces.parsers.XML11Configuration.parse(Unknown Source)
+	at org.apache.xerces.parsers.XML11Configuration.parse(Unknown Source)
+	at org.apache.xerces.parsers.XMLParser.parse(Unknown Source)
+	at org.apache.xerces.parsers.AbstractSAXParser.parse(Unknown Source)
+	at org.apache.xerces.jaxp.SAXParserImpl$JAXPSAXParser.parse(Unknown Source)
+	at org.dom4j.io.SAXReader.read(SAXReader.java:439)
+	at org.dom4j.io.SAXReader.read(SAXReader.java:317)
+	at util.XmlUtil.loadXML(XmlUtil.java:71)
+	at system.LoadConfig.loadDemoConfig(LoadConfig.java:60)
+	at crawler.timerManager.SearchTask.run(SearchTask.java:13)
+	at java.util.TimerThread.mainLoop(Unknown Source)
+	at java.util.TimerThread.run(Unknown Source)
+2014-06-19 13:49:09,557 INFO  system.LoadConfig - loadDemoConfig: Load demo config fail!null
+java.lang.NullPointerException
+	at system.LoadConfig.loadDemoConfig(LoadConfig.java:65)
+	at crawler.timerManager.SearchTask.run(SearchTask.java:13)
+	at java.util.TimerThread.mainLoop(Unknown Source)
+	at java.util.TimerThread.run(Unknown Source)
+2014-06-19 13:50:06,853 INFO   - main: 10秒后启动采集
+2014-06-19 13:51:59,947 INFO   - main: 10秒后启动采集
