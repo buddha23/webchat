@@ -1,0 +1,20 @@
+<div class="am-cf am-padding">
+    <div class="am-fl am-cf"><strong class="am-text-primary am-text-lg">文库管理</strong> /
+        <small>微信文档详情底部配置</small>
+    </div>
+</div>
+
+<div class="am-g" ng-controller="docDetailFooterCtrl">
+    <div class="am-u-sm-12 am-u-md-6 am-margin-bottom-lg">
+        <h3 class="am-text-center">内容编辑</h3>
+        <script type="text/plain" id="editor" style="width:100%;height:360px;"></script>
+    </div>
+    <div class="am-u-sm-6 am-show-md-up am-margin-bottom-lg">
+        <h3 class="am-text-center">预览效果</h3>
+        <div style="border: 1px solid lightgrey; height: 422px; padding: 20px 10px; overflow-y: visible;" ng-bind-html="pageContent|trusthtml">
+        </div>
+    </div>
+    <div class="am-u-md-12 am-text-right">
+        <button class="am-btn am-btn-primary am-btn-lg" ng-click="save()">保存</button>
+    </div>
+</div>

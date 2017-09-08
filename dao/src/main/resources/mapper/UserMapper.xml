@@ -1,0 +1,338 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.lld360.cnc.repository.UserDao">
+
+    <sql id="searchCondition">
+        <where>
+            <if test="key != null">(u.mobile LIKE "%"#{key}"%" OR u.name LIKE "%"#{key}"%" OR u.nickname LIKE "%"#{key}"%")</if>
+            <if test="mobile != null">u.mobile LIKE "%"#{mobile}"%"</if>
+            <!--<if test="name != null">`name` like "%"#{name}"%"</if>
+            <if test="nickname != null">nickname like "%"#{nickname}"%"</if>
+            <if test="description != null">description like "%"#{description}"%"</if>
+            <if test="createTime != null">create_time = #{createTime}</if>
+            <if test="lastLogin != null">last_login = #{lastLogin}</if>
+            <if test="state != null">state = #{state}</if>-->
+            <if test="platform != null">AND (platform = #{platform}<if test="platform == 'Mobile'"> OR platform = 'Qrcode'</if>)</if>
+            <if test="beginTime != null">AND u.create_time &gt;= #{beginTime}</if>
+            <if test="endTime != null">AND u.create_time &lt;= #{endTime}</if>
+            <if test="searchTime != null">AND DATE(u.create_time)= DATE(#{searchTime})</if>
+        </where>
+    </sql>
+
+    <sql id="columns">
+        u.id, u.name, u.mobile, u.password, u.nickname, u.mail_address mailAddress, u.avatar, u.qq, u.idcard, u.address, u.description, u.create_time createTime, u.last_login lastLogin, u.state
+    </sql>
+
+    <sql id="columnsWithScore">
+        <include refid="columns"/>
+        ,us.total_score totalScore,us.total_in totalIn,us.total_out totalOut
+    </sql>
+
+    <select id="search" parameterType="map" resultType="com.lld360.cnc.dto.UserDto">
+        SELECT DISTINCT
+        <include refid="columnsWithScore"/>,
+        qq.`nickname` qqName, wx.`nickname` weixinName,
+        up.`total_point` totalPoint
+        FROM `user` u
+        LEFT JOIN `user_score` us ON us.user_id = u.id
+        LEFT JOIN `user_point` up ON up.user_id = u.id
+        LEFT JOIN `third_account` qq ON qq.`user_id` = u.`id` AND qq.`type` = 1
+        LEFT JOIN `third_account` wx ON wx.`user_id` = u.`id` AND wx.`type` = 2
+        <include refid="searchCondition"/>
+        <if test="sortBy == 'total_score'">ORDER BY us.${sortBy} ${sortType}</if>
+        <if test="sortBy == 'create_time'">ORDER BY u.create_time ${sortType}</if>
+        <if test="limit != null and offset != null">LIMIT #{limit} OFFSET #{offset}</if>
+    </select>
+
+    <select id="count" parameterType="map" resultType="long">
+        SELECT COUNT(1)
+        FROM `user` u
+        LEFT JOIN `user_score` us ON us.user_id = u.id
+        LEFT JOIN `user_point` up ON up.user_id = u.id
+        LEFT JOIN `third_account` qq ON qq.`user_id` = u.`id` AND qq.`type` = 1
+        LEFT JOIN `third_account` wx ON wx.`user_id` = u.`id` AND wx.`type` = 2
+        <include refid="searchCondition"/>
+    </select>
+
+    <select id="find" parameterType="long" resultType="com.lld360.cnc.model.User">
+        SELECT
+        <include refid="columns"/>
+        FROM `user` u
+        WHERE u.id = #{id}
+    </select>
+
+    <select id="findByMobile" parameterType="string" resultType="com.lld360.cnc.dto.UserDto">
+        SELECT
+        <include refid="columnsWithScore"/>
+        FROM `user` u
+        LEFT JOIN user_score us ON u.id = us.user_id
+        WHERE u.mobile = #{mobile};
+    </select>
+
+    <select id="isModerator" resultType="java.lang.Boolean" parameterType="long">
+        SELECT (COUNT(user_id) > 0) AS isModerator
+        FROM moderator
+        WHERE user_id = #{id} AND state = 1
+    </select>
+
+    <insert id="create" parameterType="com.lld360.cnc.dto.UserDto" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO `user` (
+            `name`,
+            mobile,
+            password,
+            nickname,
+            avatar,
+            qq,
+            idcard,
+            address,
+            description,
+            create_time,
+            platform,
+            last_login,
+            state
+        ) VALUES (
+            #{name},
+            #{mobile},
+            #{password},
+            #{nickname},
+            #{avatar},
+            #{qq},
+            #{idcard},
+            #{address},
+            #{description},
+            #{createTime},
+            #{platform},
+            #{lastLogin},
+            #{state}
+        )
+    </insert>
+
+    <update id="updateById" parameterType="com.lld360.cnc.model.User">
+        UPDATE `user`
+        <set>
+            <if test="name != null">`name` = #{name},</if>
+            <if test="mobile != null">mobile = #{mobile},</if>
+            <if test="password != null">`password` = #{password},</if>
+            <if test="nickname != null">nickname = #{nickname},</if>
+            <if test="avatar != null">avatar = #{avatar},</if>
+            <if test="qq != null">qq = #{qq},</if>
+            <if test="idcard != null">idcard = #{idcard},</if>
+            <if test="address != null">address = #{address},</if>
+            <if test="mailAddress != null">mail_address = #{mailAddress},</if>
+            <if test="description != null">description = #{description},</if>
+            <!--<if test="createTime != null">create_time = #{createTime},</if>-->
+            <if test="lastLogin != null">last_login = #{lastLogin},</if>
+            <if test="state != null">state = #{state},</if>
+        </set>
+        WHERE id = #{id};
+    </update>
+
+    <update id="desertUser" parameterType="com.lld360.cnc.model.User">
+        UPDATE `user`
+        SET mobile = NULL,`password` = NULL,description = #{description},last_login = #{lastLogin},state = #{state}
+        WHERE id = #{id};
+    </update>
+
+    <update id="updateByMobile" parameterType="com.lld360.cnc.model.User">
+        UPDATE `user`
+        <set>
+            <if test="name != null">`name` = #{name},</if>
+            <if test="password != null">`password` = #{password},</if>
+            <if test="nickname != null">nickname = #{nickname},</if>
+            <if test="mailAddress != null">mail_address = #{mailAddress},</if>
+            <if test="avatar != null">avatar = #{avatar},</if>
+            <if test="qq != null">qq = #{qq},</if>
+            <if test="idcard != null">idcard = #{idcard},</if>
+            <if test="address != null">address = #{address},</if>
+            <if test="description != null">description = #{description},</if>
+            <!--<if test="createTime != null">create_time = #{createTime},</if>-->
+            <if test="lastLogin != null">last_login = #{lastLogin},</if>
+            <if test="state != null">state = #{state},</if>
+        </set>
+        WHERE mobile = #{mobile};
+    </update>
+
+    <update id="updateState">
+        UPDATE `user`
+        SET state = #{state}
+        WHERE id = #{userId}
+    </update>
+
+    <update id="updateAvatar">
+        UPDATE `user`
+        SET avatar = #{relativeFile}
+        WHERE id = #{id}
+    </update>
+
+    <select id="findUserDto" parameterType="long" resultType="com.lld360.cnc.dto.UserDto">
+        SELECT
+        <include refid="columnsWithScore"/>
+        FROM `user` u
+        LEFT JOIN user_score us ON u.id = us.user_id
+        WHERE u.id = #{id}
+    </select>
+
+    <select id="findInviteByCode" parameterType="string" resultType="com.lld360.cnc.model.UserInvite">
+        SELECT uir.*
+        FROM `user_invite_relation` uir
+        WHERE uir.`invite_code` = #{inviteCode}
+    </select>
+
+    <select id="findInviteByUserId" parameterType="long" resultType="com.lld360.cnc.model.UserInvite">
+        SELECT uir.*
+        FROM `user_invite_relation` uir
+        WHERE uir.`user_id` = #{userId}
+    </select>
+
+    <insert id="createUserInvite" parameterType="com.lld360.cnc.model.UserInvite">
+        INSERT INTO `user_invite_relation` (
+          `user_id`,
+          `invite_code`,
+          `is_parter`,
+          `inviter`,
+          `parter_id`,
+          `create_time`
+        )
+        VALUES
+          (
+            #{userId},
+            #{inviteCode},
+            #{isParter},
+            #{inviter},
+            #{parterId},
+            #{createTime}
+          ) ;
+    </insert>
+
+    <update id="updateUserInvite" parameterType="com.lld360.cnc.model.UserInvite">
+        UPDATE `user_invite_relation`
+        <set>
+            <if test="isParter != null">`is_parter` = #{isParter},</if>
+            <if test="parterId != null">`parter_id` = #{parterId},</if>
+            <if test="state != null">`state` = #{state},</if>
+            <if test="updateTime != null">`update_time` = #{updateTime}</if>
+        </set>
+        WHERE `user_id` = #{userId} ;
+    </update>
+
+    <select id="parterList" parameterType="map" resultMap="userDtoMap">
+        SELECT DISTINCT
+        <include refid="columnsWithScore"/>,
+        qq.`nickname` qqName, wx.`nickname` weixinName,
+        up.`total_point` totalPoint,
+        uir.`invite_code` inviteCode,
+        uir.`is_parter` isParter,
+        uir.`inviter` inviter,
+        uir.`parter_id` parterId,
+        uir.`state` iState,
+        uir.`create_time` iCreateTime,
+        uir.`update_time` iUpdateTime
+        FROM `user` u
+        JOIN `user_invite_relation` uir ON uir.`user_id` = u.id AND uir.`is_parter` IS TRUE
+        LEFT JOIN `user_score` us ON us.user_id = u.id
+        LEFT JOIN `user_point` up ON up.user_id = u.id
+        LEFT JOIN `third_account` qq ON qq.`user_id` = u.`id` AND qq.`type` = 1
+        LEFT JOIN `third_account` wx ON wx.`user_id` = u.`id` AND wx.`type` = 2
+        <include refid="searchCondition"/>
+        <if test="sortBy == 'total_score'">ORDER BY us.${sortBy} ${sortType}</if>
+        <if test="limit != null and offset != null">LIMIT #{limit} OFFSET #{offset}</if>
+    </select>
+
+    <select id="parterCount" parameterType="map" resultType="long">
+        SELECT COUNT(1)
+        FROM `user` u
+        JOIN `user_invite_relation` uir ON uir.`user_id` = u.id AND uir.`is_parter` is true
+        LEFT JOIN `user_score` us ON us.user_id = u.id
+        LEFT JOIN `user_point` up ON up.user_id = u.id
+        LEFT JOIN `third_account` qq ON qq.`user_id` = u.`id` AND qq.`type` = 1
+        LEFT JOIN `third_account` wx ON wx.`user_id` = u.`id` AND wx.`type` = 2
+        <include refid="searchCondition"/>
+    </select>
+
+    <select id="getInviteNum" parameterType="long" resultType="long">
+        SELECT COUNT(1)
+        FROM `user_invite_relation`
+        WHERE `inviter`  = #{userId}
+        AND `is_parter` IS FALSE;
+    </select>
+
+    <select id="getAreaNum" parameterType="long" resultType="long">
+        SELECT COUNT(1)
+        FROM `user_invite_relation`
+        WHERE `parter_id`  = #{userId}
+        AND `is_parter` IS FALSE;
+    </select>
+
+    <resultMap id="userMap" type="com.lld360.cnc.model.User">
+        <id property="id" column="id"/>
+        <result property="name" column="name"/>
+        <result property="mobile" column="mobile"/>
+        <result property="password" column="password"/>
+        <result property="nickname" column="nickname"/>
+        <result property="avatar" column="avatar"/>
+        <result property="qq" column="qq"/>
+        <result property="address" column="address"/>
+        <result property="mailAddress" column="mailAddress"/>
+        <result property="description" column="description"/>
+        <result property="createTime" column="createTime"/>
+        <result property="platform" column="platform"/>
+        <result property="lastLogin" column="lastLogin"/>
+        <result property="state" column="state"/>
+    </resultMap>
+
+    <resultMap id="userDtoMap" type="com.lld360.cnc.dto.UserDto" extends="userMap">
+        <result property="totalScore" column="totalScore"/>
+        <result property="totalPoint" column="totalPoint"/>
+        <result property="totalIn" column="totalIn"/>
+        <result property="totalOut" column="totalOut"/>
+        <result property="loginType" column="loginType"/>
+        <result property="openid" column="openid"/>
+        <result property="qqName" column="qqName"/>
+        <result property="weixinName" column="weixinName"/>
+        <result property="inviteNum" column="inviteNum"/>
+        <result property="areaNum" column="areaNum"/>
+        <association property="userInvite" javaType="com.lld360.cnc.model.UserInvite">
+            <result property="inviteCode" column="inviteCode"/>
+            <result property="isParter" column="isParter"/>
+            <result property="inviter" column="inviter"/>
+            <result property="parterId" column="parterId"/>
+            <result property="state" column="iState"/>
+            <result property="createTime" column="iCreateTime"/>
+            <result property="updateTime" column="iUpdateTime"/>
+        </association>
+    </resultMap>
+
+    <select id="searchRegistReport" parameterType="map" resultType="com.lld360.cnc.model.ReportData">
+        SELECT
+        ${units} AS lookTime,
+        COUNT(1) AS userNum
+        FROM user u
+        <include refid="searchCondition"/>
+        GROUP BY lookTime
+        ORDER BY lookTime ASC
+    </select>
+
+    <select id="searchRegistNum" resultType="int">
+        SELECT
+        COUNT(`platform`) num
+        FROM `user`
+        WHERE `platform` IS NOT NULL
+        GROUP BY `platform`
+        ORDER BY `platform`
+    </select>
+    
+    <select id="findByWxfwOpenId" parameterType="string" resultMap="userDtoMap">
+        SELECT DISTINCT
+        <include refid="columnsWithScore"/>,
+        wx.`nickname` weixinName,
+        up.`total_point` totalPoint
+        FROM `user` u
+        LEFT JOIN `user_score` us ON us.user_id = u.id
+        LEFT JOIN `user_point` up ON up.user_id = u.id
+        LEFT JOIN `third_account` wx ON wx.`user_id` = u.`id` AND wx.`type` = 2
+        LEFT JOIN `wxfw_user` wu ON wx.`unionid` = wu.`unionid`
+        WHERE wu.`openid` = #{openId}
+    </select>
+
+</mapper> 

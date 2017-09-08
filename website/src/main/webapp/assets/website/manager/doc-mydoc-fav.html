@@ -1,0 +1,337 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>CNC数控文库</title>
+<link rel="stylesheet" href="../../css/public.css" type="text/css">
+<link rel="stylesheet" href="../../css/style.css" type="text/css">
+<link rel="stylesheet" href="../../css/icheck-blue.css" type="text/css">
+<link rel="stylesheet" href="../../css/jquery.Jcrop.css" type="text/css">
+<script type="text/javascript" src="../../js/min/jquery-1.9.1.min.js"></script>
+<script type="text/javascript" src="../../js/utils.js"></script>
+<script type="text/javascript" src="../../js/utils.js"></script>
+<script type="text/javascript" src="../../js/min/icheck.min.js"></script>
+<script type="text/javascript" src="../../js/jquery.Jcrop.js"></script>
+<script type="text/javascript" src="../../js/jquery.dataTables.js"></script>
+<script type="text/javascript" src="../../js/website.js"></script>
+<script type="text/javascript" src="../../js/manage.js"></script>
+<script type="text/javascript" src="../../js/uploadavatar.js"></script>
+<script>
+$(function(){
+	
+	//上传选择栏
+	$('.fileGroup .fileSelect').click(function(e){
+		var $group = $(this).parent('.fileGroup');
+		$group.find('.fileInput').click().change(function(){
+			$group.find('.filePath').val($(this).val());
+		})
+	});
+})
+</script>
+</head>
+
+<body>
+<div class="header">
+	<div class="top">
+    	<div class="container">
+    		<div class="logo"></div>
+            <div class="searchbar">
+            	<div class="searchbox clearfix">
+            		<input class="search-input" type="text" placeholder="请输入您要搜索的关键词">
+                	<button class="search-btn" type="button"></button>
+                </div>
+                <div class="search-hots">
+                	<span>热门搜索：</span>
+	        		<a href="#">操作手册</a>
+	        		<a href="#">帮助文档</a>
+	        		<a href="#">西门子</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="nav">
+    	<div class="container">
+        	<ul class="menu clearfix">
+            	<li><a href="index.html">首页</a></li>
+                <li>
+                    <a class="icon-down" href="#"><span>分类</span></a>
+                    <ul class="dropdown-menu">
+                        <li><a href="#">下拉菜单一</a></li>
+                        <li><a href="#">下拉菜单二</a></li>
+                        <li><a href="#">下拉菜单三</a></li>
+                        <li><a href="#">下拉菜单四</a></li>
+                    </ul>
+                </li>
+            </ul>
+            <div class="nav-toolbar clearfix">
+                <div class="userbar clearfix">
+                    <a class="userdrop-toggle" href="###">
+                        <img class="portrait" src="../../images/default_avatar.png">
+                        <div class="new-message">9</div>
+                        <span class="name">李先森</span>
+                    </a>
+                    <ul class="userbar-userdrop">
+                        <div class="userbar-profile clearfix">
+                            <img class="profile-avatar" src="../../images/default_avatar.png" alt=""/>
+                            <div class="profile-info">
+                                <div class="profile-name">
+                                    <i class="vip-icon"></i> 李先森
+                                    <a class="sign-btn floatright" href="javascript:;"><i class="fa fa-edit"></i> 签到</a>
+                                </div>
+                                <div class="profile-score">
+                                    我的积分：<em>20</em>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="userbar-box">
+                        	<div class="userbar-menu">
+                            	<a class="menu-item" href="#">
+                                	<i class="fa fa-upload"></i>
+                                    <div>上传文档</div>
+                                </a>
+                                <a class="menu-item" href="#">
+                                	<i class="fa fa-desktop"></i>
+                                    <div>管理中心</div>
+                                </a>
+                                <a class="menu-item" href="#">
+                                	<i class="fa fa-envelope"></i>
+                                    <div class="new-message">9</div>
+                                    <div>我的消息</div>
+                                </a>
+                                <a class="menu-item" href="#">
+                                	<i class="fa fa-sign-out"></i>
+                                    <div>退出</div>
+                                </a>
+                            </div>
+                        </div>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="content management pd20">
+	<div class="container clearfix">
+        <div class="sd leftside">
+        	<div class="menu-header"><i class="fa fa-navicon"></i> 菜单</div>
+            
+            <div class="profile clearfix">
+                <div class="profile-top">
+                	<div class="profile-info clearfix">
+                    	<div class="profile-avatar"><img src="../../images/default_avatar.png" alt=""/></div>
+                        <div class="profile-meta">
+                			<div class="profile-name"><i class="vip-icon"></i> 李先森</div>
+                        	<div class="">我的积分：<span class="score">20</span></div>
+                        </div>
+                    </div>
+                    <!--
+                    <ul class="profile-list">
+                        <a href="doc-upload.html">
+                        <li class="profile-btn">
+                            <i class="fa fa-upload"></i> <span>上传我的文档</span>
+                        </li>
+                        </a>
+                    </ul>
+                    -->
+                </div>
+            </div>
+            <!--
+            <div class="curtain" style="background-image: url(../images/curtain_clock.png);">
+                <div class="curtain-content">
+                    <div class="clock"></div>
+                    <div class="date"></div>
+                </div>
+            </div>
+            -->
+            <ul class="menu">
+                <li class="menu-user">
+                    <a href="#"><i class="icon-user"></i> 个人管理</a>
+                    <ul class="menu-sub">
+                        <li><a href="usercenter.html">个人中心</a></li>
+                        <li><a href="user-profile.html">资料编辑</a></li>
+                        <li><a href="user-pwd.html">修改密码</a></li>
+                        <li><a href="user-account-1.html">账号管理</a></li>
+                        <!--<li><a href="user-score.html">我的积分</a></li>-->
+                    </ul>
+                </li>
+                <li class="menu-doc">
+                    <a href="#"><i class="icon-book-open"></i> 文档管理</a>
+                    <ul class="menu-sub">
+                    	<li><a href="doc-mydoc-upload.html">我的上传</a></li>
+                        <li><a href="doc-mydoc-download.html">我的下载</a></li>
+                        <li><a href="doc-mydoc-fav.html">我的收藏</a></li>
+                    </ul>
+                </li>
+                <li class="menu-file">
+                    <a href="#"><i class="icon-drawer"></i> 软件管理</a>
+                    <ul class="menu-sub">
+                    	<li><a href="doc-myfile-upload.html">我的上传</a></li>
+                        <li><a href="doc-myfile-download.html">我的下载</a></li>
+                        <li><a href="doc-myfile-fav.html">我的收藏</a></li>
+                    </ul>
+                </li>
+                <li class="menu-moderator">
+                    <a href="#"><i class="icon-trophy"></i> 版主管理</a>
+                    <ul class="menu-sub">
+                    	<li><a href="category.html">板块管理</a></li>
+                    </ul>
+                </li>
+                <li class="menu-finance">
+                    <a href="#"><i class="icon-wallet"></i> 财务管理</a>
+                    <ul class="menu-sub">
+                        <li><a href="user-vip.html">购买会员</a></li>
+                        <li><a href="user-score.html">充值 & 提现</a></li>
+                    	<li><a href="finance-account.html">提现账户管理</a></li>
+                    </ul>
+                </li>
+                <li class="">
+                    <a href="logout.html"><i class="icon-logout"></i> 退出登录</a>
+                </li>
+            </ul>
+        </div>
+        
+        <div class="main" data-menu="doc">
+        	<div class="box">
+            	<div class="box-header">
+                	<h1>文档管理</h1>
+                </div>
+            	<div class="box-content">
+                	<div class="user-panel clearfix">
+                        <div class="panel-col clearfix">
+                        	<div class="col-main">
+                                <div class="item-doc"></div>
+                                <div class="text">
+                                    <div class="item-title">我的文档（20）</div>
+                                    <a class="item-btn" href="doc-upload.html">上传</a>
+                                </div>
+                            </div>
+                            <div class="col-intro">
+                            	<p>说明：上传数控相关操作手册，说明指南文档等</p>
+                                <p class="tips">文档格式：pdf，doc，xls，ppt，txt</p>
+                            </div>
+                        </div>
+                	</div>
+                    
+                    <div class="box-pane margintop20">
+                        <ul class="subnav clearfix">
+                            <li><a href="doc-mydoc-upload.html">我的上传</a></li>
+                            <li><a href="doc-mydoc-download.html">我的下载</a></li>
+                            <li class="current"><a href="doc-mydoc-fav.html">我的收藏</a></li>
+                        </ul>
+                        
+                        <div class="box-pane-content">
+                            <table class="table-style2 dyntable">
+                                <thead>
+                                    <tr>
+                                        <th><input class="checkall" name="" type="checkbox" value="" /></th>
+                                        <th>名称</th>
+                                        <th>类型</th>
+                                        <th>收藏日期</th>
+                                        <th>操作</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><input class="" name="" type="checkbox" value="" /></td>
+                                        <td>设计师要懂心理学</td>
+                                        <td>pdf文档</td>
+                                        <td>2016-08-24</td>
+                                        <td><a class="label label-primary" href="#">查看</a><a class="label label-orange" href="#">取消收藏</a></td>
+                                    </tr>
+                                    <tr>
+                                        <td><input class="" name="" type="checkbox" value="" /></td>
+                                        <td>设计师要懂心理学</td>
+                                        <td>pdf文档</td>
+                                        <td>2016-08-24</td>
+                                        <td><a class="label label-primary" href="#">查看</a><a class="label label-orange" href="#">取消收藏</a></td>
+                                    </tr>
+                                    <tr>
+                                        <td><input class="" name="" type="checkbox" value="" /></td>
+                                        <td>芹菜煮水的特殊功效</td>
+                                        <td>文本文档</td>
+                                        <td>2016-08-24</td>
+                                        <td><a class="label label-primary" href="#">查看</a><a class="label label-orange" href="#">取消收藏</a></td>
+                                    </tr>
+                                </tbody>
+                                <tfoot>
+                                    <tr><td colspan="5" rowspan="1"><a class="" href="###">批量取消</a></td></tr>
+                                </tfoot>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="sd rightside">
+        	
+        </div>
+    </div>
+</div>
+
+<div class="footer pd">
+  <div class="container clearfix">
+		<div class="logo"></div>
+        <div class="footer-info">
+        	<div class="footer-header">CNC数控文库</div>
+        	<ul class="footer-nav clearfix">
+            	<li><a class="linkcolor linkline" href="#">商务合作</a></li>
+                <li><a class="linkcolor linkline" href="feedback.html">意见反馈</a></li>
+                <li><a class="linkcolor linkline" href="#">关于我们</a></li>
+                <li><a class="linkcolor linkline" href="#">版权声明</a></li>
+                <li><a class="linkcolor linkline" href="#">联系我们</a></li>
+            </ul>
+            <div class="footer-text">
+            	© Copyright 2016 蜀ICP备16003108号-2.
+            </div>
+        </div>
+        <div class="footer-info">
+        	<div class="footer-header">友情链接</div>
+        	<ul class="footer-nav clearfix">
+            	<li><a class="linkcolor linkline" href="http://www.aishukong.com" target="_blank" rel="nofollow">爱数控论坛</a></li>
+            	<li><a class="linkcolor linkline" href="http://www.pgyfwz.com" target="_blank" rel="nofollow">蒲公英网</a></li>
+                <li><a class="linkcolor linkline" href="http://www.laserfair.com" target="_blank" rel="nofollow">激光智造网</a></li>
+                <li><a class="linkcolor linkline" href="http://www.redsuncnc.com" target="_blank" rel="nofollow">瑞德森机床</a></li>
+                <li><a class="linkcolor linkline" href="http://www.lld360.com" target="_blank" rel="nofollow">数控招聘</a></li>
+                <li><a class="linkcolor linkline" href="http://www.itpxpj.com" target="_blank" rel="nofollow">培训网</a></li>
+            </ul>
+        </div>
+        <div class="qr">
+        	<img class="qr-img" src="../../images/qr.jpg" alt=""/>
+            <div class="qr-text">微信公众号二维码</div>
+        </div>
+  </div>
+</div>
+
+<div class="crop-dialog clearfix">
+	<div class="avatar-select">
+      	<div class="crop-add">
+        </div>
+        
+        <div class="crop-dialog-btns">
+        	<a class="btn-yes">保存</a>
+        </div>
+    </div>
+	<div class="crop-box">
+    	<div class="clearfix">
+            <div class="crop-main">
+                <div class="crop-wrapper">
+                    <img src="images/blank.png" class="img-origin" alt="[Jcrop Example]">
+                </div>
+            </div>
+            <div class="crop-side">
+                <div class="crop-preview">
+                    <img src="images/blank.png" class="img-preview" alt="Preview">
+                    <input type="file" name="file" class="upload-select" id="upload-select" style="display: none;"/>
+                </div>
+                <div class="tips"><i class="bek-icon-quote-left"></i> 您可以拖动图片进行裁剪，达到满意效果后点击保存生成头像。 <i class="bek-icon-quote-right"></i></div>
+            </div>
+        </div>
+        <div class="crop-dialog-btns">
+        	<a class="btn-yes">保存</a>
+        </div>
+    </div>
+</div>
+</body>
+</html>

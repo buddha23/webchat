@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lld360.cnc.repository.DocTagDao">
+
+    <!-- 通用查询结果列-->
+    <sql id="baseColumns">
+        id, `name`, description
+    </sql>
+
+    <insert id="create" parameterType="com.lld360.cnc.model.DocTag" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO doc_tag (name, description) VALUES (#{name}, #{description})
+    </insert>
+
+    <select id="findAll" resultType="com.lld360.cnc.model.DocTag">
+        SELECT
+        <include refid="baseColumns"/>
+        FROM doc_tag
+        <if test="limit != null">LIMIT #{limit}</if>
+    </select>
+
+    <select id="find" resultType="com.lld360.cnc.model.DocTag">
+        SELECT
+        <include refid="baseColumns"/>
+        FROM doc_tag WHERE `name` = #{tag}
+    </select>
+
+    <insert id="createDocXTag" parameterType="com.lld360.cnc.model.DocXTag">
+        INSERT INTO doc_x_tag (
+            doc_id,
+            tag_id
+        ) VALUES (
+            #{docId},
+            #{tagId}
+        )
+    </insert>
+
+    <insert id="createDocXTags" parameterType="arraylist">
+        INSERT INTO doc_x_tag(doc_id, tag_id) VALUES
+        <foreach collection="list" item="dxt" separator=",">(#{dxt.docId}, #{dxt.tagId})</foreach>
+    </insert>
+
+    <delete id="deleteDocXTagsByDocId" parameterType="long">
+        DELETE FROM doc_x_tag
+        WHERE doc_id = #{docId}
+    </delete>
+
+    <!-- 新增文库标签操作 -->
+
+
+    <!-- admin文库管理/文档列表、报表/文档下载统计这两个地方使用这个查询条件 -->
+    <sql id="docTagSearchCondition">
+        <where>
+            <if test="key != null">AND (name LIKE "%"#{key}"%" OR description LIKE "%"#{key}"%")</if>
+        </where>
+    </sql>
+
+
+    <select id="search" parameterType="map" resultType="com.lld360.cnc.model.DocTag">
+        SELECT
+        *
+        FROM doc_tag
+        <include refid="docTagSearchCondition"/>
+        <if test="limit != null">LIMIT #{limit}</if>
+        <if test="offset != null">OFFSET #{offset}</if>
+    </select>
+
+    <select id="count" parameterType="map" resultType="long">
+        SELECT count(*)
+        FROM doc_tag
+        <include refid="docTagSearchCondition"/>
+    </select>
+
+    <select id="findById" parameterType="Integer" resultType="com.lld360.cnc.model.DocTag">
+        SELECT
+        *
+        FROM doc_tag WHERE `id` = #{id}
+    </select>
+
+
+    <delete id="delete" parameterType="com.lld360.cnc.model.DocTag">
+        DELETE FROM doc_tag
+        WHERE id = #{id}
+    </delete>
+
+
+    <update id="update" parameterType="com.lld360.cnc.model.DocTag">
+        UPDATE doc_tag
+        <set>
+            <if test="name != null">name = #{name},</if>
+            <if test="description != null">description = #{description},</if>
+        </set>
+        WHERE id = #{id};
+    </update>
+
+
+</mapper>

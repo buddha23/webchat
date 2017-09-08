@@ -1,0 +1,95 @@
+<script type="text/javascript" src="scripts/components/My97DatePicker/WdatePicker.js"></script>
+
+<div class="am-cf am-padding">
+    <div class="am-fl am-cf">
+        <strong class="am-text-primary am-text-lg">报表</strong> /
+        <small>用户充值记录</small>
+    </div>
+</div>
+
+<div class="am-g" ng-controller="userScorePayCtrl">
+    <div class="am-u-sm-12 am-u-md-4">
+        <div class="am-input-group am-input-group-sm">
+            <!--<input type="text" class="am-form-field" ng-model="searchKey">-->
+            <div class="am-btn-toolbar">
+                <div class="am-btn-group am-btn-group-xs">
+                    <label>时间:</label>
+                    <input class="text-input" placeholder="起始日期" value="start" type="text" ng-model="beginTime"  id="startDatetime" onClick="WdatePicker({readOnly:true, dateFmt:'yyyy-MM-dd HH:mm:ss',maxDate:'#F{$dp.$D(\'endDatetime\')||\'%y-%M-%d\'}'})"  onChange="">
+                    至 <input class="text-input" placeholder="截止日期"  value="end" type="text" ng-model="endTime"  id="endDatetime" onClick="WdatePicker({readOnly:true, dateFmt:'yyyy-MM-dd HH:mm:ss',minDate:'#F{$dp.$D(\'startDatetime\')}',maxDate:'%y-%M-%d'})" onChange="">
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="am-u-sm-12 am-u-md-4">
+        <div class="am-input-group am-input-group-sm">
+            <font>本日成交: <label class="am-text-danger">{{dailyPay}}</label> 元</font>
+            <font class="am-margin-left">本月成交: <label class="am-text-danger">{{monthPay}}</label> 元</font>
+            <font class="am-margin-left">牛人币赠送: <label class="am-text-danger">{{adminGive}}</label> 牛人币</font>
+        </div>
+    </div>
+
+    <div class="am-u-sm-12 am-u-md-2">
+        <div class="am-input-group am-input-group-sm">
+            <label>交易类型:&nbsp;</label>
+            <select ng-model="params.tradeType">
+                <option value="0">所有</option>
+                <option value="1">购买牛人币</option>
+                <option value="2">购买会员</option>
+                <option value="3">购买视频</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="am-u-sm-12 am-u-md-2">
+        <div class="am-input-group am-input-group-sm">
+            <input type="text" class="am-form-field"  ng-model="searchKey" ng-keypress="onSearchKeyPress($event)">
+               <span class="am-input-group-btn">
+                 <button class="am-btn am-btn-default" type="button" ng-click="doSearch()">搜索</button>
+               </span>
+        </div>
+    </div>
+
+    <div class="am-u-sm-12">
+        <table class="am-table am-table-striped am-table-hover table-main">
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>用户昵称</th>
+                <th>用户手机号</th>
+                <th>日期</th>
+                <th>充值数额/牛人币</th>
+                <th>状态</th>
+                <th>备注</th>
+                <th>交易号</th>
+                <th>支付类型</th>
+            </tr>
+            </thead>
+
+            <tbody>
+            <tr ng-repeat="a in data.content">
+                <td>{{a.id}}</td>
+                <td>{{a.nickName}}</td>
+                <td>{{a.mobile}}</td>
+                <td class="am-hide-sm-only">{{a.tradeTime | date:'yyyy-MM-dd HH:mm:ss'}}</td>
+                <td>{{a.tradeAmount}}元 / {{a.buyScore}}牛人币</td>
+                <td>{{state2str(a.tradeState)}}</td>
+                <td>{{a.tradeRemark}}</td>
+                <td>{{a.innerTradeNo}}</td>
+                <td>{{payway2str(a.payType)}}</td>
+            </tr>
+            </tbody>
+            <tfoot>
+            </tfoot>
+        </table>
+        <div>
+            <div class="am-fl">
+
+            </div>
+            <div class="am-fr">
+                <ng-pager page-change="getPage(page)" page-data="data" items="11"></ng-pager>
+            </div>
+        </div>
+    </div>
+</div>

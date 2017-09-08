@@ -1,0 +1,297 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=0" />
+<title></title>
+<link rel="stylesheet" type="text/css" href="../css/public.css">
+<link rel="stylesheet" type="text/css" href="../css/style_mobile.css">
+<link rel="stylesheet" href="../plugins/froalaEditor/css/froala_editor.pkgd.min.css" type="text/css">
+<script type="text/javascript" src="../js/min/jquery-1.11.2.min.js"></script>
+<script type="text/javascript" src="../js/app.js"></script>
+<!-- froala editor -->
+<script src="../plugins/froalaEditor/js/froala_editor.min.js"></script>
+<script src="../plugins/froalaEditor/js/languages/zh_cn.js"></script>
+<script src="../plugins/froalaEditor/js/plugins/align.min.js"></script>
+<script src="../plugins/froalaEditor/js/plugins/colors.min.js"></script>
+<script src="../plugins/froalaEditor/js/plugins/draggable.min.js"></script>
+<script src="../plugins/froalaEditor/js/plugins/code_view.min.js"></script>
+<script src="../plugins/froalaEditor/js/plugins/code_beautifier.min.js"></script>
+<script src="../plugins/froalaEditor/js/plugins/font_size.min.js"></script>
+<script src="../plugins/froalaEditor/js/plugins/font_family.min.js"></script>
+<script src="../plugins/froalaEditor/js/plugins/fullscreen.min.js"></script>
+<script src="../plugins/froalaEditor/js/plugins/image.min.js"></script>
+<script src="../plugins/froalaEditor/js/plugins/image_manager.min.js"></script>
+<script src="../plugins/froalaEditor/js/plugins/table.min.js"></script>
+<script>
+$(function(){
+	$('.float-btns .question-btn').click(function(){
+		$('.window').show(0, function(){
+			disable_scroll(); 
+			jQuery('body').css('overflow-y','hidden');
+		});
+	});
+	
+	$('.window .window-close').click(function(){
+		$('.window').hide(0, function(){
+			enable_scroll(); 
+			jQuery('body').css('overflow-y','visible');
+		});
+	});
+	
+	$('#edit').froalaEditor({
+		height: 200,
+		language: "zh_cn",
+		toolbarButtonsXS: ['bold', 'italic', 'underline', 'insertImage']
+		//imageUploadURL: "${ctx}/upload/uploadImage"
+	});
+
+	var category = (function(){
+		var _menuState = false;
+		return{
+			openMenu: function(){
+				$('.qa-category').show();
+				$('.qa-list,.float-btns').hide();
+				_menuState = true;
+			},
+			closeMenu: function(){
+				$('.qa-category').hide();
+				$('.qa-list,.float-btns').show();
+				_menuState = false;
+			},
+			getMenuState: function(){
+				return _menuState;
+			}
+		}
+	})();
+
+	//demo
+	$('.toolbar-filter').click(function(){
+		if(!category.getMenuState())
+			category.openMenu();
+		else
+			category.closeMenu();
+	});
+
+	$('.qa-category').click(function(){
+		category.closeMenu();
+	})
+})
+</script>
+</head>
+
+<body>
+<div class="container">
+    <header>
+		<div class="top">
+	    	<div class="menu-left">
+	    		<a id="prevPage" class="menu-item" href="javascript:history.back()"><i class="fa fa-chevron-left"></i></a>
+	        </div>
+	        
+	        <div class="menu-right">
+	    		<a class="menu-item menu-user" href="index.html#usercenter" onclick="location.reload()"></a>
+	        </div>
+	    	
+	    	<div class="title">大牛数控</div>
+    	</div>
+    	
+    	<div class="tabs clearfix">
+        	<a href="index.html">首页</a>
+            <a href="category.html">文库</a>
+            <a href="course.html">课堂</a>
+            <a class="current" href="Q&A.html">问答</a>
+        </div>
+    </header>
+    
+    <div class="content clearfix">
+    	<div class="page-qa">
+			<div class="category-toolbar">
+				<div class="toolbar-info">版块： 三菱数控 </div>
+				<a class="toolbar-filter" href="javascript:;">筛选<i class="fa fa-angle-down"></i></a>
+			</div>
+
+			<div class="qa-category" style="display: none;">
+				<ul class="qa-category-list bg-white clearfix">
+					<a href="Q&A-list.html">
+						<div class="qa-category-pic"><img src="../images/demo/logo1.png" alt=""/></div>
+						<div class="qa-category-info">
+							<div class="qa-category-name">三菱数控</div>
+							<div class="qa-category-meta"><em class="meta-label">帖子：</em>10200 <em class="meta-label marginleft15">活跃：</em>2919020</div>
+							<div class="qa-category-meta"><em class="meta-label">最新：</em>四轴用ATAN怎么找正</div>
+						</div>
+					</a>
+					<a href="Q&A-list.html">
+						<div class="qa-category-pic"><img src="../images/demo/logo2.png" alt=""/></div>
+						<div class="qa-category-info">
+							<div class="qa-category-name">西门子数控</div>
+							<div class="qa-category-meta"><em class="meta-label">帖子：</em>8825 <em class="meta-label marginleft15">活跃：</em>993087</div>
+							<div class="qa-category-meta"><em class="meta-label">最新：</em>四轴用ATAN怎么找正</div>
+						</div>
+					</a>
+					<a href="Q&A-list.html">
+						<div class="qa-category-pic"><img src="../images/demo/logo3.png" alt=""/></div>
+						<div class="qa-category-info">
+							<div class="qa-category-name">山崎马扎克</div>
+							<div class="qa-category-meta"><em class="meta-label">帖子：</em>10200 <em class="meta-label marginleft15">活跃：</em>2919020</div>
+							<div class="qa-category-meta"><em class="meta-label">最新：</em>四轴用ATAN怎么找正</div>
+						</div>
+					</a>
+					<a href="Q&A-list.html">
+						<div class="qa-category-pic"><img src="../images/demo/logo4.png" alt=""/></div>
+						<div class="qa-category-info">
+							<div class="qa-category-name">CAXA</div>
+							<div class="qa-category-meta"><em class="meta-label">帖子：</em>8825 <em class="meta-label marginleft15">活跃：</em>993087</div>
+							<div class="qa-category-meta"><em class="meta-label">最新：</em>四轴用ATAN怎么找正</div>
+						</div>
+					</a>
+				</ul>
+			</div>
+
+    		<div class="qa-list">
+		    	<a class="qa-list-item" href="Q&A-detail.html">
+		            <div class="qa-item-profile">
+		                <img class="avatar" src="../images/default_avatar.png" alt=""/>
+		            </div>
+		            <div class="qa-item-info">
+		                <div class="qa-author">Carine</div>
+		                <div class="qa-meta">
+		                    <span><i class="icon-clock"></i> 刚刚</span>
+		                    <span><i class="icon-eye"></i> 3442</span>
+		                    <span><i class="icon-bubble"></i> 50</span>
+		                </div>
+		            </div>
+                    <div class="qa-title">
+                    	<div class="qa-reward qa-icon-offer">10 牛人币</div>
+                    	数控编程中G50指令代码什么意思？
+                    </div>
+		            <div class="qa-content">
+	                    <p>指令格式：G50 X（U） 指令格式：G50 X（U） Z（W） ；指令功能：设置当前位置的绝对坐标，通过设置当前位置的绝对坐标在系统中建立工件坐标系（也称浮动坐标系）。执行本指令后，系统将当前位置作为程序零点，执行回程序零点操作时，返回这一位置。 工件坐标系建立后，绝对坐标编程按这个坐标系输入坐标</p>
+	                </div>
+	                <div class="qa-pics clearfix">
+	                    <img src="../images/demo/ex_1.jpg" alt=""/>
+	                    <img src="../images/demo/ex_2.jpg" alt=""/>
+	                    <img src="../images/demo/ex_3.jpg" alt=""/>
+	                    <img src="../images/demo/ex_4.jpg" alt=""/>
+	                </div>
+		        </a>
+		        <a class="qa-list-item" href="Q&A-detail.html">
+		            <div class="qa-item-profile">
+		                <img class="avatar" src="../images/default_avatar.png" alt=""/>
+		            </div>
+		            <div class="qa-item-info">
+		                <div class="qa-author">柠檬</div>
+		                <div class="qa-meta">
+		                    <span><i class="icon-clock"></i> 一小时前</span>
+		                    <span><i class="icon-eye"></i> 3442</span>
+		                    <span><i class="icon-bubble"></i> 50</span>
+		                </div>
+		            </div>
+		            <div class="qa-title">
+                    	<div class="qa-reward qa-icon-offer">20 积分</div>
+                    	大家帮我想想。。。
+		            </div>
+		            <div class="qa-content">
+	                    <p>数控4刀位要车一个外圆打一个内孔把产品割下来，精度是0到0.02现在是一把90度外圆车刀一把3厘米割刀一个中心钻，一个钻头。。。现在做下来的产品没有光洁度尺寸也不好，有没有高手指点下啊？</p>
+	               </div>
+		        </a>
+		        <a class="qa-list-item" href="Q&A-detail.html">
+		            <div class="qa-item-profile">
+		                <img class="avatar" src="../images/default_avatar.png" alt=""/>
+		            </div>
+		            <div class="qa-item-info">
+		                <div class="qa-author">小马</div>
+		                <div class="qa-meta">
+		                    <span><i class="icon-calendar"></i> 今天 01:38</span>
+		                    <span><i class="icon-eye"></i> 3442</span>
+		                    <span><i class="icon-bubble"></i> 50</span>
+		                </div>
+		            </div>
+		            <div class="qa-title">
+                    	<div class="qa-reward qa-icon-end">已悬赏</div>
+                    	法兰克系统的程序广数系统无法读取，跪求原因。
+                   	</div>
+		            <div class="qa-content">
+	                    <p>今天刚应聘了一家企业，让我试下手，造型编程搞好了，出的程序（法兰克程序）在广数CNC上读取不出来！操蛋啊！按照之前别人的程序我往上凑，也不行！真丢人！跪求大神分析原因，在线等！太丢人了了！</p>
+	               </div>
+		        </a>
+		        <a class="qa-list-item" href="Q&A-detail.html">
+		            <div class="qa-item-profile">
+		                <img class="avatar" src="../images/default_avatar.png" alt=""/>
+		            </div>
+		            <div class="qa-item-info">
+		                <div class="qa-author">麦老爷</div>
+		                <div class="qa-meta">
+		                    <span><i class="icon-clock"></i> 三分钟前</span>
+		                    <span><i class="icon-eye"></i> 3442</span>
+		                    <span><i class="icon-bubble"></i> 50</span>
+		                </div>
+		            </div>
+                    <div class="qa-title">宝鸡数控加工中心</div>
+		            <div class="qa-content">
+	                    <p>数控加工中心切换到手轮，手轮没反应，唉还没找到原因，但愿换个手轮能好</p>
+	               </div>
+		        </a>
+                <a class="qa-list-item" href="Q&A-detail.html">
+		            <div class="qa-item-profile">
+		                <img class="avatar" src="../images/default_avatar.png" alt=""/>
+		            </div>
+		            <div class="qa-item-info">
+		                <div class="qa-author">谢师傅</div>
+		                <div class="qa-meta">
+		                    <span><i class="icon-calendar"></i> 2015-04-03 01:38</span>
+		                    <span><i class="icon-eye"></i> 3442</span>
+		                    <span><i class="icon-bubble"></i> 50</span>
+		                </div>
+		            </div>
+                    <div class="qa-title">数控编程中G50指令代码什么意思？</div>
+		            <div class="qa-content">
+	                    <p>指令格式：G50 X（U） 指令格式：G50 X（U） Z（W） ；指令功能：设置当前位置的绝对坐标，通过设置当前位置的绝对坐标在系统中建立工件坐标系（也称浮动坐标系）。执行本指令后，系统将当前位置作为程序零点，执行回程序零点操作时，返回这一位置。 工件坐标系建立后，绝对坐标编程按这个坐标系输入坐标</p>
+	                </div>
+		        </a>
+	        </div>
+        </div>
+    </div>
+    
+    <footer>
+    </footer>
+    
+    <div class="float-btns">
+        <div class="question-btn">
+            <i class="icon-pencil"></i>
+        </div>
+    </div>
+</div>
+
+
+<div class="window">
+	<div class="container bg-white">
+    	<form class="question-write">
+        	<div>
+                <input class="input-full ui-input-mobile" type="text" placeholder="提问标题" name="title">
+            </div>
+            <div class="margintop15">
+                <input class="file-input" type="file" accept="image/*" style="display: none;" placeholder="提问标题" name="title">
+            </div>
+            <div class="margintop15">
+                <textarea class="input-full ui-input-mobile" id='edit' name="content" placeholder="提问内容"></textarea> 
+            </div>
+            <div class="margintop15">
+            	<ul class="upload-image clearfix">
+            		<li><div class="add-image"></div></li>
+            		<li>
+            			<div class="del-image">
+            				<i class="fa fa-close"></i>
+            			</div>
+            			<img src="../images/demo/ex_1.jpg" >
+            		</li>
+            	</ul>
+            </div>
+            <div class="margintop15">
+                <button class="button btn-primary" type="submit">发表</button>
+                <button class="button btn-light window-close marginleft5" type="button">取消</button>
+            </div>
+        </form>
+    </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,393 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>CNC数控文库</title>
+<link rel="stylesheet" href="../css/public.css" type="text/css">
+<link rel="stylesheet" href="../css/style.css" type="text/css">
+<link rel="stylesheet" href="../css/icheck-blue.css" type="text/css">
+<link rel="stylesheet" href="../plugins/froalaEditor/css/froala_editor.pkgd.min.css" type="text/css">
+<script type="text/javascript" src="../js/min/jquery-1.9.1.min.js"></script>
+<script type="text/javascript" src="../js/utils.js"></script>
+<script type="text/javascript" src="../js/min/icheck.min.js"></script>
+<script type="text/javascript" src="../js/min/jquery.lazyload.min.js"></script>
+<script type="text/javascript" src="../js/jquery.jcountdown.js"></script>
+<script type="text/javascript" src="../js/website.js"></script>
+<script type="text/javascript" src="../js/layer.js"></script>
+<script type="text/javascript" src="../js/lrtk.js"></script>
+<!-- froala editor -->
+<script src="../plugins/froalaEditor/js/froala_editor.min.js"></script>
+<script src="../plugins/froalaEditor/js/languages/zh_cn.js"></script>
+<script src="../plugins/froalaEditor/js/plugins/align.min.js"></script>
+<script src="../plugins/froalaEditor/js/plugins/colors.min.js"></script>
+<script src="../plugins/froalaEditor/js/plugins/draggable.min.js"></script>
+<script src="../plugins/froalaEditor/js/plugins/code_view.min.js"></script>
+<script src="../plugins/froalaEditor/js/plugins/code_beautifier.min.js"></script>
+<script src="../plugins/froalaEditor/js/plugins/font_size.min.js"></script>
+<script src="../plugins/froalaEditor/js/plugins/font_family.min.js"></script>
+<script src="../plugins/froalaEditor/js/plugins/fullscreen.min.js"></script>
+<script src="../plugins/froalaEditor/js/plugins/image.min.js"></script>
+<script src="../plugins/froalaEditor/js/plugins/image_manager.min.js"></script>
+<script src="../plugins/froalaEditor/js/plugins/table.min.js"></script>
+<script type="text/javascript">
+$(function(){
+	$('.question-btn').on('click', function(){
+		var pagei = layer.open({
+			type: 1,   //0-4的选择,
+			title: "发布问题",
+			border: [0],
+			shadeClose: true,
+			area: ['auto', 'auto'],
+			content:  $('#question-dialog')
+		});
+	});
+
+	$('#dialog-close').on('click', function(){
+		 layer.closeAll();
+	});
+
+	$('#edit').froalaEditor({
+		height: 300,
+		language: "zh_cn"
+		//imageUploadURL: "${ctx}/upload/uploadImage"
+	});
+
+	var $countEl = $('.comment-reply textarea');
+	var $countTips = $('.count-tips');
+	var allowed = 200;
+	var warning = 25;
+	var cssWarning = 'warning';
+	var cssExceeded = 'exceeded';
+	var counterText = '剩余字符：';
+	var counterExceeded = '超出字符：';
+
+	function calculate(){
+		var count = $countEl.val().length;
+		var available = allowed - count;
+		if(available <= warning && available >= 0){
+			$countTips.addClass(cssWarning);
+		} else {
+			$countTips.removeClass(cssWarning);
+		}
+		if(available < 0){
+			$countTips.addClass(cssExceeded).html(counterExceeded + '<em>' + -available + '</em>');
+		} else {
+			$countTips.removeClass(cssExceeded).html(counterText + '<em>' + available + '</em>');
+		}
+	};
+
+	calculate();
+	$countEl.keyup(function(){calculate()});
+	$countEl.change(function(){calculate()});
+
+	//结束时间15天后
+	//此处只做演示，time应取服务端结束时间
+	var time = getLocalTime(new Date(), 15);
+
+	if($(".countdown-day").length > 0){
+		$(".countdown-day").countdown({
+			date: time.Format("yyyy/MM/dd h:m:s"),
+			dataAttr: "cdate"
+		});
+	}
+})
+</script>
+</head>
+
+<body>
+<div class="header">
+	<div class="top">
+    	<div class="container">
+    		<div class="logo"></div>
+            <div class="searchbar">
+            	<div class="searchbox clearfix">
+            		<input class="search-input" type="text" placeholder="请输入您要搜索的关键词">
+                	<button class="search-btn" type="button"></button>
+                </div>
+                <div class="search-hots">
+                	<span>热门搜索：</span>
+	        		<a href="#">操作手册</a>
+	        		<a href="#">帮助文档</a>
+	        		<a href="#">西门子</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="nav">
+    	<div class="container">
+        	<ul class="menu clearfix">
+            	<li><a href="index.html">首页</a></li>
+                <li><a href="doc-search.html">数控文库</a></li>
+                <li><a href="doc-file.html">数控软件</a></li>
+                <li><a href="video.html">数控课堂</a></li>
+                <li><a href="tutorial.html">精品教程</a></li>
+                <li><a class="current" href="Q&A.html">数控问答</a></li>
+                <li><a href="cooperate.html">战略合作</a></li>
+                <!--
+                <li>
+                    <a class="icon-down" href="#"><span>分类</span></a>
+                    <ul class="dropdown-menu">
+                        <li><a href="#">下拉菜单一</a></li>
+                        <li><a href="#">下拉菜单二</a></li>
+                        <li><a href="#">下拉菜单三</a></li>
+                        <li><a href="#">下拉菜单四</a></li>
+                    </ul>
+                </li>
+                -->
+            </ul>
+            <div class="nav-toolbar clearfix">
+                <div class="userbar clearfix">
+                    <a class="userdrop-toggle" href="###">
+                        <img class="portrait" src="../images/default_avatar.png">
+                        <div class="new-message">9</div>
+                        <span class="name">李先森</span>
+                    </a>
+                    <ul class="userbar-userdrop">
+                        <div class="userbar-profile clearfix">
+                            <img class="profile-avatar" src="../images/default_avatar.png" alt=""/>
+                            <div class="profile-info">
+                                <div class="profile-name">
+                                    <i class="vip-icon"></i> 李先森
+                                    <a class="sign-btn floatright" href="javascript:;"><i class="fa fa-edit"></i> 签到</a>
+                                </div>
+                                <div class="profile-score">
+                                    我的积分：<em>20</em>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="userbar-box">
+                        	<div class="userbar-menu">
+                            	<a class="menu-item" href="#">
+                                	<i class="fa fa-upload"></i>
+                                    <div>上传文档</div>
+                                </a>
+                                <a class="menu-item" href="#">
+                                	<i class="fa fa-desktop"></i>
+                                    <div>管理中心</div>
+                                </a>
+                                <a class="menu-item" href="#">
+                                	<i class="fa fa-envelope"></i>
+                                    <div class="new-message">9</div>
+                                    <div>我的消息</div>
+                                </a>
+                                <a class="menu-item" href="#">
+                                	<i class="fa fa-sign-out"></i>
+                                    <div>退出</div>
+                                </a>
+                            </div>
+                        </div>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="content bg-grey pd20">
+	<div class="container">
+		<div class="page-qa clearfix">
+        	<div class="qa-aside">
+            	<div class="userbar">
+                	<a class="question-btn" href="javascript:;"><i class="fa fa-question-circle"></i> 我要提问</a>
+                </div>
+            </div>
+
+        	<div class="qa-main">
+                <div class="qa-article">
+                    <div class="qa-profile">
+                        <img class="avatar" src="../images/default_avatar.png" alt=""/>
+                    </div>
+                    <div class="qa-info">
+                        <h1 class="qa-title">
+	                    	<div class="qa-reward qa-icon-offer">10 牛人币</div>
+	                    	数控编程中G50指令代码什么意思？
+	                    </h1>
+                        <div class="qa-meta">
+                            <span><i class="icon-user"></i> Carine</span>
+                            <span><i class="icon-calendar"></i> 2015-04-03 01:38</span>
+                            <span><i class="icon-eye"></i> 3442</span>
+                            <span><i class="icon-bubble"></i> 50</span>
+                        </div>
+                    </div>
+
+                    <div class="qa-content">
+                        <p>指令格式：G50 X（U） 指令格式：G50 X（U） Z（W） ；指令功能：设置当前位置的绝对坐标，通过设置当前位置的绝对坐标在系统中建立工件坐标系（也称浮动坐标系）。执行本指令后，系统将当前位置作为程序零点，执行回程序零点操作时，返回这一位置。 工件坐标系建立后，绝对坐标编程按这个坐标系输入坐标</p>
+                    </div>
+
+                    <div class="qa-countdown">
+	                	悬赏截止时间： <span class="countdown-day fix"></span>
+	                </div>
+                </div>
+
+                <div class="qa-comment">
+                    <div class="comment-header">评论（42）</div>
+                    <ul class="comment-list">
+                        <li class="clearfix">
+                            <div class="comment-avatar"><img src="../images/default_avatar.png" alt=""></div>
+                            <div class="comment-info">
+                                <div class="comment-title clearfix">
+                                    <div class="name">Ivan</div>
+                                    <div class="check-btn"><i class="fa fa-thumbs-up"></i> 选为最佳</div>
+	                                <!-- 选为最佳答案后显示
+	                                	<div class="check-btn"><i class="fa fa-thumbs-up"></i> 最佳答案</div>
+	                                -->
+                                </div>
+                                <div class="comment-msg">Very beautiful! ^^</div>
+                                <div class="comment-meta">
+                                	<div class="meta-item">2015-07-29 14:35</div>
+                                    <div class="meta-item"><a class="linkline linkcolor" href="javascript:;">赞 (5)</a></div>
+                                </div>
+                            </div>
+                        </li>
+                        <li class="clearfix">
+                            <div class="comment-avatar"><img src="../images/default_avatar.png" alt=""></div>
+                            <div class="comment-info">
+                                <div class="comment-title clearfix">
+                                    <div class="name">Leon</div>
+                                    <div class="check-btn"><i class="fa fa-thumbs-up"></i> 选为最佳</div>
+                                </div>
+                                <div class="comment-msg">真的很棒，收藏！</div>
+                                <div class="comment-meta">
+                                	<div class="meta-item">2015-07-29 14:35</div>
+                                    <div class="meta-item"><a class="linkline linkcolor" href="javascript:;">赞 (5)</a></div>
+                                </div>
+                            </div>
+                        </li>
+                        <li class="clearfix">
+                            <div class="comment-avatar"><img src="../images/default_avatar.png" alt=""></div>
+                            <div class="comment-info">
+                                <div class="comment-title clearfix">
+                                    <div class="name">Aerie</div>
+                                    <div class="check-btn"><i class="fa fa-thumbs-up"></i> 选为最佳</div>
+                                </div>
+                                <div class="comment-msg">真大神，学习ing…</div>
+                                <div class="comment-meta">
+                                	<div class="meta-item">2015-07-29 14:35</div>
+                                    <div class="meta-item"><a class="linkline linkcolor" href="javascript:;">赞 (5)</a></div>
+                                </div>
+                            </div>
+                        </li>
+                        <li class="clearfix">
+                            <div class="comment-avatar"><img src="../images/default_avatar.png" alt=""></div>
+                            <div class="comment-info">
+                                <div class="comment-title clearfix">
+                                    <div class="name">Eileen</div>
+                                    <div class="check-btn"><i class="fa fa-thumbs-up"></i> 选为最佳</div>
+                                </div>
+                                <div class="comment-msg">非常好的分享！</div>
+                                <div class="comment-meta">
+                                	<div class="meta-item">2015-07-29 14:35</div>
+                                    <div class="meta-item"><a class="linkline linkcolor" href="javascript:;">赞 (5)</a></div>
+                                </div>
+                            </div>
+                        </li>
+                        <li class="clearfix">
+                            <div class="comment-avatar"><img src="../images/default_avatar.png" alt=""></div>
+                            <div class="comment-info">
+                                <div class="comment-title clearfix">
+                                    <div class="name">Jamie</div>
+                                    <div class="check-btn"><i class="fa fa-thumbs-up"></i> 选为最佳</div>
+                                </div>
+                                <div class="comment-msg">赞一个</div>
+                                <div class="comment-meta">
+                                	<div class="meta-item">2015-07-29 14:35</div>
+                                    <div class="meta-item"><a class="linkline linkcolor" href="javascript:;">赞 (5)</a></div>
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+
+                    <!-- 分页 -->
+                    <div class="clearfix">
+                        <div class="comment-pagination fl clearfix">
+                            <a class="paging current" href="#">1</a>
+                            <a class="paging" href="#">2</a>
+                            <a class="paging" href="#">3</a>
+                            <a class="paging" href="#">4</a>
+                            <a class="paging" href="#">5</a>
+                            <a class="paging ellipsis" href="javascript:void(0);">...</a>
+                            <!--<a class="paging disable" href="#">下一页</a>-->
+                            <a class="paging" href="#">8</a>
+                            <a class="paging" href="#">下一页</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="comment-bar">
+                    <div class="comment-bar-wrapper">
+                        <form action="#" method="post">
+                            <div class="comment-add">
+                                <div class="comment-avatar"><img src="../images/demo/avatar.png" alt=""></div>
+                                <div class="comment-inputbox">
+                                    <div class="comment-reply">
+                                        <textarea placeholder="回复：" name="reply" class="ui-textarea-default"></textarea>
+                                    </div>
+                                    <div class="comment-captcha">
+                                    	<input class="ui-input-default" style="width: 140px;" >
+                                        <img class="captcha-img" src="../images/captcha.png" style="margin-left: 4px;">
+                                    </div>
+                                    <div class="comment-operate">
+                                        <input class="button btn-primary" type="submit" value="提交">
+                                        <span class="tips">按ctrl+enter快速回复，</span>
+                                        <span class="count-tips">剩余字符：<em>200</em></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="footer pd">
+  <div class="container clearfix">
+		<div class="logo"></div>
+        <div class="footer-info">
+        	<div class="footer-header">CNC数控文库</div>
+        	<ul class="footer-nav clearfix">
+            	<li><a class="linkcolor linkline" href="#">商务合作</a></li>
+                <li><a class="linkcolor linkline" href="feedback.html">意见反馈</a></li>
+                <li><a class="linkcolor linkline" href="#">关于我们</a></li>
+                <li><a class="linkcolor linkline" href="#">版权声明</a></li>
+                <li><a class="linkcolor linkline" href="#">联系我们</a></li>
+            </ul>
+            <div class="footer-text">
+            	© Copyright 2016 蜀ICP备16003108号-2.
+            </div>
+        </div>
+        <div class="footer-info">
+        	<div class="footer-header">友情链接</div>
+        	<ul class="footer-nav clearfix">
+            	<li><a class="linkcolor linkline" href="http://www.aishukong.com" target="_blank" rel="nofollow">爱数控论坛</a></li>
+            	<li><a class="linkcolor linkline" href="http://www.pgyfwz.com" target="_blank" rel="nofollow">蒲公英网</a></li>
+                <li><a class="linkcolor linkline" href="http://www.laserfair.com" target="_blank" rel="nofollow">激光智造网</a></li>
+                <li><a class="linkcolor linkline" href="http://www.redsuncnc.com" target="_blank" rel="nofollow">瑞德森机床</a></li>
+                <li><a class="linkcolor linkline" href="http://www.lld360.com" target="_blank" rel="nofollow">数控招聘</a></li>
+                <li><a class="linkcolor linkline" href="http://www.itpxpj.com" target="_blank" rel="nofollow">培训网</a></li>
+            </ul>
+        </div>
+        <div class="qr">
+        	<img class="qr-img" src="../images/qr.jpg" alt=""/>
+            <div class="qr-text">微信公众号二维码</div>
+        </div>
+  </div>
+</div>
+
+<div id="question-dialog" class="question-dialog" style="padding: 20px; width: 800px; height: 480px; display: none;">
+	<div class="question-write">
+    	<div>
+        	<input class="input-full ui-input-default" type="text" placeholder="提问标题" name="title">
+        </div>
+        <div class="margintop15">
+        	<textarea class="input-full ui-input-default" id='edit' name="content" ></textarea>
+        </div>
+        <div class="margintop15">
+        	<button class="button btn-primary">发表</button>
+            <button id="dialog-close" class="button btn-light marginleft5">取消</button>
+        </div>
+    </div>
+</div>
+</body>
+</html>

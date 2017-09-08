@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.lld360.cnc.repository.CommodityCategoryDao">
+
+    <insert id="create" parameterType="com.lld360.cnc.model.CommodityCategory">
+        INSERT INTO `commodity_category` (
+          `name`,
+          `icon`,
+          `description`,
+          `sorting`,
+          `create_time`
+        )
+        VALUES
+          (
+           #{name},
+           #{icon},
+           #{description},
+           #{sorting},
+           #{createTime}
+          ) ;
+    </insert>
+
+    <update id="update" parameterType="com.lld360.cnc.model.CommodityCategory">
+        UPDATE `commodity_category`
+        <set>
+            <if test="name != null">`name` = #{name},</if>
+            <if test="icon != null">`icon` = #{icon},</if>
+            <if test="description != null">`description` = #{description},</if>
+            <if test="sorting != null">`sorting` = #{sort},</if>
+        </set>
+        WHERE `id` = #{id} ;
+    </update>
+
+    <select id="getAllCategories" resultType="com.lld360.cnc.model.CommodityCategory">
+        SELECT
+          `id`,
+          `name`,
+          `icon`,
+          `description`,
+          `sorting`,
+          `create_time` createTime
+        FROM `commodity_category`
+    </select>
+
+    <select id="getCategoryById" parameterType="int" resultType="com.lld360.cnc.model.CommodityCategory">
+        SELECT
+          `id`,
+          `name`,
+          `icon`,
+          `description`,
+          `sorting`,
+          `create_time` createTime
+        FROM `commodity_category`
+        WHERE id = #{id}
+    </select>
+</mapper>

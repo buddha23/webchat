@@ -1,0 +1,39 @@
+<script type="text/javascript" src="scripts/components/My97DatePicker/WdatePicker.js"></script>
+<div class="am-cf am-padding">
+    <div class="am-fl am-cf">
+        <strong class="am-text-primary am-text-lg">报表</strong> /
+        <small>帖子&教程报表</small>
+    </div>
+</div>
+
+<div class="am-g" ng-controller="reportDailyActiveCtrl">
+    <div class="am-u-sm-12 am-u-md-9">
+        <div class="am-btn-toolbar">
+            <div class="am-btn-group am-btn-group-xs">
+                <div class="am-btn-group am-btn-group-xs">
+                    <label for="beginDate">时间段：</label>
+                    <input type="text" class="text-input" placeholder="起始日期" ng-model="beginTime" id="beginDate"
+                           onclick="WdatePicker({readOnly:true, dateFmt:'yyyy-MM-dd HH:mm:ss',maxDate:'#F{$dp.$D(\'endDate\')||\'%y-%M-%d\'}'})"
+                           onchange=""/>
+                    至 <input type="text" class="text-input" placeholder="截止日期" ng-model="endTime" id="endDate"
+                             onclick="WdatePicker({readOnly:true, dateFmt:'yyyy-MM-dd HH:mm:ss',minDate:'#F{$dp.$D(\'beginDate\',{d:+1})}',maxDate:'%y-%M-%d'})"
+                             onchange=""/>
+
+                    <label for="timeUnit" style="margin-left: 10px">时间单位：</label>
+                    <select id="timeUnit">
+                        <option value="DATE" selected>按天</option>
+                        <option value="MONTH">按月</option>
+                        <option value="YEAR">按年</option>
+                    </select>
+
+                    <span class="am-btn-group-btn" style="margin-left: 20px;pxheight: 39px;color:orangered">
+                        <button class="am-btn am-btn-default" type="button" ng-click="doSearch()">搜索</button>
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="line" class="am-u-sm-12 am-margin-left am-margin-top" style="height: 480px;"></div>
+</div>
+

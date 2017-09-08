@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lld360.cnc.repository.WxQaDao">
+
+    <!-- 通用查询结果列-->
+    <sql id="baseColumns">
+        id, q, a, volume
+    </sql>
+
+    <insert id="insert" parameterType="com.lld360.cnc.model.WxQa" useGeneratedKeys="true" keyColumn="id">
+        INSERT INTO wx_qa (q, a) VALUES (#{q}, #{a})
+        ON DUPLICATE KEY UPDATE a = #{a}
+    </insert>
+
+    <delete id="delete" parameterType="long">
+        DELETE FROM wx_qa
+        WHERE id = #{id}
+    </delete>
+
+    <select id="find" parameterType="long" resultType="com.lld360.cnc.model.WxQa">
+        SELECT
+        <include refid="baseColumns"/>
+        FROM wx_qa
+        WHERE id = #{id}
+    </select>
+
+    <select id="findByQ" parameterType="string" resultType="com.lld360.cnc.model.WxQa">
+        SELECT
+        <include refid="baseColumns"/>
+        FROM wx_qa
+        WHERE q = #{q}
+    </select>
+
+    <select id="count" resultType="java.lang.Long" parameterType="map">
+        SELECT COUNT(id) FROM wx_qa
+        <where>
+            <if test="q != null and q != ''">q LIKE "%"#{q}"%"</if>
+        </where>
+    </select>
+
+    <select id="search" resultType="com.lld360.cnc.model.WxQa" parameterType="map">
+        SELECT
+        <include refid="baseColumns"/>
+        FROM wx_qa
+        <where>
+            <if test="q != null and q != ''">q LIKE "%"#{q}"%"</if>
+        </where>
+        <if test="limit != null">LIMIT #{limit}</if>
+        <if test="offset != null">OFFSET #{offset}</if>
+    </select>
+
+    <select id="findInSetByQ" resultType="java.lang.Boolean">
+        SELECT COUNT(1) > 0
+        FROM wx_qa
+        WHERE q = #{q} AND FIND_IN_SET(#{msg}, a)
+    </select>
+
+    <update id="update" parameterType="com.lld360.cnc.model.WxQa">
+        UPDATE wx_qa
+        SET q = #{q}, a = #{a}
+        WHERE id = #{id}
+    </update>
+
+    <update id="addVolume" parameterType="long">
+        UPDATE wx_qa
+        SET volume = volume + 1
+        WHERE id = #{qaId}
+    </update>
+
+</mapper>

@@ -1,0 +1,39 @@
+<div class="am-cf am-padding">
+    <div class="am-fl am-cf">
+        <strong class="am-text-primary am-text-lg">用户管理</strong> /
+        <small>用户牛人币列表</small>
+    </div>
+</div>
+
+<div class="am-g" ng-controller="userScoresListCtrl">
+    <div class="am-u-sm-12">
+        <table class="am-table table-main">
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>类型</th>
+                <th>牛人币变动</th>
+                <th>说明</th>
+                <th>操作时间</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr ng-repeat="a in data.content">
+                <td>{{a.id}}</td>
+                <td>{{types[a.type] || '错误类型'}}</td>
+                <td>{{a.scoreChange}}</td>
+                <td>{{a.description}}</td>
+                <td class="am-hide-sm-only">{{a.createTime | date:'yyyy-MM-dd HH:mm:ss'}}</td>
+            </tr>
+            </tbody>
+        </table>
+        <div>
+            <div class="am-fl">
+                <a class="am-btn am-btn-warning am-btn-xs" ui-sref="userList()">返回列表</a>
+            </div>
+            <div class="am-fr">
+                <ng-pager page-change="getPage(page)" page-data="data" items="11"></ng-pager>
+            </div>
+        </div>
+    </div>
+</div>

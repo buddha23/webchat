@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.lld360.cnc.repository.UserWithdrawDao">
+
+    <!-- 定义全局查询的SQL变量语句 -->
+    <sql id="searchCondition">
+        <where>
+			<if test="userId != null"> and uw.user_id = #{userId}</if>
+			<if test="tradeAmount != null">and uw.trade_amount = #{tradeAmount}</if>
+			<if test="createTime != null">and uw.create_time = #{createTime}</if>
+			<if test="updateTime != null">and uw.update_time = #{updateTime}</if>
+			<if test="tradeStatus != null">and uw.trade_status = #{tradeStatus}</if>
+			<if test="tradeRemark != null">and uw.trade_remark like "%"#{tradeRemark}"%"</if>
+			<if test="innerTradeNo != null">and uw.inner_trade_no like "%"#{innerTradeNo}"%"</if>
+			<if test="tradeNo != null">and uw.trade_no like "%"#{tradeNo}"%"</if>
+			<if test="dealer != null">and uw.dealer = #{dealer}</if>
+			<if test="successTime != null">and uw.success_time = #{successTime}</if>
+			<if test="beginTime != null">and  uw.create_time <![CDATA[>=]]> #{beginTime}</if>
+			<if test="endTime != null" >and uw.create_time <![CDATA[<=]]> #{endTime}</if>
+			<if test="searchkey != null">AND u.name like "%"#{searchkey}"%" OR u.mobile like "%"#{searchkey}"%"</if>
+        </where>
+    </sql>
+
+	<!-- 用于select查询公用抽取的列 -->
+	<sql id="columns">
+	    <![CDATA[
+        	uw.id ,
+        	uw.user_id ,
+        	uw.account_id,
+        	uw.trade_amount ,
+        	uw.`trade_score`,
+        	uw.create_time ,
+        	uw.update_time ,
+        	uw.trade_status ,
+        	uw.trade_remark ,
+        	uw.trade_fail_reason ,
+        	uw.inner_trade_no ,
+        	uw.trade_no ,
+        	uw.dealer ,
+        	uw.success_time,
+        	u.name,u.mobile,
+        	a.name,ua.account_type,ua.account,ua.account_name
+	    ]]>
+	</sql>
+
+    <select id="search" parameterType="map" resultMap="userwithdrawMap">
+        SELECT
+        <include refid="columns"/>
+        FROM  user_withdraw uw
+		LEFT JOIN user u ON uw.user_id=u.id
+		LEFT JOIN  admin a ON a.id=uw.dealer
+		LEFT JOIN  user_account ua ON  ua.id=uw.account_id
+        <include refid="searchCondition"/>
+		order BY uw.trade_status ,uw.create_time
+        <if test="limit != null">LIMIT #{limit}</if>
+        <if test="offset != null">OFFSET #{offset}</if>
+    </select>
+
+    <select id="count" parameterType="map" resultType="long">
+        SELECT count(1)
+        FROM user_withdraw uw
+		LEFT JOIN user u ON uw.user_id=u.id
+		LEFT JOIN  admin a ON a.id=uw.dealer
+		LEFT JOIN  user_account ua ON  ua.id=uw.account_id
+        <include refid="searchCondition"/>
+    </select>
+
+    <select id="find" parameterType="long" resultMap="userwithdrawMap">
+        SELECT
+        <include refid="columns"/>
+        FROM  user_withdraw uw
+		LEFT JOIN user u ON uw.user_id=u.id
+		LEFT JOIN  admin a ON a.id=uw.dealer
+		LEFT JOIN  user_account ua ON  ua.id = uw.account_id
+        WHERE uw.id = #{id}
+    </select>
+
+    <insert id="create" parameterType="com.lld360.cnc.model.UserWithdraw" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO
+        user_withdraw (
+        	user_id ,
+        	trade_amount ,
+        	`trade_score`,
+        	create_time ,
+        	update_time ,
+        	trade_status ,
+        	trade_remark ,
+        	inner_trade_no ,
+        	trade_no ,
+        	dealer ,
+        	account_id ,
+        	success_time ,
+        	trade_fail_reason
+        ) VALUES (
+        	#{userId} ,
+        	#{tradeAmount} ,
+        	#{tradeScore},
+        	#{createTime} ,
+        	#{updateTime} ,
+        	#{tradeStatus} ,
+        	#{tradeRemark} ,
+        	#{innerTradeNo} ,
+        	#{tradeNo} ,
+        	#{dealer} ,
+        	#{accountId} ,
+        	#{successTime},
+        	#{failReason}
+        )
+    </insert>
+
+    <update id="update" parameterType="com.lld360.cnc.model.UserWithdraw">
+        UPDATE user_withdraw
+        <set>
+			<if test="userId != null">user_id = #{userId}, </if>
+			<if test="tradeAmount != null">trade_amount = #{tradeAmount}, </if>
+			<if test="createTime != null">create_time = #{createTime}, </if>
+			<if test="updateTime != null">update_time = #{updateTime}, </if>
+			<if test="tradeStatus != null">trade_status = #{tradeStatus}, </if>
+			<if test="tradeRemark != null">trade_remark = #{tradeRemark}, </if>
+			<if test="innerTradeNo != null">inner_trade_no = #{innerTradeNo}, </if>
+			<if test="tradeNo != null">trade_no = #{tradeNo}, </if>
+			<if test="dealer != null">dealer = #{dealer}, </if>
+			<if test="successTime != null">success_time = #{successTime}, </if>
+			<if test="failReason != null">trade_fail_reason = #{failReason}, </if>
+        </set>
+        WHERE id = #{id};
+    </update>
+
+    <delete id="delete" parameterType="long">
+        DELETE FROM user_withdraw WHERE id = #{id}
+    </delete>
+
+     <select id="findByInnerTradeNo"  parameterType="string" resultMap="userwithdrawMap">
+      SELECT
+        <include refid="columns"/>
+        FROM  user_withdraw uw
+		LEFT JOIN user u ON uw.user_id=u.id
+		LEFT JOIN  admin a ON a.id=uw.dealer
+		LEFT JOIN  user_account ua ON  ua.id=uw.account_id
+        WHERE uw.inner_trade_no = #{innerTradeNo}
+
+    </select>
+
+
+    <!-- 结果集mapper -->
+    <resultMap id="userwithdrawMap" type="com.lld360.cnc.model.UserWithdraw">
+		 <result property="id" column="id"/>
+		 <result property="userId" column="user_id"/>
+		 <result property="tradeAmount" column="trade_amount"/>
+		 <result property="tradeScore" column="trade_score"/>
+		 <result property="createTime" column="create_time"/>
+		 <result property="updateTime" column="update_time"/>
+		 <result property="tradeStatus" column="trade_status"/>
+		 <result property="tradeRemark" column="trade_remark"/>
+		 <result property="innerTradeNo" column="inner_trade_no"/>
+		 <result property="tradeNo" column="trade_no"/>
+		 <result property="successTime" column="success_time"/>
+		 <result property="failReason" column="trade_fail_reason"/>
+		<association property="user" javaType="com.lld360.cnc.model.User">
+			<id property="id" column="user_id" />
+			<result property="name" column="name"/>
+			<result property="mobile" column="mobile" />
+		</association>
+		<association property="withdrawDealer" javaType="com.lld360.cnc.model.Admin">
+			<id property="id" column="dealer" />
+			<result property="name" column="name"/>
+		</association>
+		<association property="userAccount" javaType="com.lld360.cnc.model.UserAccount">
+			<id property="id" column="account_id" />
+			<result property="accountName" column="account_name"/>
+			<result property="account" column="account"/>
+			<result property="accountType" column="account_type"/>
+		</association>
+    </resultMap>
+
+</mapper> 

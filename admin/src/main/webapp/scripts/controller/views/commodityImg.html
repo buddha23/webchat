@@ -1,0 +1,146 @@
+<div class="am-cf am-padding">
+    <div class="am-fl am-cf">
+        <strong class="am-text-primary am-text-lg">系统设置菜单</strong> /
+        <small>商品广告图片管理</small>
+    </div>
+</div>
+<div class="am-g" ng-controller="commodityImgCtrl">
+
+    <div class="box col-xs-12">
+        <div class="form-group">
+            <label class="col-sm-2 control-label">图片上传:</label>
+            <div class="col-sm-9">
+                <div class="upload-group">
+                    <label for="imgAdd">
+                        <button type="button" ng-click="add()" class="btn btn-default btn-upload">
+                            <i class="fa fa-fw fa-image"></i> 选择图片
+                        </button>
+                    </label>
+                    <input id="imgAdd" type="file" class="upload-select" style="display: none;"/>
+                </div>
+                <ul class="page-photomanage margin-top-20 clearfix">
+                    <li data-id="{{img.id}}" data-sort="{{img.name}}" ng-repeat="img in imgs">
+                        <form class="form-horizontal" id="imgForm" name="imgForm" ng-submit="save(img)">
+                            <div class="photomanage-bg">
+                                <div class="photomanage-img">
+                                    <img ng-if="!img.src" ng-src="{{img.path ? '/files/user/' + img.path : 'assets/images/add_img_btn.png'}}">
+                                    <img ng-if="img.src" ng-src="{{img.src}}">
+                                    <input name="path" type="text" ng-model="img.path" hidden>
+                                    <input name="id" type="text" ng-model="img.id" hidden>
+                                    <input name="name" type="text" ng-model="img.name" hidden>
+                                </div>
+                                <div class="delete" ng-click="delete(img)"><i class="fa fa-fw fa-close"></i></div>
+                            </div>
+                            <div class="photomanage-footer">
+                                <div class="photomanage-footer-wrapper">
+                                    <div class="row">
+                                        <b>图片链接地址</b>
+                                    </div>
+                                    <div class="row">
+                                        <input name="link" type="url" ng-model="img.link">
+                                    </div>
+                                    <div class="row">
+                                        <button class="am-btn am-btn-primary am-btn-xs" type="submit" ng-disabled="imgForm.$invalid">更新图片
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<style type="text/css">
+    .form-group {
+        margin-bottom: 15px;
+    }
+
+    .col-xs-1, .col-sm-1, .col-md-1, .col-lg-1, .col-xs-2, .col-sm-2, .col-md-2, .col-lg-2, .col-xs-3, .col-sm-3, .col-md-3, .col-lg-3, .col-xs-4, .col-sm-4, .col-md-4, .col-lg-4, .col-xs-5, .col-sm-5, .col-md-5, .col-lg-5, .col-xs-6, .col-sm-6, .col-md-6, .col-lg-6, .col-xs-7, .col-sm-7, .col-md-7, .col-lg-7, .col-xs-8, .col-sm-8, .col-md-8, .col-lg-8, .col-xs-9, .col-sm-9, .col-md-9, .col-lg-9, .col-xs-10, .col-sm-10, .col-md-10, .col-lg-10, .col-xs-11, .col-sm-11, .col-md-11, .col-lg-11, .col-xs-12, .col-sm-12, .col-md-12, .col-lg-12 {
+        position: relative;
+        min-height: 1px;
+        padding-right: 15px;
+        padding-left: 15px;
+        float: left;
+    }
+
+    .margin-top-20 {
+        margin-top: 20px;
+    }
+
+    .page-photomanage {
+        padding: 0;
+    }
+
+    .page-photomanage li {
+        margin-right: 15px;
+        float: left;
+        margin-bottom: 15px;
+        width: 218px;
+        list-style-type: none;
+    }
+
+    .page-photomanage li .photomanage-bg {
+        position: relative;
+        width: 218px;
+        height: 150px;
+        background-color: #f2f2f2;
+    }
+
+    .page-photomanage li .photomanage-bg .photomanage-img {
+        width: 100%;
+        height: 100%;
+    }
+
+    .page-photomanage li .photomanage-bg .delete {
+        width: 22px;
+        height: 22px;
+        line-height: 22px;
+        text-align: center;
+        background: #fff;
+        position: absolute;
+        right: 6px;
+        top: 6px;
+        font-size: 14px;
+        font-weight: bold;
+        border-radius: 2px;
+        cursor: pointer;
+    }
+
+    .page-photomanage li .photomanage-bg .delete:hover {
+        color: #00a2d4;
+    }
+
+    .page-photomanage li img {
+        width: 100%;
+        height: 100%;
+        vertical-align: bottom;
+    }
+
+    .page-photomanage li.placeHolder div {
+        width: 100%;
+        height: 100%;
+        box-sizing: border-box;
+    }
+
+    .page-photomanage li .photomanage-footer {
+        background: #fff;
+    }
+
+    .page-photomanage li .photomanage-footer .photomanage-footer-wrapper {
+        width: 100%;
+    }
+
+    .page-photomanage li .photomanage-footer .photomanage-footer-wrapper input[type="text"] {
+        width: 100%;
+    }
+
+    .page-photomanage li .photomanage-footer .photomanage-footer-wrapper .row {
+        margin: 12px 0;
+    }
+
+    .placeHolder div { background-color:white !important; border:dashed 2px #ddd !important; }
+</style>

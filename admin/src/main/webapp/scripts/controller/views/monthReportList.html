@@ -1,0 +1,114 @@
+<script type="text/javascript" src="scripts/components/My97DatePicker/WdatePicker.js"></script>
+
+
+
+<div class="am-cf am-padding">
+    <div class="am-fl am-cf">
+        <strong class="am-text-primary am-text-lg">报表</strong> /
+        <small>浏览下载统计</small>
+    </div>
+</div>
+
+<div class="am-g" ng-controller="monthRecordListCtrl">
+    <div class="am-u-sm-12 am-u-md-9">
+        <div class="am-btn-toolbar">
+            <div class="am-btn-group am-btn-group-xs">
+                <!--<a href="#/doc/0" ui-sref="docDetail({id:0})" class="am-btn am-btn-default"><span class="am-icon-plus"></span> 新增</a>-->
+                <!--<button type="button" class="am-btn am-btn-default"><span class="am-icon-trash-o"></span> 删除</button>-->
+            </div>
+        </div>
+    </div>
+    <div class="am-u-sm-12 am-u-md-9">
+        <div class="am-input-group am-input-group-sm">
+            <!--<input type="text" class="am-form-field" ng-model="searchKey">-->
+            <div class="am-btn-toolbar">
+                <div class="am-btn-group am-btn-group-xs">
+                    <input class="text-input" placeholder="起始日期" value="start" type="text" ng-model="beginTime" id="startDatetime" onClick="WdatePicker({readOnly:true, dateFmt:'yyyy-MM-dd HH:mm:ss',maxDate:'#F{$dp.$D(\'endDatetime\')||\'%y-%M-%d\'}'})"  onChange=""  >
+                    至 <input class="text-input" placeholder="截止日期" value="end" type="text" ng-model="endTime" id="endDatetime" onClick="WdatePicker({readOnly:true, dateFmt:'yyyy-MM-dd HH:mm:ss',minDate:'#F{$dp.$D(\'startDatetime\')}',maxDate:'%y-%M-%d'})" onChange=""  >
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="am-u-sm-12 am-u-md-3">
+        <div class="am-input-group am-input-group-sm">
+               <span class="am-input-group-btn">
+                 <button class="am-btn am-btn-default" type="button" ng-click="doSearch()">搜索</button>
+               </span>
+        </div>
+    </div>
+
+    <div class="am-u-sm-12">
+        <table class="am-table am-table-striped am-table-hover table-main">
+            <thead>
+            <tr>
+                <th class="table-check"><input type="checkbox" ng-model="checkAll"></th>
+                <th>ID</th>
+                <th>日期</th>
+                <th>资料浏览量</th>
+                <th>资料下载量</th>
+                <th><a href="javascript:void(0);" ng-click="sortBy('views')">文库浏览量</a></th>
+                <th><a href="javascript:void(0);" ng-click="sortBy('downloads')">文库下载量</a></th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr ng-repeat="a in data.content">
+                <td><input type="checkbox" ng-checked="checkAll"></td>
+                <td>{{a.id}}</td>
+                <td>
+                    <a style="display:block; width: 300px; overflow: hidden;white-space: nowrap;text-overflow: ellipsis;" title="{{a.summary}}">{{a.statisticsDate}}</a>
+
+                </td>
+                <td>
+
+                    <a style="display:block; width: 300px; overflow: hidden;white-space: nowrap;text-overflow: ellipsis;" title="{{a.summary}}">{{a.articleViews}}</a>
+
+                </td>
+                <td class="am-hide-sm-only">
+
+
+                    <a style="display:block; width: 300px; overflow: hidden;white-space: nowrap;text-overflow: ellipsis;" title="{{a.summary}}">{{a.articleDownloads}}</a>
+
+                </td>
+
+                <td>
+
+                    <a style="display:block; width: 300px; overflow: hidden;white-space: nowrap;text-overflow: ellipsis;" title="{{a.summary}}">{{a.docViews}}</a>
+
+                </td>
+                <td class="am-hide-sm-only">
+
+                    <a ng-click="seeDetail(a.statisticsDate)" style="display:block; width: 300px; overflow: hidden;white-space: nowrap;text-overflow: ellipsis;" title="{{a.summary}}">{{a.docDownloads}}</a>
+
+                </td>
+            </tr>
+            </tbody>
+            <tfoot>
+                <tr>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td>资料浏览总量：{{articleViewsSum}}</td>
+
+                    <!--<td colspan="4"></td>-->
+                    <td>资料下载总量：{{articleDownloadsSum}}</td>
+
+                    <td>文库浏览总量：{{docViewsSum}}</td>
+
+                    <!--<td colspan="4"></td>-->
+                    <td>文库下载总量：{{docDownloadsSum}}</td>
+                </tr>
+
+            </tfoot>
+        </table>
+        <div>
+            <div class="am-fl">
+
+            </div>
+            <div class="am-fr">
+                <ng-pager page-change="getPage(page)" page-data="data" items="11"></ng-pager>
+            </div>
+        </div>
+    </div>
+</div>

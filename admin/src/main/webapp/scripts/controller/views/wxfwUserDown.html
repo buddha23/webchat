@@ -1,0 +1,15 @@
+<div ng-controller="wxfwUserDownCtrl">
+    <div class="am-cf am-padding">
+        <div class="am-fl am-cf"><strong class="am-text-primary am-text-lg">首页</strong> /
+            <small>服务号用户导入</small>
+        </div>
+    </div>
+
+    <div class="am-g">
+        <div class="am-u-sm-12">
+            <button class="am-btn am-btn-primary" ng-click="doDownload()">点击导入openId</button>
+            <button class="am-btn am-btn-primary" ng-click="getUserInfo()">点击查询unionId</button>
+            <p ng-show="result">执行结果：{{result}}</p>
+        </div>
+    </div>
+</div>

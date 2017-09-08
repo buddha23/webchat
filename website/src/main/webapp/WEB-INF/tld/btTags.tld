@@ -1,0 +1,111 @@
+<taglib xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-jsptaglibrary_2_1.xsd"
+        version="2.1">
+
+    <description>bluetie custom tags 1.0</description>
+    <display-name>bluetie custom tags</display-name>
+    <tlib-version>1.0</tlib-version>
+    <short-name>bt</short-name>
+    <uri>http://www.lld360.com/tags</uri>
+
+    <!-- Tags -->
+    <tag>
+        <name>pagination</name>
+        <tag-class>com.lld360.cnc.website.tags.PaginationTag</tag-class>
+        <body-content>empty</body-content>
+        <attribute>
+            <name>data</name>
+            <required>true</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+    </tag>
+
+
+    <tag>
+        <name>paginationSite</name>
+        <tag-class>com.lld360.cnc.website.tags.PaginationTagSite</tag-class>
+        <body-content>empty</body-content>
+        <attribute>
+            <name>data</name>
+            <required>true</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+        <attribute>
+            <name>basePath</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+        <attribute>
+            <name>styleClass</name>
+            <required>false</required>
+            <rtexprvalue>false</rtexprvalue>
+        </attribute>
+    </tag>
+
+    <tag>
+        <name>fileSize</name>
+        <tag-class>com.lld360.cnc.website.tags.FileSizeTag</tag-class>
+        <body-content>empty</body-content>
+        <attribute>
+            <name>size</name>
+            <required>true</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+    </tag>
+
+    <tag>
+        <name>durationToString</name>
+        <description>时长:秒转换为时分秒</description>
+        <tag-class>com.lld360.cnc.website.tags.DurationToString</tag-class>
+        <body-content>empty</body-content>
+        <attribute>
+            <name>duration</name>
+            <required>true</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+    </tag>
+
+    <!-- Functions -->
+    <function>
+        <description>输出变量的值，如果值为空则输出默认值</description>
+        <name>out</name>
+        <function-class>com.lld360.cnc.website.tags.BtFunctions</function-class>
+        <function-signature>java.lang.String outVal(java.lang.String,java.lang.String)</function-signature>
+        <example>
+            ${bt:outVal(user.nickname, user.name)}
+        </example>
+    </function>
+
+    <function>
+        <description>字符串连接</description>
+        <name>concat</name>
+        <function-class>com.lld360.cnc.website.tags.BtFunctions</function-class>
+        <function-signature>java.lang.String concat(java.lang.Object...)</function-signature>
+        <example>
+            ${bt:prefixVal('/files', user.avatar)}
+        </example>
+    </function>
+
+    <function>
+        <description>自动判断连接是否带有http并输出URL</description>
+        <name>url</name>
+        <function-class>com.lld360.cnc.website.tags.BtFunctions</function-class>
+        <function-signature>
+            java.lang.String url(java.lang.String,java.lang.String,java.lang.String)
+        </function-signature>
+        <example>
+            ${bt:url('user/3/avatar.jpg', '/files/', '/assets/default.avatar.jpg')}
+        </example>
+    </function>
+
+    <function>
+        <description>清理字符串中的html标签</description>
+        <name>html2Text</name>
+        <function-class>com.lld360.cnc.website.tags.BtFunctions</function-class>
+        <function-signature>java.lang.String html2Text(java.lang.String)</function-signature>
+        <example>
+            ${bt:html2Text('<p>text</p>'}
+        </example>
+    </function>
+
+</taglib>

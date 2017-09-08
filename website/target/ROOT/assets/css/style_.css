@@ -1,0 +1,35 @@
+.container{width: 100%; min-width: 320px; max-width: 768px; margin: 0 auto; position: relative; }
+
+header{ background: #3385ff; color: #fff; padding: 15px; position: relative; z-index: 99; }
+header h1{ font-size: 22px; font-weight: bold; }
+header .logo{ float: right; width: 50px; height: 50px; }
+header .logo img{ width: 100%; height: 100%; }
+header .header-info{ padding-right: 60px; }
+
+.content{ background: #fff; }
+.content .record-count{ padding: 10px; }
+.content .record-count dt{ }
+.content .record-count dd{ margin-top: 4px; }
+.content .record-count em{ color: #ff4c4c; font-weight: bold; }
+.content .table-default{ width: 100%; }
+.content .table-default .col2{ width: 20%; }
+.content .table-default .col8{ width: 80%; }
+.content .table-default{ width: 100%; box-sizing: border-box; }
+.content .table-default th, .content .table-default td{ padding: 10px 8px; text-align: left; vertical-align: top; }
+.content .table-default th{ background: #fff; font-weight: bold; }
+.content .table-default td{ border-top: 1px solid #f4f4f4; }
+.content .table-default td .button-small{ margin: 2px; }
+.content .table-default td img{ max-width: 80px; max-height: 80px; }
+.content .table-default td a{ margin-right: 5px; color: #3385ff; }
+.content .table-default>tbody>tr:nth-of-type(odd){ background-color: #f9f9f9; }
+.content .pagination-wrapper{ padding: 15px 0; }
+.content .qr{ text-align: center; padding: 20px 0; }
+.content .qr img{ width: 150px; height: 150px; }
+
+.content article{}
+.content article h1{ text-align: center; padding: 10px; font-size: 18px; color: #3385ff; border-bottom: 1px solid #ddd; }
+.content article .meta{ padding: 10px; }
+.content article .meta p{ margin: 10px 0; }
+.content article .pics{ padding: 0 10px; }
+.content article .pics img{ width: 100%; -webkit-user-drag: none; }
+.content .meta .download{ color: #3385ff; }

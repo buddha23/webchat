@@ -1,0 +1,78 @@
+<div class="am-cf am-padding">
+    <div class="am-fl am-cf">
+        <strong class="am-text-primary am-text-lg">文库管理</strong> /
+        <small>版主申请审核</small>
+    </div>
+</div>
+
+<div class="am-g" ng-controller="moderatorManageCtrl">
+    <div class="am-u-sm-12 am-u-md-9">
+        <div class="am-btn-toolbar">
+            <div class="am-btn-group am-btn-group-xs">
+                <button type="button" class="am-btn am-btn-default" ng-click="deleteSome()"><span class="am-icon-trash-o"></span> 批量删除</button>
+            </div>
+        </div>
+    </div>
+    <div class="am-u-sm-12 am-u-md-3">
+        <div class="am-input-group am-input-group-sm">
+            <input type="text" class="am-form-field"  ng-model="searchKey" ng-keypress="onSearchKeyPress($event)">
+            <span class="am-input-group-btn">
+                <button class="am-btn am-btn-default" type="button" ng-click="doSearch()">搜索</button>
+            </span>
+        </div>
+    </div>
+
+    <div class="am-u-sm-12">
+        <table class="am-table am-table-striped am-table-hover table-main">
+            <thead>
+            <tr>
+                <th class="table-check"><input type="checkbox" ng-model="checkAll" ng-click="choseAll($event)"></th>
+                <th>ID</th>
+                <th>昵称</th>
+                <th>姓名</th>
+                <th>电话</th>
+                <th>QQ</th>
+                <th>Email</th>
+                <th>申请版块</th>
+                <th>申请时间</th>
+                <th>申请信息</th>
+                <th>操作</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr ng-repeat="a in data.content">
+                <td><input type="checkbox" ng-checked="checkAll" ng-click="chose($event,a)"></td>
+                <td>{{a.userId}}</td>
+                <td>{{a.nickname}}</td>
+                <td>{{a.name}}</td>
+                <td>{{a.mobile}}</td>
+                <td>{{a.qq}}</td>
+                <td>{{a.mailAddress}}</td>
+                <td>{{a.categoryName}}</td>
+                <td>{{a.createTime | date:'yyyy-MM-dd HH:mm'}}</td>
+                <td>{{a.remarks}}</td>
+                <td>
+                    <div class="am-btn-toolbar">
+                        <div class="am-btn-group am-btn-group-xs">
+                            <a class="am-btn am-btn-default am-btn-xs am-text-secondary" ng-click="agree(a)">
+                                <span class="am-icon-pencil-square-o"></span> 同意
+                            </a>
+                            <button class="am-btn am-btn-default am-btn-xs am-text-danger am-hide-sm-only" ng-click="disagree(a)">
+                                <span class="am-icon-trash-o"></span> 不同意
+                            </button>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+        <div>
+            <div class="am-fl">
+
+            </div>
+            <div class="am-fr">
+                <ng-pager page-change="getPage(page)" page-data="data" items="11"></ng-pager>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.lld360.cnc.repository.VodChaptersDao">
+
+    <!-- 定义全局查询的SQL变量语句 -->
+    <sql id="searchCondition">
+        <where>
+            <if test="volumeId != null">AND vc.volume_id = #{volumeId}</if>
+            <if test="name != null">AND vc.`name` LIKE "%"#{name}"%"</if>
+            <if test="sorting != null">AND vc.sorting = #{sorting}</if>
+        </where>
+    </sql>
+    <!-- 用于select查询公用抽取的列 -->
+    <sql id="columns">
+	    <![CDATA[
+        vc.id,
+        vc.volume_id,
+        vc.`name`,
+        vc.sorting
+        ]]>
+	</sql>
+
+    <select id="search" parameterType="map" resultMap="vodchaptersMap">
+        SELECT
+        <include refid="columns"/>,
+        vs.id sid,
+        vs.name sname,
+        vs.sorting ssorting,
+        vs.duration sduration,
+        vs.free free
+        FROM vod_chapters vc
+        LEFT JOIN vod_section vs ON vc.`id` = vs.`chapter_id`
+        <include refid="searchCondition"/>
+        ORDER BY vc.sorting ASC ,vs.sorting ASC
+        <if test="limit != null">LIMIT #{limit}</if>
+        <if test="offset != null">OFFSET #{offset}</if>
+    </select>
+
+    <select id="count" parameterType="map" resultType="long">
+        SELECT count(1)
+        FROM vod_chapters vc
+        <include refid="searchCondition"/>
+    </select>
+
+    <select id="sectionCount" parameterType="map" resultType="long">
+        SELECT COUNT(1)
+        FROM vod_section vs
+        LEFT JOIN vod_chapters vc ON vc.`id` = vs.`chapter_id`
+        <include refid="searchCondition"/>
+    </select>
+
+    <select id="find" parameterType="long" resultMap="vodchaptersMap">
+        SELECT
+        <include refid="columns"/>
+        FROM vod_chapters vc
+        WHERE id = #{id}
+    </select>
+
+    <insert id="create" parameterType="com.lld360.cnc.model.VodChapters" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO
+            vod_chapters (
+                volume_id,
+                `name`,
+                sorting
+            ) VALUES (
+            #{volumeId},
+            #{name},
+            #{sorting}
+        )
+    </insert>
+
+    <update id="update" parameterType="com.lld360.cnc.model.VodChapters">
+        UPDATE vod_chapters
+        <set>
+            <if test="volumeId != null">volume_id = #{volumeId},</if>
+            <if test="name != null">`name` = #{name},</if>
+            <if test="sorting != null">sorting = #{sorting},</if>
+        </set>
+        WHERE id = #{id};
+    </update>
+
+    <delete id="delete" parameterType="long">
+        DELETE FROM vod_chapters
+        WHERE id = #{id}
+    </delete>
+
+    <delete id="deleteByNotBelongVolume">
+        DELETE FROM vod_chapters WHERE
+        <if test="ids.length &gt; 0">
+            <foreach collection="ids" item="id" open="id NOT IN (" separator="," close=") AND ">#{id}</foreach>
+        </if>
+        volume_id = #{volumeId}
+    </delete>
+
+
+    <!-- 结果集mapper -->
+    <resultMap id="vodchaptersMap" type="com.lld360.cnc.model.VodChapters">
+        <result property="id" column="id"/>
+        <result property="volumeId" column="volume_id"/>
+        <result property="name" column="name"/>
+        <result property="sorting" column="sorting"/>
+        <collection property="vodSections" ofType="com.lld360.cnc.model.VodSection">
+            <id property="id" column="sid"/>
+            <result property="name" column="sname"/>
+            <result property="sorting" column="ssorting"/>
+            <result property="duration" column="sduration"/>
+            <result property="free" column="free"/>
+        </collection>
+    </resultMap>
+
+</mapper> 

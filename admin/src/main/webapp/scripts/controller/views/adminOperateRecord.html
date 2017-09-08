@@ -1,0 +1,56 @@
+<div class="am-cf am-padding">
+    <div class="am-fl am-cf">
+        <strong class="am-text-primary am-text-lg">后台管理</strong> /
+        <small>管理员操作日志</small>
+    </div>
+</div>
+
+<div class="am-g" ng-controller="operateRecordCtrl">
+    <div class="am-u-sm-12">
+        <table class="am-table am-table-striped am-table-hover table-main">
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>操作名称</th>
+                <th>执行方法</th>
+                <th>参数</th>
+                <th>成功</th>
+                <th>异常</th>
+                <th>管理员</th>
+                <th>操作时间</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr ng-repeat="a in data.content">
+                <td>{{a.id}}</td>
+                <td>{{a.name}}</td>
+                <td>{{a.method}}</td>
+                <td>
+                    <button ng-if="a.args" type="button" class="am-btn am-btn-default am-btn-xs am-text-success am-hide-sm-only" ng-click="showArgs(a.args)">详细</button>
+                    <span ng-if="!a.args">无</span>
+                </td>
+                <td>
+                    <span ng-if="a.successed">是</span>
+                    <span ng-if="!a.successed">否</span>
+                </td>
+                <td>
+                    <span ng-if="a.exception">查看</span>
+                    <span ng-if="!a.exception">无</span>
+                </td>
+                <td>{{a.adminName}}</td>
+                <td>
+                    {{a.createTime | date:'yyyy-MM-dd HH:mm'}}
+                </td>
+            </tr>
+            </tbody>
+        </table>
+        <div>
+            <div class="am-fl">
+
+            </div>
+            <div class="am-fr">
+                <ng-pager page-change="getPage(page)" page-data="data" items="11"></ng-pager>
+            </div>
+        </div>
+    </div>
+</div>

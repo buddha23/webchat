@@ -1,0 +1,529 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>CNC数控文库</title>
+    <link rel="stylesheet" href="../../css/public.css" type="text/css">
+    <link rel="stylesheet" href="../../css/style.css" type="text/css">
+    <link rel="stylesheet" href="../../css/icheck-blue.css" type="text/css">
+    <link rel="stylesheet" href="../../css/jquery.Jcrop.css" type="text/css">
+    <link rel="stylesheet" href="../../css/validationEngine.jquery.css" type="text/css">
+    <script type="text/javascript" src="../../js/min/jquery-1.9.1.min.js"></script>
+    <script type="text/javascript" src="../../js/utils.js"></script>
+    <script type="text/javascript" src="../../js/min/icheck.min.js"></script>
+    <script type="text/javascript" src="../../js/jquery.Jcrop.js"></script>
+    <script type="text/javascript" src="../../js/jquery.validationEngine.js"></script>
+    <script type="text/javascript" src="../../js/jquery.validationEngine-zh_CN.js"></script>
+    <script type="text/javascript" src="../../js/website.js"></script>
+    <script type="text/javascript" src="../../js/manage.js"></script>
+    <script>
+        $(function () {
+            $('#page-form').validationEngine({
+                promptPosition: "topLeft", // 有5种模式 topLeft, topRight, bottomLeft, centerRight, bottomRight
+                scroll: false,
+                showOneMessage: true,
+                maxErrorsPerField: true
+            });
+			
+			/** 图片上传
+			* Author: 贝大湿
+			*/
+			var $filechooser = $("#choose");
+			
+			$("#upload").on("click", function () {
+				$filechooser.click();
+			});
+			
+			$filechooser.change(function() {
+                if (!this.files.length) return;
+                var files = Array.prototype.slice.call(this.files);
+                if (files.length > 3) {
+                    alert("最多同时只可上传3张图片");
+                    return;
+                }
+                files.forEach(function (file, i) {
+                    if (!/\/(?:jpeg|png|gif)/i.test(file.type)) return;
+                    var reader = new FileReader();
+                    var li = document.createElement("li");
+                    li.innerHTML = '<div class="progress"><span></span></div>';
+                    $(".img-list").append($(li));
+                    reader.onload = function () {
+                        var result = this.result;
+                        var img = new Image();
+                        img.src = result;
+                        $(li).css("background-image", "url(" + result + ")");
+                        upload(result, file.type, $(li));
+                        return;
+                    };
+                    reader.readAsDataURL(file);
+                })
+            });
+			
+			//图片上传，将base64的图片转成二进制对象，塞进formdata上传
+			function upload(basestr, type, $li) {
+				var text = window.atob(basestr.split(",")[1]);
+				var buffer = new Uint8Array(text.length);
+				var pecent = 0, loop = null;
+				for (var i = 0; i < text.length; i++) {
+					buffer[i] = text.charCodeAt(i);
+				}
+				var blob = getBlob([buffer], type);
+				var xhr = new XMLHttpRequest();
+				var formdata = getFormData();
+				formdata.append('imagefile', blob);
+				//上传url
+				$.ajax({
+					type: "POST",
+					url: "http://localhost:8080/m/commodity/imgUpload",
+					data: formdata,
+					cache: false,
+					processData: false,
+					contentType: false,
+					success: function(data){
+						console.log(data);
+						var jsonData = data;
+						var imagedata = jsonData || {};
+						var text = imagedata.path ? '上传成功' : '上传失败';
+						//将上传成功后的路径保存在input中
+						var $pathInput = $("#imgPath");
+						if ($pathInput.val() == "") {
+							$pathInput.val($pathInput.val() + imagedata.path);
+						} else {
+							$pathInput.val($pathInput.val() + "," + imagedata.path);
+						}
+						console.log('图片路径： ' + $pathInput.val());
+						console.log(text + '：' + imagedata.path);
+						clearInterval(loop);
+						//当收到该消息时上传完毕
+						$li.find(".progress span").animate({'width': "100%"}, pecent < 95 ? 200 : 0, function () {
+							$(this).html(text);
+						});
+						if (!imagedata.path) return;
+						//$(".pic-list").append('<a href="' + imagedata.path + '">' + imagedata.name + '（' + imagedata.size + '）<img src="' + imagedata.path + '" /></a>');
+					},
+					xhrFields: {
+						onsendstart: function() {
+							//this是指向XHR
+							//数据发送进度，前50%展示该进度
+							this.upload.addEventListener('progress', function (e) {
+								if (loop) return;
+								pecent = ~~(100 * e.loaded / e.total) / 2;
+								$li.find(".progress span").css('width', pecent + "%");
+								if (pecent == 50) {
+									mockProgress();
+								}
+							}, false);
+							//数据后50%用模拟进度
+							function mockProgress() {
+								if (loop) return;
+								loop = setInterval(function () {
+									pecent++;
+									$li.find(".progress span").css('width', pecent + "%");
+									if (pecent == 99) {
+										clearInterval(loop);
+									}
+								}, 100)
+							}
+						}
+					}
+				});
+			}
+			
+			/**
+			 * 获取blob对象的兼容性写法
+			 * @param buffer
+			 * @param format
+			 * @returns {*}
+			 */
+			function getBlob(buffer, format) {
+				try {
+					return new Blob(buffer, {type: format});
+				} catch (e) {
+					var bb = new (window.BlobBuilder || window.WebKitBlobBuilder || window.MSBlobBuilder);
+					buffer.forEach(function (buf) {
+						bb.append(buf);
+					});
+					return bb.getBlob(format);
+				}
+			}
+	
+			/**
+			 * 获取formdata
+			 */
+			function getFormData() {
+				var isNeedShim = ~navigator.userAgent.indexOf('Android')
+						&& ~navigator.vendor.indexOf('Google')
+						&& !~navigator.userAgent.indexOf('Chrome')
+						&& navigator.userAgent.match(/AppleWebKit\/(\d+)/).pop() <= 534;
+				return isNeedShim ? new FormDataShim() : new FormData()
+			}
+	
+			/**
+			 * formdata 补丁, 给不支持formdata上传blob的android机打补丁
+			 * @constructor
+			 */
+			function FormDataShim() {
+				console.warn('using formdata shim');
+				var o = this,
+						parts = [],
+						boundary = Array(21).join('-') + (+new Date() * (1e16 * Math.random())).toString(36),
+						oldSend = XMLHttpRequest.prototype.send;
+				this.append = function (name, value, filename) {
+					parts.push('--' + boundary + '\r\nContent-Disposition: form-data; name="' + name + '"');
+					if (value instanceof Blob) {
+						parts.push('; filename="' + (filename || 'blob') + '"\r\nContent-Type: ' + value.type + '\r\n\r\n');
+						parts.push(value);
+					}
+					else {
+						parts.push('\r\n\r\n' + value);
+					}
+					parts.push('\r\n');
+				};
+				// Override XHR send()
+				XMLHttpRequest.prototype.send = function (val) {
+					var fr,
+							data,
+							oXHR = this;
+					if (val === o) {
+						// Append the final boundary string
+						parts.push('--' + boundary + '--\r\n');
+						// Create the blob
+						data = getBlob(parts);
+						// Set up and read the blob into an array to be sent
+						fr = new FileReader();
+						fr.onload = function () {
+							oldSend.call(oXHR, fr.result);
+						};
+						fr.onerror = function (err) {
+							throw err;
+						};
+						fr.readAsArrayBuffer(data);
+						// Set the multipart content type and boudary
+						this.setRequestHeader('Content-Type', 'multipart/form-data; boundary=' + boundary);
+						XMLHttpRequest.prototype.send = oldSend;
+					}
+					else {
+						oldSend.call(this, val);
+					}
+				};
+			}
+        })
+    </script>
+</head>
+
+<body>
+<div class="header">
+    <div class="top">
+        <div class="container">
+            <div class="logo"></div>
+            <div class="searchbar">
+                <div class="searchbox clearfix">
+                    <input class="search-input" type="text" placeholder="请输入您要搜索的关键词">
+                    <button class="search-btn" type="button"></button>
+                </div>
+                <div class="search-hots">
+                    <span>热门搜索：</span>
+                    <a href="#">操作手册</a>
+                    <a href="#">帮助文档</a>
+                    <a href="#">西门子</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="nav">
+        <div class="container">
+            <ul class="menu clearfix">
+                <li><a href="index.html">首页</a></li>
+                <li>
+                    <a class="icon-down" href="#"><span>分类</span></a>
+                    <ul class="dropdown-menu">
+                        <li><a href="#">下拉菜单一</a></li>
+                        <li><a href="#">下拉菜单二</a></li>
+                        <li><a href="#">下拉菜单三</a></li>
+                        <li><a href="#">下拉菜单四</a></li>
+                    </ul>
+                </li>
+            </ul>
+            <div class="nav-toolbar clearfix">
+                <div class="userbar clearfix">
+                    <a class="userdrop-toggle" href="###">
+                        <img class="portrait" src="../../images/default_avatar.png">
+                        <div class="new-message">9</div>
+                        <span class="name">李先森</span>
+                    </a>
+                    <ul class="userbar-userdrop">
+                        <div class="userbar-profile clearfix">
+                            <img class="profile-avatar" src="../../images/default_avatar.png" alt=""/>
+                            <div class="profile-info">
+                                <div class="profile-name">
+                                    李先森
+                                    <div class="profile-menu">
+                                        <a href="#">管理</a>
+                                        <a href="#">退出</a>
+                                    </div>
+                                </div>
+                                <div class="profile-score">
+                                    我的积分：<em>20</em>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="userbar-box">
+                            <div class="box-wrapper">
+                                <div class="box-header">个人中心</div>
+                                <div class="box-content">
+                                    <!--
+                                    <div class="box-empty">
+                                        <div class="doc-tips">暂无文档，赶紧上传吧!</div>
+                                        <div class="upload-btn">上传我的文档</div>
+                                    </div>
+                                    -->
+                                    <div class="box-list">
+                                        <div class="doc-mine">
+                                            <dl class="clearfix">
+                                                <dt><a href="#">设计师要懂心理学</a></dt>
+                                                <dd>8页</dd>
+                                            </dl>
+                                            <dl class="clearfix">
+                                                <dt><a href="#">设计师要懂心理学</a></dt>
+                                                <dd>8页</dd>
+                                            </dl>
+                                        </div>
+                                        <div class="upload-btn">上传我的文档</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="content management pd20">
+    <div class="container clearfix">
+        <div class="sd leftside">
+            <div class="menu-header"><i class="fa fa-navicon"></i> 菜单</div>
+
+            <div class="profile clearfix">
+                <div class="profile-top">
+                    <div class="profile-info clearfix">
+                        <div class="profile-avatar"><img src="../../images/default_avatar.png" alt=""/></div>
+                        <div class="profile-meta">
+                            <div class="profile-name"><i class="vip-icon"></i> 李先森</div>
+                            <div class="">我的积分：<span class="score">20</span></div>
+                        </div>
+                    </div>
+                    <!--
+                    <ul class="profile-list">
+                        <a href="doc-upload.html">
+                            <li class="profile-btn">
+                                <i class="fa fa-upload"></i> <span>上传我的文档</span>
+                            </li>
+                        </a>
+                    </ul>
+                    -->
+                </div>
+            </div>
+            <!--
+            <div class="curtain" style="background-image: url(../images/curtain_clock.png);">
+                <div class="curtain-content">
+                    <div class="clock"></div>
+                    <div class="date"></div>
+                </div>
+            </div>
+            -->
+            <ul class="menu">
+                <li class="menu-user">
+                    <a href="#"><i class="icon-user"></i> 个人管理</a>
+                    <ul class="menu-sub">
+                        <li><a href="usercenter.html">个人中心</a></li>
+                        <li><a href="user-profile.html">资料编辑</a></li>
+                        <li><a href="user-pwd.html">修改密码</a></li>
+                        <li><a href="user-account-1.html">账号管理</a></li>
+                        <!--<li><a href="user-score.html">我的积分</a></li>-->
+                    </ul>
+                </li>
+                <li class="menu-business">
+                    <a href="#"><i class="icon-home"></i> 企业管理</a>
+                    <ul class="menu-sub">
+                        <li><a href="business-upload.html">入驻资料</a></li>
+                        <li><a href="business-info.html">企业信息</a></li>
+                    </ul>
+                </li>
+                <li class="menu-doc">
+                    <a href="#"><i class="icon-book-open"></i> 文档管理</a>
+                    <ul class="menu-sub">
+                        <li><a href="doc-mydoc-upload.html">我的上传</a></li>
+                        <li><a href="doc-mydoc-download.html">我的下载</a></li>
+                        <li><a href="doc-mydoc-fav.html">我的收藏</a></li>
+                    </ul>
+                </li>
+                <li class="menu-moderator">
+                    <a href="#"><i class="icon-trophy"></i> 版主管理</a>
+                    <ul class="menu-sub">
+                    	<li><a href="category.html">板块管理</a></li>
+                    </ul>
+                </li>
+                <li class="menu-finance">
+                    <a href="#"><i class="icon-wallet"></i> 财务管理</a>
+                    <ul class="menu-sub">
+                        <li><a href="user-vip.html">购买会员</a></li>
+                        <li><a href="user-score.html">充值 & 提现</a></li>
+                    	<li><a href="finance-account.html">提现账户管理</a></li>
+                    </ul>
+                </li>
+                <li class="">
+                    <a href="logout.html"><i class="icon-logout"></i> 退出登录</a>
+                </li>
+            </ul>
+        </div>
+
+        <div class="main" data-menu="business">
+            <div class="box clearfix">
+                <div class="box-header">
+                    <h1>企业入驻资料</h1>
+                </div>
+                <div class="box-content">
+                    <form id="page-form" class="page-form business-form margintop15" action="#" method="post">
+                        <div class="row">
+                            <label for=""><span class="color-red">*</span> 公司名称：</label>
+                            <div class="field">
+                                <input class="ui-input-default validate[required]" type="text"/>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <label><span class="color-red">*</span> 公司所在地：</label>
+                            <div class="field">
+                                <input id="password" type="text" class="ui-input-default validate[required]">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <label><span class="color-red">*</span> 公司营业执照代码：</label>
+                            <div class="field">
+                                <input class="ui-input-default validate[required]" type="text"/>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <label><span class="color-red">*</span> 联系人姓名：</label>
+                            <div class="field">
+                                <input class="ui-input-default validate[required]" type="text"/>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <label><span class="color-red">*</span> 联系人电话：</label>
+                            <div class="field">
+                                <input class="ui-input-default validate[required]" type="text"/>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <label><span class="color-red">*</span> 验证码：</label>
+                            <div class="field">
+                                <input class="ui-input-default validate[required]" type="text"/>
+                                <img class="captcha" src="../../images/captcha.png" />
+                            </div>
+                        </div>
+                        <div class="row">
+                            <label><span class="color-red">*</span> 企业营业执照图：</label>
+                            <div class="field">
+                                <div style="display:none">
+                                    <input type="file" id="choose" accept="image/*" multiple >
+                                    <input type="text" id="imgPath" name="imgPath">
+                                </div>
+                                <ul class="img-list clearfix">
+                                    <li id="upload">
+                                        <div class="upload-icon">
+                                        	<div class="icon-wrapper">
+                                                <div class="icon-plus-x"></div>
+                                                <div class="icon-plus-y"></div>
+                                            </div>
+                                        </div>
+                                        <em>点击添加图片</em>
+                                        <p>支持jpg，gif，png格式</p>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <label></label>
+                            <div class="field">
+                                <button class="button btn-green btn-large" type="submit"><i class="fa fa-check"></i> 确定</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="sd rightside">
+
+        </div>
+    </div>
+</div>
+
+<div class="footer pd">
+  <div class="container clearfix">
+		<div class="logo"></div>
+        <div class="footer-info">
+        	<div class="footer-header">CNC数控文库</div>
+        	<ul class="footer-nav clearfix">
+            	<li><a class="linkcolor linkline" href="#">商务合作</a></li>
+                <li><a class="linkcolor linkline" href="feedback.html">意见反馈</a></li>
+                <li><a class="linkcolor linkline" href="#">关于我们</a></li>
+                <li><a class="linkcolor linkline" href="#">版权声明</a></li>
+                <li><a class="linkcolor linkline" href="#">联系我们</a></li>
+            </ul>
+            <div class="footer-text">
+            	© Copyright 2016 蜀ICP备16003108号-2.
+            </div>
+        </div>
+        <div class="footer-info">
+        	<div class="footer-header">友情链接</div>
+        	<ul class="footer-nav clearfix">
+            	<li><a class="linkcolor linkline" href="http://www.aishukong.com" target="_blank" rel="nofollow">爱数控论坛</a></li>
+            	<li><a class="linkcolor linkline" href="http://www.pgyfwz.com" target="_blank" rel="nofollow">蒲公英网</a></li>
+                <li><a class="linkcolor linkline" href="http://www.laserfair.com" target="_blank" rel="nofollow">激光智造网</a></li>
+                <li><a class="linkcolor linkline" href="http://www.redsuncnc.com" target="_blank" rel="nofollow">瑞德森机床</a></li>
+                <li><a class="linkcolor linkline" href="http://www.lld360.com" target="_blank" rel="nofollow">数控招聘</a></li>
+                <li><a class="linkcolor linkline" href="http://www.itpxpj.com" target="_blank" rel="nofollow">培训网</a></li>
+            </ul>
+        </div>
+        <div class="qr">
+        	<img class="qr-img" src="../../images/qr.jpg" alt=""/>
+            <div class="qr-text">微信公众号二维码</div>
+        </div>
+  </div>
+</div>
+
+<div class="crop-dialog clearfix">
+    <div class="avatar-select">
+        <div class="crop-add">
+        </div>
+
+        <div class="crop-dialog-btns">
+            <a class="btn-yes">保存</a>
+        </div>
+    </div>
+    <div class="crop-box">
+        <div class="clearfix">
+            <div class="crop-main">
+                <div class="crop-wrapper">
+                    <img src="images/blank.png" class="img-origin" alt="[Jcrop Example]">
+                </div>
+            </div>
+            <div class="crop-side">
+                <div class="crop-preview">
+                    <img src="images/blank.png" class="img-preview" alt="Preview">
+                    <input type="file" name="file" class="upload-select" id="upload-select" style="display: none;"/>
+                </div>
+                <div class="tips"><i class="bek-icon-quote-left"></i> 您可以拖动图片进行裁剪，达到满意效果后点击保存生成头像。 <i
+                        class="bek-icon-quote-right"></i></div>
+            </div>
+        </div>
+        <div class="crop-dialog-btns">
+            <a class="btn-yes">保存</a>
+        </div>
+    </div>
+</div>
+</body>
+</html>

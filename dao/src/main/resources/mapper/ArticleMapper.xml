@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lld360.cnc.repository.ArticleDao">
+
+    <!-- 通用查询结果列-->
+    <sql id="baseColumns">
+        a.id, a.title, a.summary, a.content, a.images, a.`source`, a.category_id, a.file_id, a.views, a.create_time
+    </sql>
+
+    <delete id="delete" parameterType="long">
+        DELETE FROM article
+        WHERE id = #{id}
+    </delete>
+
+    <select id="find" parameterType="long" resultType="com.lld360.cnc.model.Article">
+        SELECT
+        <include refid="baseColumns"/>, f.path pdf, GROUP_CONCAT(t.`name`) tags
+        FROM article a
+        LEFT JOIN article_file f ON a.file_id = f.id
+        LEFT JOIN article_x_tag x ON a.id = x.article_id
+        LEFT JOIN tag t ON t.id = x.tag_id
+        WHERE a.id = #{id}
+        GROUP BY a.id
+    </select>
+
+    <select id="findByKeyWord" parameterType="string" resultType="com.lld360.cnc.model.Article">
+        SELECT
+        <include refid="baseColumns"/>
+        FROM tag t
+        JOIN article_x_tag x ON t.`id` = x.`tag_id`
+        JOIN article a ON x.`article_id` = a.`id`
+        <if test="keyword != null and keyword != ''">
+            WHERE t.`name` REGEXP #{keyword}
+        </if>
+        GROUP BY a.id
+    </select>
+
+    <select id="countByKeyWord" resultType="long" parameterType="string">
+        SELECT COUNT(DISTINCT a.id) AS counts
+        FROM tag t
+        JOIN article_x_tag x ON t.`id` = x.`tag_id`
+        JOIN article a ON x.`article_id` = a.`id`
+        <if test="keyword != null and keyword != ''">
+            WHERE t.`name` REGEXP #{keyword}
+        </if>
+    </select>
+
+    <!-- Map查询（可分页） -->
+    <sql id="byMapConditions">
+        <where>
+            <if test="key != null and key != ''">
+                t.`name` LIKE "%"#{key}"%" OR a.title LIKE "%"#{key}"%"
+            </if>
+        </where>
+    </sql>
+    <select id="countByMap" resultType="java.lang.Long" parameterType="map">
+        SELECT
+        IFNULL(COUNT(DISTINCT a.id), 0) AS counts
+        FROM article a
+        JOIN article_x_tag xx ON a.id=xx.article_id
+        JOIN tag t ON xx.tag_id=t.id
+        <include refid="byMapConditions"/>
+    </select>
+    <select id="findByMap" resultType="com.lld360.cnc.model.Article" parameterType="map">
+        SELECT
+        <include refid="baseColumns"/>
+        ,af.downloads
+        FROM article a
+        JOIN article_file af ON a.file_id = af.id
+        JOIN article_x_tag xx ON a.id=xx.article_id
+        JOIN tag t ON xx.tag_id=t.id
+        <include refid="byMapConditions"/>
+        GROUP BY a.id
+        <if test="sortBy == 'createTime'">ORDER BY a.create_time ${sortType}</if>
+        <if test="sortBy == 'views'">ORDER BY a.${sortBy} ${sortType}</if>
+        <if test="sortBy == 'downloads'">ORDER BY af.${sortBy} ${sortType}</if>
+        <if test="limit != null">LIMIT #{limit}</if>
+        <if test="offset != null">OFFSET #{offset}</if>
+    </select>
+
+    <insert id="create" parameterType="com.lld360.cnc.model.Article" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO article (
+            title,
+            summary,
+            content,
+            images,
+            `source`,
+            category_id,
+            file_id,
+            views,
+            create_time
+        ) VALUE (
+            #{title},
+            #{summary},
+            #{content},
+            #{images},
+            #{source},
+            #{categoryId},
+            #{fileId},
+            #{views},
+            #{createTime}
+        )
+    </insert>
+
+    <update id="update" parameterType="com.lld360.cnc.model.Article">
+        UPDATE article
+        <set>
+            <if test="title != null">title = #{title},</if>
+            <if test="summary != null">summary = #{summary},</if>
+            <if test="content != null">content = #{content},</if>
+            <if test="images != null">images = #{images},</if>
+            <if test="source != null">`source` = #{source},</if>
+            <if test="categoryId != null">category_id = #{categoryId},</if>
+            <if test="fileId != null">file_id = #{fileId},</if>
+            <if test="views != null">views = #{views},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+        </set>
+        WHERE id = #{id}
+    </update>
+
+    <update id="addViews" parameterType="long">
+        UPDATE article
+        SET views = views + 1
+        WHERE id = #{id}
+    </update>
+
+
+</mapper>

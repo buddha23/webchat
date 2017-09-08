@@ -1,0 +1,69 @@
+<div class="am-cf am-padding">
+    <div class="am-fl am-cf">
+        <strong class="am-text-primary am-text-lg">微信词条管理</strong> /
+        <small>微信词条列表</small>
+    </div>
+</div>
+
+<div class="am-g" ng-controller="wxqaListCtrl">
+    <div class="am-u-sm-12 am-u-md-9">
+        <div class="am-btn-toolbar">
+            <div class="am-btn-group am-btn-group-xs">
+                <a href ui-sref="wxqaDetail({id:0})" class="am-btn am-btn-default"><span class="am-icon-plus"></span> 新增</a>
+                <button type="button" class="am-btn am-btn-default"><span class="am-icon-trash-o"></span> 删除</button>
+            </div>
+        </div>
+    </div>
+    <div class="am-u-sm-12 am-u-md-3">
+        <div class="am-input-group am-input-group-sm">
+            <input type="text" class="am-form-field" ng-model="searchKey">
+            <span class="am-input-group-btn">
+                <button class="am-btn am-btn-default" type="button" ng-click="doSearch()">搜索</button>
+            </span>
+        </div>
+    </div>
+
+    <div class="am-u-sm-12">
+        <table class="am-table am-table-striped am-table-hover table-main">
+            <thead>
+            <tr>
+                <th class="table-check"><input type="checkbox" ng-model="checkAll"></th>
+                <th>ID</th>
+                <th>问题</th>
+                <th>答案</th>
+                <th>搜索量</th>
+                <th>操作</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr ng-repeat="a in data.content">
+                <td><input type="checkbox" ng-checked="checkAll"></td>
+                <td>{{a.id}}</td>
+                <td><a href="#/wxqa/{{a.id}}" style="display:block; width: 300px; overflow: hidden;white-space: nowrap;text-overflow: ellipsis;">{{a.q}}</a></td>
+                <td><div style="width: 500px; overflow: hidden;white-space: nowrap;text-overflow: ellipsis;">{{a.a}}</div></td>
+                <td>{{a.volume}}</td>
+                <td>
+                    <div class="am-btn-toolbar">
+                        <div class="am-btn-group am-btn-group-xs">
+                            <a class="am-btn am-btn-default am-btn-xs am-text-secondary" ui-sref="wxqaDetail({id:a.id})">
+                                <span class="am-icon-pencil-square-o"></span> 编辑
+                            </a>
+                            <button class="am-btn am-btn-default am-btn-xs am-text-danger am-hide-sm-only" ng-click="delete(a)">
+                                <span class="am-icon-trash-o"></span> 删除
+                            </button>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+        <div>
+            <div class="am-fl">
+
+            </div>
+            <div class="am-fr">
+                <ng-pager page-change="getPage(page)" page-data="data" items="11"></ng-pager>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,7 @@
+<ul class="am-pagination">
+    <li ng-class="{'am-disabled': pageData.first}"><a href ng-click="pageChange({page:1})">&laquo;</a></li>
+    <li ng-class="{'am-disabled': pageData.first}"><a href ng-click="pageChange({page:pageData.number})">&lsaquo;</a></li>
+    <li ng-repeat="p in pages" ng-class="{'am-active': pageData.number===p}"><a href ng-click="pageChange({page: p + 1})">{{p+1}}</a></li>
+    <li ng-class="{'am-disabled': pageData.last}"><a href ng-click="pageChange({page:pageData.number+2})">&rsaquo;</a></li>
+    <li ng-class="{'am-disabled': pageData.last}"><a href ng-click="pageChange({page:pageData.totalPages})">&raquo;</a></li>
+</ul>

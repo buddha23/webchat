@@ -1,0 +1,115 @@
+<div class="am-cf am-padding">
+    <div class="am-fl am-cf">
+        <strong class="am-text-primary am-text-lg">数控课堂</strong> /
+        <small>课堂邀请卡</small>
+    </div>
+</div>
+
+<div class="am-g" ng-controller="vodInviteCardsCtrl">
+    <div class="am-u-sm-12 am-u-md-4">
+        <div class="am-btn-toolbar">
+            <div class="am-btn-group am-btn-group-xs">
+                <button type="button" class="am-btn am-btn-default" ng-click="createCard()" ng-if="adminPermissions.indexOf('video:w') != -1 || admin.isRoot">
+                    <span class="am-icon-plus"></span> 新增</button>
+                <button type="button" class="am-btn am-btn-default" ng-click="deleteSome()" ng-if="adminPermissions.indexOf('video:w') != -1 || admin.isRoot">
+                    <span class="am-icon-trash-o"></span> 删除</button>
+            </div>
+        </div>
+    </div>
+    <div class="am-u-sm-12 am-u-md-8">
+        <div class="am-form am-text-right">
+            <label for="cardsType">类型:</label>
+            <select id="cardsType" style="width: 20%; display: inline-block;" ng-model="params.type">
+                <option value="0">不限</option>
+                <option value="1">视频集</option>
+                <option value="2">文档</option>
+                <option value="3">软件</option>
+                <option value="4">会员</option>
+            </select>
+            <label for="cardState">使用状态:</label>
+            <select id="cardState" style="width: 20%; display: inline-block;" ng-model="params.state">
+                <option value="0">不限</option>
+                <option value="1">未使用</option>
+                <option value="2">已使用</option>
+            </select>
+            <input type="text" style="width: auto; display: inline-block;" ng-model="searchKey" ng-keypress="onSearchKeyPress($event)">
+            <button class="am-btn am-btn-default" type="button" ng-click="doSearch()">搜索</button>
+        </div>
+    </div>
+
+    <div class="am-u-sm-12">
+        <table class="am-table am-table-striped am-table-hover table-main">
+            <thead>
+            <tr>
+                <th class="table-check"><input type="checkbox" ng-model="checkAll" ng-click="choseAll($event)"></th>
+                <th>ID</th>
+                <th>类型</th>
+                <th>文件名</th>
+                <th>链接</th>
+                <th>使用状态</th>
+                <th>使用者</th>
+                <th>创建时间</th>
+                <th>操作</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr ng-repeat="a in data.content">
+                <td><input type="checkbox" ng-checked="checkAll" ng-click="chose($event,a.id)"></td>
+                <td>{{a.id}}</td>
+                <td>{{typeName[a.type] || '-'}}</td>
+                <td>{{a.objectName}}</td>
+                <td>http://www.d6sk.com/m/video/inviteCard?inviteCode={{a.inviteCode}}</td>
+                <td>{{states[a.state]}}</td>
+                <td>{{a.userName || '-'}}</td>
+                <td class="am-hide-sm-only">{{a.createTime | date:'yyyy-MM-dd HH:mm'}}</td>
+                <td>
+                    <div class="am-btn-toolbar">
+                        <div class="am-btn-group am-btn-group-xs">
+                            <button class="am-btn am-btn-default am-btn-xs am-text-danger am-hide-sm-only" ng-click="delete(a)" ng-if="adminPermissions.indexOf('video:w') != -1 || admin.isRoot">
+                                <span class="am-icon-trash-o"></span> 删除
+                            </button>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+        <div>
+            <div class="am-fl">
+            </div>
+            <div class="am-fr">
+                <div style="display: inline-block; margin-right: 10px">
+                    <small>共</small> <span style="color: #f08080;">{{data.totalElements}}</span> <small>条数据</small>
+                </div>
+                <div style="display: inline-block;">
+                    <ng-pager page-change="getPage(page)" page-data="data" items="11"></ng-pager>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="createDiv" hidden>
+        <div class="am-margin-left am-margin-top">
+            <label>邀请卡类型:</label>
+            <select id="cardType">
+                <option value="1">视频集</option>
+                <option value="2">文档</option>
+                <option value="3">软件</option>
+                <option value="4">会员</option>
+            </select>
+        </div>
+        <div class="am-margin-left am-margin-top">
+            <label>文件ID:</label>
+            <input id="cardObjectId" type="number" onkeyup="this.value=this.value.replace(/\D/g,'')" onafterpaste="this.value=this.value.replace(/\D/g,'')">
+            <button id="checkObject">查询</button>
+            <br>
+            <span>信息:</span>
+            <span id="objectMsg">请谨慎输入ID,错误ID将使邀请码无效</span>
+        </div>
+        <div class="am-margin-left am-margin-top">
+            <label>生成张数:</label>
+            <input id="cardNum" type="number" onkeyup="this.value=this.value.replace(/\D/g,'')" onafterpaste="this.value=this.value.replace(/\D/g,'')">
+        </div>
+    </div>
+    <input id="copyInput" value="" hidden>
+</div>

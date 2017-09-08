@@ -1,0 +1,61 @@
+<script type="text/javascript" src="scripts/components/My97DatePicker/WdatePicker.js"></script>
+<div class="am-cf am-padding">
+    <div class="am-fl am-cf">
+        <strong class="am-text-primary am-text-lg">文库管理</strong> /
+        <small>版主贡献值历史</small>
+    </div>
+</div>
+
+<div class="am-g" ng-controller="moderatorScoreHistoryCtr">
+    <div class="am-u-sm-12 am-u-md-9">
+        <div class="am-btn-toolbar">
+            <div class="am-btn-group am-btn-group-xs">
+                <input type="text"  class="text-input" placeholder="起始日期" ng-model="beginTime" id="beginDate" onclick="WdatePicker({readOnly:true, dateFmt:'yyyy-MM-dd',maxDate:'#F{$dp.$D(\'endDate\')||\'%y-%M-%d\'}'})" onchange=""/>
+                至 <input type="text"  class="text-input" placeholder="截止日期" ng-model="endTime" id="endDate" onclick="WdatePicker({readOnly:true, dateFmt:'yyyy-MM-dd',minDate:'#F{$dp.$D(\'beginDate\')}',maxDate:'%y-%M-%d'})" onchange=""/>
+            </div>
+        </div>
+    </div>
+    <div class="am-u-sm-12 am-u-md-3">
+        <div class="am-input-group am-input-group-sm">
+            <input type="text" class="am-form-field" ng-model="searchKey" ng-keypress="onSearchKeyPress($event)">
+          <span class="am-input-group-btn">
+            <button class="am-btn am-btn-default" type="button" ng-click="doSearch()">搜索</button>
+          </span>
+        </div>
+    </div>
+
+    <div class="am-u-sm-12">
+        <table class="am-table am-table-striped am-table-hover table-main">
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>版主</th>
+                <th>贡献值</th>
+                <th>时间</th>
+                <th>相关ID</th>
+                <th>操作</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr ng-repeat="a in data.content">
+                <td>{{a.id}}</td>
+                <td>{{a.userNickname}}</td>
+                <td>{{a.scoreChange}}</td>
+                <td>{{a.createTime | date:'yyyy-MM-dd HH:mm'}}</td>
+                <td>{{a.objectId}}</td>
+                <td>{{a.description}}</td>
+            </tr>
+            </tbody>
+            <tfoot>
+            </tfoot>
+        </table>
+        <div>
+            <div class="am-fl">
+
+            </div>
+            <div class="am-fr">
+                <ng-pager page-change="getPage(page)" page-data="data" items="11"></ng-pager>
+            </div>
+        </div>
+    </div>
+</div>

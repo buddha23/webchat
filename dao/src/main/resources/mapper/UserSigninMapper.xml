@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lld360.cnc.repository.UserSigninDao">
+
+    <sql id="searchCondition">
+        <where>
+            <if test="userId != null">AND user_id = #{userId}</if>
+            <if test="signinTime != null">AND DATE(signin_time) = #{signinTime}</if>
+        </where>
+    </sql>
+
+    <insert id="create" parameterType="com.lld360.cnc.model.UserSignin" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO `user_signin` (
+            user_id,
+            score_add,
+            signin_time
+        ) VALUES (
+            #{userId},
+            #{scoreAdd},
+            #{signinTime}
+        )
+    </insert>
+
+    <select id="findByParam" parameterType="map" resultType="com.lld360.cnc.model.UserSignin">
+        SELECT *
+        FROM `user_signin`
+        <include refid="searchCondition"/>
+        ORDER BY id DESC
+    </select>
+</mapper>

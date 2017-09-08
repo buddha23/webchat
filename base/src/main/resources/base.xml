@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+
+    <import resource="classpath:dao.xml"/>
+
+    <context:component-scan base-package="com.lld360.cnc.service"/>
+
+    <!-- Spring message -->
+    <bean id="messageSource" class="org.springframework.context.support.ResourceBundleMessageSource">
+        <property name="useCodeAsDefaultMessage" value="true"/>
+        <property name="basenames">
+            <list>
+                <value>locale.text</value>
+                <value>locale.message</value>
+            </list>
+        </property>
+    </bean>
+
+    <context:property-placeholder location="classpath:config.properties"/>
+
+    <bean class="com.lld360.cnc.core.Configer">
+        <property name="env" value="${APP.ENV}"/>
+        <property name="appUrl" value="${APP.url}"/>
+
+        <!--微信公众号-->
+        <property name="wxGzhToken" value="${WX.GZH.TOKEN}"/>
+        <property name="wxGzhAppID" value="${WX.GZH.AppID}"/>
+        <property name="wxGzhAppSecret" value="${WX.GZH.AppSecret}"/>
+        <property name="wxGzhEncodingAESKey" value="${WX.GZH.EncodingAESKey}"/>
+
+        <!--大牛数控自己的微信公众号-->
+        <property name="wxSelfGzhs" value="${weixin.selfgzhs}"/>
+
+        <!--微信第三方服务平台-->
+        <property name="wxComponenAppId" value="${weixin.component_app_id}"/>
+        <property name="wxComponenAppSecret" value="${weixin.component_app_secret}"/>
+        <property name="wxComponenAppToken" value="${weixin.component_app_token}"/>
+        <property name="wxComponenAppDecryptKey" value="${weixin.component_app_decrypt_key}"/>
+
+        <property name="wxAccountAppid" value="${wx.account.appid}"/>
+        <property name="wxAccountScrect" value="${wx.account.secret}"/>
+        <property name="qqAccountAppid" value="${qq.account.appid}"/>
+        <property name="qqAccountScrect" value="${qq.account.secret}"/>
+
+        <!--微信服务号-->
+        <property name="wxFwAppid" value="${weixinFw.app_id}"/>
+        <property name="wxFwScret" value="${weixinFw.app_secret}"/>
+
+        <property name="fileBasePath" value="${file.base.path}"/>
+        <property name="smsExpiredTime" value="${sms.expiredTime}"/>
+        <property name="taobaoSmsClient">
+            <bean class="com.taobao.api.DefaultTaobaoClient">
+                <constructor-arg name="serverUrl" value="${sms.url}"/>
+                <constructor-arg name="appKey" value="${sms.appkey}"/>
+                <constructor-arg name="appSecret" value="${sms.appsecret}"/>
+            </bean>
+        </property>
+
+        <property name="rechargeExchangeRate" value="${recharge.exchange_rate}"/>
+    </bean>
+
+    <!--支付宝-->
+    <bean class="com.lld360.alipay.AlipayConfig" id="alipayConfig">
+        <property name="alipayPid" value="${alipay.pid}"/>
+        <property name="alipayPrivateKey" value="${alipay.private_key}"/>
+        <property name="alipayPublicKey" value="${alipay.public_key}"/>
+        <property name="alipayNotifyUrl" value="${alipay.notify_url}"/>
+        <property name="alipayReturnUrl" value="${alipay.return_url}"/>
+        <property name="alipayWapAppId" value="${alipay.wap.appid}"/>
+        <property name="alipayWapPrivateKey" value="${alipay.wap.private_key}"/>
+        <property name="alipayWapPublicKey" value="${alipay.wap.public_key}"/>
+        <property name="alipayWapNotifyUrl" value="${alipay.wap.notify_url}"/>
+        <property name="alipayWapReturnUrl" value="${alipay.wap.return_url}"/>
+        <property name="alipayTransferpid"  value="${alipay.transfer.pid}"/>
+        <property name="alipayTransferprivateKey" value="${alipay.transfer.private_key}"/>
+        <property name="alipayTransferpublicKey"  value="${alipay.transfer.public_key}"/>
+    </bean>
+    <bean class="com.lld360.cnc.core.WeiXinPayConfiger">
+        <property name="appId" value="${weixinPay.app_id}"/>
+        <property name="appSecret" value="${weixinPay.app_secret}"/>
+        <property name="mchId" value="${weixinPay.mch_id}"/>
+        <property name="signKey" value="${weixinPay.sign_key}"/>
+        <property name="callBackUrl" value="${weixinPay.callback_url}"/>  
+    </bean>
+    <bean id="alipayTradeBuilder" class="com.lld360.alipay.bean.AlipayTradeBuilder">
+        <constructor-arg name="configer" ref="alipayConfig"/>
+    </bean>
+
+    <!--阿里云-->
+    <bean class="com.lld360.cnc.core.utils.AliYunOSSUtil" id="ossUtil">
+        <constructor-arg name="accessKey" value="${aliyun.access_key}"/>
+        <constructor-arg name="accessKeySecret" value="${aliyun.access_key_secret}"/>
+        <constructor-arg name="bucket" value="${aliyun.oss.bucket}"/>
+        <constructor-arg name="regionId" value="${aliyun.oss.region_id}"/>
+    </bean>
+
+    <!--全局配置Json和Xml转换器(不输出Null属性)-->
+    <bean id="objectMapper" class="com.fasterxml.jackson.databind.ObjectMapper">
+        <property name="serializationInclusion" value="NON_NULL"/>
+    </bean>
+    <bean id="xmlMapper" class="com.fasterxml.jackson.dataformat.xml.XmlMapper">
+        <property name="serializationInclusion" value="NON_NULL"/>
+    </bean>
+
+    <!--线程池异步发送邮件-->
+    <bean id="taskExecutor" class="org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor">
+        <property name="corePoolSize" value="5"/>
+        <property name="maxPoolSize" value="10"/>
+        <property name="queueCapacity" value="25"/>
+    </bean>
+
+    <bean id="aliSmsSender" class="com.lld360.cnc.core.bean.AliSmsSender"/>
+
+</beans>

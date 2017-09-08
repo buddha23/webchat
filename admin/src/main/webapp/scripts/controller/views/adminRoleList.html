@@ -1,0 +1,57 @@
+<div class="am-cf am-padding">
+    <div class="am-fl am-cf">
+        <strong class="am-text-primary am-text-lg">后台管理</strong> /
+        <small>角色列表</small>
+    </div>
+</div>
+
+<div class="am-g" ng-controller="roleListCtrl">
+    <div class="am-u-sm-12 am-u-md-9">
+        <div class="am-btn-toolbar">
+            <div class="am-btn-group am-btn-group-xs">
+                <a href="#/roleUpdate/0" class="am-btn am-btn-default"><span class="am-icon-plus"></span> 新增</a>
+            </div>
+        </div>
+    </div>
+    <div class="am-u-sm-12 am-u-md-3">
+        <div class="am-input-group am-input-group-sm">
+            &nbsp;
+        </div>
+    </div>
+
+    <div class="am-u-sm-12">
+        <table class="am-table am-table-striped am-table-hover table-main">
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>角色名</th>
+                <th>角色代码</th>
+                <th>权限集合</th>
+                <th>描述</th>
+                <th>操作</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr ng-repeat="a in data" ng-if="a.id != 1">
+                <td>{{a.id}}</td>
+                <td><a href="#/role/{{a.id}}">{{a.name}}</a></td>
+                <td>{{a.role}}</td>
+                <td>{{showPermission(a)}}</td>
+                <td>{{a.description}}</td>
+                <td>
+                    <div class="am-btn-toolbar">
+                        <div class="am-btn-group am-btn-group-xs">
+                            <a class="am-btn am-btn-default am-btn-xs am-text-secondary" href="#/roleUpdate/{{a.id}}" style="color: #00a2d4">
+                                <span class="am-icon-pencil-square-o"></span> 编辑
+                            </a>
+                            <button class="am-btn am-btn-default am-btn-xs am-text-danger am-hide-sm-only" ng-click="delete(a)">
+                                <span class="am-icon-trash-o"></span> 删除
+                            </button>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>

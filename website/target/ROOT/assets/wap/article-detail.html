@@ -1,0 +1,77 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=0" />
+<title></title>
+<link rel="stylesheet" type="text/css" href="../css/public.css">
+<link rel="stylesheet" type="text/css" href="../css/style_mobile.css">
+<script type="text/javascript" src="../js/min/jquery-1.11.2.min.js"></script>
+<script type="text/javascript" src="../js/pinchzoom.js"></script>
+</head>
+
+<body>
+<div class="container">
+	<div class="zoomable">
+        <header>
+        	<div class="wrapper">
+                <div class="logo">
+                    <img src="../images/logo.jpg" alt=""/>
+                </div>
+                <div class="header-info">
+                    <h1>数控资料查询</h1>
+                    <p>随身的技术手册--数控技术人员的好帮手</p>
+                </div>
+            </div>
+        </header>
+        
+        <div class="content clearfix">
+            <article>
+            	<div class="doc-header">
+                	<h1>FAGOR8055跟随误差过大报警</h1>
+                </div>
+                <div class="meta">
+                    <p><strong>关键字：</strong>90,DS1449,</p>
+                    <p><strong>简介：</strong><br/>FANUC系统应用全闭环时与接地相关故障及排除。可能的原因：1.1821，1882参数设置不当。2.光栅尺信号不稳定。3.光栅尺信号被干扰。解决详情请查看文章详细内容。</p>
+                    <p><strong>详情：</strong></p>
+                </div>
+                <div class="pics">
+                    <img src="../images/55c5c404973c6-0.png" alt=""/>
+                </div>
+                <!-- 分页 -->
+                <div class="pagination-wrapper clearfix">
+                    <div class="pagination clearfix">
+                        <a class="paging current" href="#">1</a>
+                        <a class="paging" href="#">2</a>
+                        <a class="paging" href="#">3</a>
+                        <a class="paging" href="#">4</a>
+                        <a class="paging" href="#">5</a>
+                        <!--
+                        <a class="paging ellipsis" href="javascript:void(0);">...</a>
+                        <a class="paging disable" href="#">下一页</a>
+                        -->
+                        <a class="paging" href="#">下一页</a>
+                    </div>
+                </div>
+                
+                <div class="qr">
+           	    	<img src="../images/qr.jpg" alt=""/>
+                    <p>扫描二维码关注我们</p>
+                </div>
+          </article>
+        </div>
+        
+        <footer>
+        </footer>
+    </div>
+</div>
+</body>
+
+<script>
+$(function () {
+	$('.zoomable').each(function () {
+		new RTP.PinchZoom($(this), {});
+	});
+})
+</script>
+</html>

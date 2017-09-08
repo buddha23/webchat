@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lld360.cnc.repository.UserSuggestDao">
+
+    <!--通用查询条件-->
+    <sql id="searchCondition">
+        <where>
+            <if test="userId != null">AND us.user_id = #{userId}</if>
+            <if test="key != null">AND u.nickname LIKE "%"#{key}"%" OR us.content LIKE "%"#{key}"%"</if>
+            <if test="replyState != null and replyState == 'yes'">AND us.reply IS NOT NULL</if>
+            <if test="replyState != null and replyState == 'no'">AND us.reply IS NULL</if>
+        </where>
+    </sql>
+
+    <!--通用查询列-->
+    <sql id="columns">
+        <![CDATA[
+        us.id,
+        us.user_id,
+        us.content,
+        us.reply,
+        us.fid,
+        us.create_time,
+        us.reply_time,
+        us.category_id,
+        us.state,
+        u.nickname uNickname,
+        u.avatar uAvatar,
+        u.`mobile` uMobile
+        ]]>
+    </sql>
+
+    <insert id="create" parameterType="com.lld360.cnc.model.UserSuggest">
+        INSERT INTO user_suggest(
+        user_id,
+        content,
+        reply,
+        fid,
+        create_time,
+        reply_time,
+        category_id
+        )VALUES (
+        #{userId},
+        #{content},
+        #{reply},
+        #{fid},
+        #{createTime},
+        #{replyTime},
+        #{categoryId}
+        )
+    </insert>
+
+    <delete id="delete" parameterType="long">
+        DELETE FROM user_suggest
+        WHERE id = #{id}
+    </delete>
+
+    <update id="update" parameterType="com.lld360.cnc.model.UserSuggest">
+        UPDATE user_suggest
+        <set>
+            <if test="reply != null">reply = #{reply},</if>
+            <if test="replyTime != null">reply_time = #{replyTime},</if>
+            <if test="state != null">state = #{state},</if>
+            <if test="fid != null and fid != 0">fid = #{fid},</if>
+        </set>
+        WHERE id = #{id}
+    </update>
+
+    <select id="getUserSuggestPage" parameterType="map" resultMap="suggestMap">
+        SELECT
+        <include refid="columns"/>
+        FROM user_suggest us
+        LEFT JOIN user u ON us.user_id = u.id
+        <include refid="searchCondition"/>
+        ORDER BY us.create_time DESC
+        <if test="limit != null">limit #{limit}</if>
+        <if test="offset != null">offset #{offset}</if>
+    </select>
+
+    <select id="count" parameterType="map" resultType="java.lang.Long">
+        SELECT count(1)
+        FROM user_suggest us
+        LEFT JOIN user u ON us.user_id = u.id
+        <include refid="searchCondition"/>
+    </select>
+
+    <select id="getUserSuggestById" parameterType="long" resultMap="suggestMap">
+        SELECT
+        <include refid="columns"/>
+        FROM user_suggest us
+        LEFT JOIN user u ON us.user_id = u.id
+        WHERE us.id = #{id}
+    </select>
+
+    <resultMap id="suggestMap" type="com.lld360.cnc.dto.UserSuggestDto">
+        <id property="id" column="id"/>
+        <result property="userId" column="user_id"/>
+        <result property="fid" column="fid"/>
+        <result property="content" column="content"/>
+        <result property="reply" column="reply"/>
+        <result property="categoryId" column="category_id"/>
+        <result property="createTime" column="create_time"/>
+        <result property="replyTime" column="reply_time"/>
+        <result property="state" column="state"/>
+        <result property="uNickname" column="uNickname"/>
+        <result property="uAvatar" column="uAvatar"/>
+        <result property="uMobile" column="uMobile"/>
+    </resultMap>
+
+</mapper>

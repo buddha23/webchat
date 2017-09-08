@@ -1,0 +1,79 @@
+<div class="am-cf am-padding">
+    <div class="am-fl am-cf">
+        <strong class="am-text-primary am-text-lg">企业管理</strong> /
+        <small>企业列表</small>
+    </div>
+</div>
+
+<div class="am-g" ng-controller="enterpriseListCtrl">
+ <!--    <div class="am-u-sm-12 am-u-md-8">
+        <div class="am-form am-text-right">
+            <input type="text" style="width: auto; display: inline-block;" ng-model="searchKey" ng-keypress="onSearchKeyPress($event)">
+            <button class="am-btn am-btn-default" type="button" ng-click="doSearch()">搜索</button>
+        </div>
+    </div> -->
+
+    <div class="am-u-sm-12">
+        <table class="am-table am-table-striped am-table-hover table-main">
+            <thead>
+            <tr>
+                <th class="table-check"><input type="checkbox" ng-model="checkAll" ng-click="choseAll($event)"></th>
+                <th>ID</th>
+                <th>名称</th>
+                <th>地址</th>
+                <th>营业执照代码</th>
+                <!-- <th>营业执照图</th> -->
+                <th>联系人</th>
+                <th>联系电话</th>
+                <th>审核状态</th>
+                <th>操作</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr ng-repeat="a in data.content">
+                <td><input type="checkbox" ng-checked="checkAll"  ng-click="chose($event,a.id)"></td>
+                <td>{{a.id}}</td>
+                <td>{{a.name}}</td>
+                <td>{{a.address}}</td>
+                <td>{{a.registrationNo}}</td>
+     <!--            <td><img ng-if="a.registrationImg" class="am-img-thumbnail am-img-bdrs" ng-src="/files/{{a.registrationImg}}"/></td> -->
+                <td>{{a.linkman}}</td>
+                <td>{{a.mobile}}</td>
+                <td>
+                <span ng-if="a.state === 1">待审核</span>
+                <span ng-if="a.state === 2">通过</span>
+                <span ng-if="a.state === 3">不通过</span>
+                </td>
+                <td>
+                    <div class="am-btn-toolbar">
+                        <div class="am-btn-group am-btn-group-xs">
+                            <button class="am-btn am-btn-default am-btn-xs am-text-warning am-hide-sm-only" ng-click="seeImg(a)">
+                                <span class="am-icon-circle-o"></span> 查看营业执照图
+                            </button>
+                            <button ng-if="a.state === 1" class="am-btn am-btn-default am-btn-xs am-text-warning am-hide-sm-only" ng-click="pass(a)">
+                                <span class="am-icon-circle-o"></span> 通过
+                            </button>
+                             <button ng-if="a.state === 1" class="am-btn am-btn-default am-btn-xs am-text-warning am-hide-sm-only" ng-click="unPass(a)">
+                                <span class="am-icon-circle-o"></span> 不通过
+                            </button>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+        <div>
+            <div class="am-fl">
+
+            </div>
+            <div class="am-fr">
+                <div style="display: inline-block; margin-right: 10px">
+                    <small>共搜索到</small> <span style="color: #f08080;">{{data.totalElements}}</span> <small>条数据</small>
+                </div>
+                <div style="display: inline-block;">
+                    <ng-pager page-change="getPage(page)" page-data="data" items="11"></ng-pager>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

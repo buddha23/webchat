@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lld360.cnc.repository.SearchWordsDao">
+
+    <!-- 通用查询结果列-->
+    <sql id="baseColumns">
+        id, `name`, counts
+    </sql>
+
+    <sql id="byMapConditions">
+        <where>
+            <if test="content != null and content != ''">
+                s.`name` LIKE "%"#{content}"%"
+            </if>
+        </where>
+    </sql>
+
+    <select id="search" parameterType="map" resultType="com.lld360.cnc.model.SearchWords">
+        SELECT
+        <include refid="baseColumns"/>
+        FROM search_words s
+        <include refid="byMapConditions"/>
+        ORDER BY s.counts DESC, s.id ASC
+        <if test="limit != null">LIMIT #{limit}</if>
+        <if test="offset != null">OFFSET #{offset}</if>
+    </select>
+
+    <select id="count" parameterType="map" resultType="long">
+        SELECT COUNT(id)
+        FROM search_words s
+        <include refid="byMapConditions"/>
+    </select>
+
+    <select id="hasWord" parameterType="java.lang.String" resultType="boolean">
+        SELECT (COUNT(id) > 0) has
+        FROM search_words
+        WHERE name = #{name}
+    </select>
+
+    <select id="find" parameterType="long" resultType="com.lld360.cnc.model.SearchWords">
+        SELECT
+        <include refid="baseColumns"/>
+        FROM search_words
+        WHERE id = #{id}
+    </select>
+
+    <!--获取热门搜索-->
+    <select id="findHotWords" parameterType="int" resultType="java.lang.String">
+        SELECT `name` FROM search_words ORDER BY counts DESC LIMIT #{count}
+    </select>
+
+    <insert id="create" parameterType="com.lld360.cnc.model.SearchWords" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO search_words (
+            `name`,
+            counts
+        ) VALUES (
+            #{name},
+            #{counts}
+        )
+    </insert>
+
+    <insert id="createOrAddCounts" parameterType="string">
+        INSERT INTO search_words (
+            `name`,
+            counts
+        ) VALUES (
+            #{word},
+            1
+        )
+        ON DUPLICATE KEY UPDATE counts = counts + 1
+    </insert>
+
+    <update id="update" parameterType="com.lld360.cnc.model.SearchWords">
+        UPDATE search_words
+        SET name = #{name}, counts = #{counts}
+        WHERE id = #{id}
+    </update>
+
+    <update id="addCounts" parameterType="java.lang.String">
+        UPDATE search_words
+        SET counts = counts + 1
+        WHERE `name` = #{name}
+    </update>
+
+    <delete id="delete" parameterType="long">
+        DELETE FROM search_words
+        WHERE id = #{id}
+    </delete>
+
+
+    <update id="doBatchClearZero">
+        UPDATE search_words
+        <set>
+            counts = 0
+        </set>
+        WHERE id in
+
+        <foreach item="item" index="index" collection="array"
+                 open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </update>
+
+    <update id="doOneClearZero" parameterType="Integer">
+        UPDATE search_words
+        <set>
+            counts = 0
+        </set>
+        where id=#{id}
+    </update>
+
+</mapper>

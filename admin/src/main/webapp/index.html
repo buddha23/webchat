@@ -1,0 +1,251 @@
+<!doctype html>
+<html class="no-js fixed-layout">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title ng-bind="title">加载中……</title>
+    <meta name="description" content="大牛数控数控技术资料管理平台">
+    <meta name="keywords" content="大牛数控,数控技术资料,管理平台">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="renderer" content="webkit">
+    <link rel="icon" type="image/png" href="favicon.ico">
+    <link rel="stylesheet" href="amazeui/css/amazeui.min.css"/>
+    <link rel="stylesheet" href="amazeui/css/admin.css">
+    <link rel="stylesheet" href="amazeui/css/font-awesome.min.css">
+    <link rel="stylesheet" href="scripts/components/layer/skin/default/layer.css">
+    <link rel="stylesheet" href="scripts/plugins/umeditor/themes/default/css/umeditor.min.css">
+    <link rel="stylesheet" href="amazeui/css/app.css">
+</head>
+<body>
+<!--[if lte IE 10]>
+<p class="browsehappy">你正在使用<strong>过时</strong>的浏览器，系统暂不支持。 请 <a href="http://browsehappy.com/" target="_blank">升级浏览器</a> 以获得更好的体验！</p>
+<![endif]-->
+
+<header class="am-topbar am-topbar-inverse admin-header">
+    <div class="am-topbar-brand">
+        <strong>大牛数控</strong>
+        <small>{{title}}管理平台</small>
+    </div>
+
+    <button class="am-topbar-btn am-topbar-toggle am-btn am-btn-sm am-btn-success am-show-sm-only"
+            data-am-collapse="{target: '#topbar-collapse'}"><span class="am-sr-only">导航切换</span> <span
+            class="am-icon-bars"></span></button>
+
+    <div class="am-collapse am-topbar-collapse" id="topbar-collapse">
+
+        <ul class="am-nav am-nav-pills am-topbar-nav am-topbar-right admin-header-list">
+            <li><a href="javascript:;"><span class="am-icon-envelope-o"></span> 收件箱 <span
+                    class="am-badge am-badge-warning">5</span></a></li>
+            <li class="am-dropdown" data-am-dropdown>
+                <a class="am-dropdown-toggle" data-am-dropdown-toggle href="javascript:;">
+                    <span class="am-icon-users"></span>
+                    <span ng-bind="admin.name">管理员</span>
+                    <span class="am-icon-caret-down"></span>
+                </a>
+                <ul class="am-dropdown-content">
+                    <li><a href="#"><span class="am-icon-user"></span> 资料</a></li>
+                    <li><a href="#" ng-click="updatePwd()"><span class="am-icon-cog"></span> 设置</a></li>
+                    <li><a href ng-click="logout()"><span class="am-icon-power-off"></span> 退出</a></li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+</header>
+
+<div class="am-cf admin-main">
+    <!-- sidebar start -->
+    <div class="admin-sidebar am-offcanvas" id="admin-offcanvas">
+        <div class="am-offcanvas-bar admin-offcanvas-bar">
+            <ul class="am-list admin-sidebar-list">
+                <li><a href="#/index" data-admin="{{admin}}"><span class="am-icon-home"></span> 首页</a></li>
+                <li class="admin-parent" ng-if="admin.isRoot">
+                    <a class="am-cf" data-am-collapse="{target: '#collapse-admin'}"><span class="am-icon-user-secret"></span>
+                        后台管理 <span class="am-icon-angle-right am-fr am-margin-right"></span></a>
+                    <ul class="am-list am-collapse admin-sidebar-sub" id="collapse-admin">
+                        <li><a href="#/adminList" class="am-cf"><span class="am-icon-users"></span> 管理员列表<span class="am-icon-star am-fr am-margin-right admin-icon-yellow"></span></a></li>
+                        <li><a href="#/roleList"><span class="am-icon-user"></span> 角色管理</a></li>
+                        <li><a href="#/permission"><span class="am-icon-paw"></span> 权限一览 </a></li>
+                        <li><a href="#/operateRecord"><span class="am-icon-paw"></span> 管理员操作日志</a></li>
+                    </ul>
+                </li>
+                <li class="admin-parent" ng-if="adminPermissions.indexOf('user:r') != -1 || admin.isRoot">
+                    <a class="am-cf" data-am-collapse="{target: '#collapse-user'}"><span class="am-icon-users"></span>
+                        用户管理 <span class="am-icon-angle-right am-fr am-margin-right"></span></a>
+                    <ul class="am-list am-collapse admin-sidebar-sub" id="collapse-user">
+                        <li><a href="#/user" class="am-cf"><span class="am-icon-users"></span> 用户列表<span class="am-icon-star am-fr am-margin-right admin-icon-yellow"></span></a></li>
+                        <li ng-if="adminPermissions.indexOf('parter:r') != -1 || admin.isRoot"><a href="#/userParter" class="am-cf"><span class="am-icon-user-md"></span> 区域合伙人<span class="am-fr am-margin-right"></span></a></li>
+                        <li><a href="#/userMember" class="am-cf"><span class="am-icon-question-circle"></span> 会员列表<span class="am-fr am-margin-right"></span></a></li>
+                        <li><a href="#/userSuggest" class="am-cf"><span class="am-icon-question-circle"></span> 用户反馈<span class="am-fr am-margin-right"></span></a></li>
+                        <li><a href="#/userPointHistory/0" class="am-cf"><span class="am-icon-list"></span> 用户积分历史<span class="am-fr am-margin-right"></span></a></li>
+                    </ul>
+                </li>
+                <li class="admin-parent" ng-if="adminPermissions.indexOf('artic:r') != -1 || admin.isRoot">
+                    <a class="am-cf" data-am-collapse="{target: '#collapse-article'}"><span class="am-icon-file"></span>
+                        数控资料管理 <span class="am-icon-angle-right am-fr am-margin-right"></span></a>
+                    <ul class="am-list am-collapse admin-sidebar-sub" id="collapse-article">
+                        <li><a href="#/articles" class="am-cf"><span class="am-icon-check"></span> 资料列表<span class="am-icon-star am-fr am-margin-right admin-icon-yellow"></span></a></li>
+                        <li class="am-hide"><a href="#/articles"><span class="am-icon-puzzle-piece"></span> 新增资料</a></li>
+                        <li ng-if="adminPermissions.indexOf('artic:w') != -1 || admin.isRoot"><a href="#/articles/download"><span class="am-icon-th"></span> 抓取更新 </a></li>
+                    </ul>
+                </li>
+                <li class="admin-parent" ng-if="adminPermissions.indexOf('doc:r') != -1 || admin.isRoot">
+                    <a class="am-cf" data-am-collapse="{target: '#collapse-doc'}"><span class="am-icon-file-pdf-o"></span>
+                        文库管理 <span class="am-icon-angle-right am-fr am-margin-right"></span></a>
+                    <ul class="am-list am-collapse admin-sidebar-sub" id="collapse-doc">
+                        <li><a href="#/doc" class="am-cf"><span class="am-icon-check"></span> 文档列表<span class="am-icon-star am-fr am-margin-right admin-icon-yellow"></span></a></li>
+                        <li ng-if="adminPermissions.indexOf('doc:w') != -1 || admin.isRoot"><a href="#/doc/0"><span class="am-icon-puzzle-piece"></span> 新增文档</a></li>
+                        <li ng-if="adminPermissions.indexOf('doc:w') != -1 || admin.isRoot"><a href="#/doctag"><span class="am-icon-puzzle-piece"></span> 标签管理</a></li>
+                        <li ng-if="adminPermissions.indexOf('doc:w') != -1 || admin.isRoot"><a href="#/docCategory"><span class="am-icon-puzzle-piece"></span> 分类管理</a></li>
+                    </ul>
+                </li>
+
+                <li class="admin-parent" ng-if="adminPermissions.indexOf('moderator') != -1 || admin.isRoot">
+                    <a class="am-cf" data-am-collapse="{target: '#collapse-moderator'}"><span class="am-icon-user-md"></span>
+                        版主管理 <span class="am-icon-angle-right am-fr am-margin-right"></span></a>
+                    <ul class="am-list am-collapse admin-sidebar-sub" id="collapse-moderator">
+                        <li><a href="#/moderatorsManage"><span class="am-icon-user-plus"></span> 版主申请管理</a></li>
+                        <li><a href="#/moderatorsList"><span class="am-icon-list"></span> 版主操作日志</a></li>
+                        <li><a href="#/moderatorScoreHistory"><span class="am-icon-list"></span> 版主贡献值历史</a></li>
+                    </ul>
+                </li>
+
+                <li class="admin-parent" ng-if="adminPermissions.indexOf('soft:r') != -1 || admin.isRoot">
+                    <a class="am-cf" data-am-collapse="{target: '#collapse-soft'}"><span class="am-icon-floppy-o"></span>
+                        软件管理 <span class="am-icon-angle-right am-fr am-margin-right"></span></a>
+                    <ul class="am-list am-collapse admin-sidebar-sub" id="collapse-soft">
+                        <li><a href="#/soft" class="am-cf"><span class="am-icon-check"></span> 软件列表<span class="am-icon-star am-fr am-margin-right admin-icon-yellow"></span></a></li>
+                        <!--<li><a href="#/soft/0"><span class="am-icon-puzzle-piece"></span> 新增软件</a></li>-->
+                        <li ng-if="adminPermissions.indexOf('soft:w') != -1 || admin.isRoot"><a href="#/softCategory"><span class="am-icon-puzzle-piece"></span> 分类管理</a></li>
+                    </ul>
+                </li>
+                <li class="admin-parent" ng-if="adminPermissions.indexOf('course') != -1 || admin.isRoot">
+                    <a class="am-cf" data-am-collapse="{target: '#collapse-course'}"><span class="am-icon-book"></span>
+                        精品教程 <span class="am-icon-angle-right am-fr am-margin-right"></span></a>
+                    <ul class="am-list am-collapse admin-sidebar-sub" id="collapse-course">
+                        <li><a href="#/course" class="am-cf"><span class="am-icon-check"></span> 教程列表<span class="am-icon-star am-fr am-margin-right admin-icon-yellow"></span></a></li>
+                        <li><a href="#/course/0"><span class="am-icon-puzzle-piece"></span> 新增教程</a></li>
+                    </ul>
+                </li>
+                <li class="admin-parent" ng-if="adminPermissions.indexOf('video:r') != -1 || admin.isRoot">
+                    <a class="am-cf" data-am-collapse="{target: '#collapse-video'}"><span class="am-icon-video-camera"></span>
+                        数控课堂 <span class="am-icon-angle-right am-fr am-margin-right"></span></a>
+                    <ul class="am-list am-collapse admin-sidebar-sub" id="collapse-video">
+                        <li><a href="#/volumeList" class="am-cf"><span class="am-icon-list-ul"></span> 视频列表<span class="am-icon-star am-fr am-margin-right admin-icon-yellow"></span></a></li>
+                        <li ng-if="adminPermissions.indexOf('video:w') != -1 || admin.isRoot"><a href="#/volume/0"><span class="am-icon-vimeo-square"></span> 新增视频</a></li>
+                        <li ng-if="adminPermissions.indexOf('video:w') != -1 || admin.isRoot"><a href="#/vodCategory"><span class="am-icon-puzzle-piece"></span> 分类管理</a></li>
+                        <li ng-if="adminPermissions.indexOf('video:w') != -1 || admin.isRoot"><a href="#/volumeInviteCards"><span class="am-icon-gift"></span> 邀请卡管理</a></li>
+                        <li ng-if="adminPermissions.indexOf('video:w') != -1 || admin.isRoot"><a href="#/volumeBuyList"><span class="am-icon-list"></span> 购买记录</a></li>
+                    </ul>
+                </li>
+                <li class="admin-parent" ng-if="adminPermissions.indexOf('withdraw') != -1 || admin.isRoot">
+                    <a class="am-cf" data-am-collapse="{target: '#collapse-withdraw'}"><span class="am-icon-credit-card"></span>
+                        提现管理 <span class="am-icon-angle-right am-fr am-margin-right"></span></a>
+                    <ul class="am-list am-collapse admin-sidebar-sub" id="collapse-withdraw">
+                        <li><a href="#/withdraw" class="am-cf"><span class="am-icon-credit-card"></span>提现管理</a></li>
+                    </ul>
+                </li>
+                <li class="admin-parent" ng-if="adminPermissions.indexOf('posts:r') != -1 || admin.isRoot">
+                    <a class="am-cf" data-am-collapse="{target: '#collapse-posts'}"><span class="am-icon-mars-double"></span>
+                        大牛论坛 <span class="am-icon-angle-right am-fr am-margin-right"></span></a>
+                    <ul class="am-list am-collapse admin-sidebar-sub" id="collapse-posts">
+                        <li><a href="#/posts" class="am-cf"><span class="am-icon-list"></span> 帖子列表<span class="am-icon-star am-fr am-margin-right admin-icon-yellow"></span></a></li>
+                        <li ng-if="adminPermissions.indexOf('posts:w') != -1 || admin.isRoot"><a href="#/postsCategory"><span class="am-icon-puzzle-piece"></span> 分类管理</a></li>
+                    </ul>
+                </li>
+
+                <li class="admin-parent" ng-if="adminPermissions.indexOf('posts:r') != -1 || admin.isRoot">
+                    <a class="am-cf" data-am-collapse="{target: '#collapse-commodity'}"><span class="am-icon-balance-scale"></span>
+                        商品管理 <span class="am-icon-angle-right am-fr am-margin-right"></span></a>
+                    <ul class="am-list am-collapse admin-sidebar-sub" id="collapse-commodity">
+                        <li><a href="#/commodity" class="am-cf"><span class="am-icon-list"></span> 商品列表<span class="am-icon-star am-fr am-margin-right admin-icon-yellow"></span></a></li>
+                        <!--<li ng-if="adminPermissions.indexOf('posts:w') != -1 || admin.isRoot"><a href="#/commodityCategory"><span class="am-icon-puzzle-piece"></span> 分类管理</a></li>-->
+                    </ul>
+                </li>
+                
+                <li class="admin-parent" ng-if="adminPermissions.indexOf('posts:r') != -1 || admin.isRoot">
+                    <a class="am-cf" data-am-collapse="{target: '#collapse-enterprise'}"><span class="am-icon-balance-scale"></span>
+                        企业管理 <span class="am-icon-angle-right am-fr am-margin-right"></span></a>
+                    <ul class="am-list am-collapse admin-sidebar-sub" id="collapse-enterprise">
+                        <li><a href="#/enterprise" class="am-cf"><span class="am-icon-list"></span> 企业列表<span class="am-icon-star am-fr am-margin-right admin-icon-yellow"></span></a></li>
+                    </ul>
+                </li>
+
+                <li class="admin-parent" ng-if="adminPermissions.indexOf('site:w') != -1 || admin.isRoot">
+                    <a class="am-cf" data-am-collapse="{target: '#collapse-copy'}"><span class="am-icon-edit"></span>
+                        网站文案 <span class="am-icon-angle-right am-fr am-margin-right"></span></a>
+                    <ul class="am-list am-collapse admin-sidebar-sub" id="collapse-copy">
+                        <li><a href="#/copyWritingList" class="am-cf"><span class="am-icon-list"></span> 文案列表<span class="am-icon-star am-fr am-margin-right admin-icon-yellow"></span></a></li>
+                        <li><a href="#/copyWritingDetail/0"><span class="am-icon-edit"></span> 新增文案</a></li>
+                    </ul>
+                </li>
+                <li class="admin-parent" ng-if="adminPermissions.indexOf('wxgzh') != -1 || admin.isRoot">
+                    <a class="am-cf" data-am-collapse="{target: '#collapse-wx'}"><span class="am-icon-wechat"></span>
+                        微信公众号 <span class="am-icon-angle-right am-fr am-margin-right"></span></a>
+                    <ul class="am-list am-collapse admin-sidebar-sub" id="collapse-wx">
+                        <li><a href="#/gzh"><span class="am-icon-wechat"></span>授权公众号</a></li>
+                        <li><a href="#/gzhentry"><span class="am-icon-wechat"></span>公众号接入页面设置</a></li>
+                        <li><a href="#/wxqa"><span class="am-icon-won"></span> 微信词条管理</a></li>
+                        <li ng-if="admin.isRoot"><a href="#/wxarticle"><span class="am-icon-list"></span> 文章列表设置</a></li>
+                        <li ng-if="admin.isRoot"><a href="#/wxmenu"><span class="am-icon-meh-o"></span> 菜单配置</a></li>
+                        <li><a href="#/wxhelpage"><span class="am-icon-heart-o"></span> 帮助页面</a></li>
+                        <li><a href="#/docDetailHeader"><span class="am-icon-puzzle-piece"></span>文档详情顶部配置</a></li>
+                        <li><a href="#/docDetailFooter"><span class="am-icon-puzzle-piece"></span>文档详情底部配置</a></li>
+                        <!--<li><a href="#/wxfwUserDown"><span class="am-icon-users"></span>服务号用户查询</a></li>-->
+                    </ul>
+                </li>
+                <li class="admin-parent" ng-if="adminPermissions.indexOf('report') != -1 || admin.isRoot">
+                    <a class="am-cf" data-am-collapse="{target: '#collapse-bb'}"><span class="am-icon-table"></span>
+                        报表 <span class="am-icon-angle-right am-fr am-margin-right"></span></a>
+                    <ul class="am-list am-collapse admin-sidebar-sub" id="collapse-bb">
+                        <li><a href="#/searchword"><span class="am-icon-search"></span> 词条搜索统计</a></li>
+                        <li><a href="#/docreport"><span class="am-icon-life-bouy"></span> 文库下载统计</a></li>
+                        <li><a href="#/categoryreport"><span class="am-icon-line-chart"></span> 文库统计报表</a></li>
+                        <li><a href="#/monthreport"><span class="am-icon-download"></span> 浏览下载统计</a></li>
+                        <li><a href="#/postsreport"><span class="am-icon-line-chart"></span> 帖子&教程报表</a></li>
+                        <li><a href="#/userreport"><span class="am-icon-users"></span> 用户注册统计</a></li>
+                        <li><a href="#/loginHistory"><span class="am-icon-calendar-check-o"></span> 用户登录统计</a></li>
+                        <li><a href="#/loginreport"><span class="am-icon-line-chart"></span> 注册&登录报表</a></li>
+                        <li><a href="#/dailyActiveReport"><span class="am-icon-line-chart"></span> 日活跃人数报表</a></li>
+                        <li><a href="#/userScorePay"><span class="am-icon-paypal"></span> 用户充值记录</a></li>
+                    </ul>
+                </li>
+                <li class="admin-parent" ng-if="adminPermissions.indexOf('setting') != -1 || admin.isRoot">
+                    <a class="am-cf" data-am-collapse="{target: '#collapse-xtsz'}"><span class="am-icon-cogs"></span>
+                        系统设置 <span class="am-icon-angle-right am-fr am-margin-right"></span></a>
+                    <ul class="am-list am-collapse admin-sidebar-sub" id="collapse-xtsz">
+                        <li><a href="#/setting"><span class="am-icon-search"></span> 基本设置</a></li>
+                        <li><a href="#/imgSetting"><span class="am-icon-puzzle-piece"></span> PC首页图片管理</a></li>
+                        <li><a href="#/wapIndexImg"><span class="am-icon-puzzle-piece"></span> WAP首页图片管理</a></li>
+                        <li><a href="#/advertiseImg"><span class="am-icon-puzzle-piece"></span> 论坛广告位图片管理</a></li>
+                        <!--<li><a href="#/commodityImg"><span class="am-icon-puzzle-piece"></span> 商品广告图片管理</a></li>-->
+                        <li><a href="#/systemLogList"><span class="am-icon-warning"></span> 系统错误日志</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <!-- sidebar end -->
+
+    <!-- content start -->
+    <div class="admin-content">
+        <div class="admin-content-body" ui-view>
+        </div>
+
+        <footer class="admin-content-footer">
+            <hr>
+            <!--<p class="am-padding-left">© 2016 四川蓝领带互联科技</p>-->
+        </footer>
+    </div>
+    <!-- content end -->
+
+</div>
+
+<a href="#" class="am-icon-btn am-icon-th-list am-show-sm-only admin-menu"
+   data-am-offcanvas="{target: '#admin-offcanvas'}"></a>
+
+<script type="text/javascript" src="scripts/components/jquery.min.js"></script>
+<script type="text/javascript" src="amazeui/js/amazeui.min.js"></script>
+<script type="text/javascript" src="assets/utils.js"></script>
+<script type="text/javascript" data-main="scripts/cfg" src="scripts/components/require.js"></script>
+</body>
+</html>

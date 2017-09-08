@@ -1,0 +1,92 @@
+<style type="text/css">
+    .cg-btn {
+        text-align: center;
+        border: 1px solid #cecece;
+        margin: 5px 10px;
+        height: 36px;
+        line-height: 36px;
+        cursor: pointer;
+    }
+    .cg-btn.active {
+        background: #0E90D2;
+        color: white;
+    }
+    .moderator-item{
+        margin: 10px 0;
+    }
+    .moderator-item a {
+        display: inline-block;
+        width: 240px;
+        border: 1px solid #e8e8e8;
+        padding: 0 10px;
+        vertical-align: middle;
+        height: 28px;
+    }
+    .moderator-item button span {
+        color: red;
+        transform: rotate(45deg);
+    }
+</style>
+
+<div class="am-cf am-padding">
+    <div class="am-fl am-cf">
+        <strong class="am-text-primary am-text-lg">分类管理</strong> /
+        <small>分类管理</small>
+    </div>
+</div>
+
+
+<div class="am-g" ng-controller="vodCategoryCtrl">
+    <div class="am-u-md-2">
+        <h3 class="am-text-center">主分类</h3>
+        <div class="cg-btn" ng-repeat="c1 in data" ng-class="{active: cg1 === c1}" ng-click="edit(c1, 1)">{{c1.name}}</div>
+        <div class="cg-btn" ng-click="add(1)"><i class="am-icon-plus"></i></div>
+    </div>
+    <div class="am-u-md-2" ng-class="{'am-u-end': !t}">
+        <h3 class="am-text-center">子分类</h3>
+        <div class="cg-btn" ng-repeat="c2 in cg1.children" ng-class="{active: cg2 === c2}" ng-click="edit(c2, 2)">{{c2.name}}</div>
+        <div class="cg-btn" ng-click="add(2)"><i class="am-icon-plus"></i></div>
+    </div>
+    <div class="am-u-md-6 am-u-end" ng-if="t">
+        <h3>类型{{t.id ? '编辑': '添加'}}</h3>
+        <form class="am-form" name="docCategoryForm">
+            <div class="am-g am-margin-top">
+                <div class="am-u-sm-4 am-u-md-2 am-text-right">
+                    <label for="icon">图标：</label>
+                </div>
+                <div class="am-u-sm-8 am-u-md-4">
+                    <label for="icon">
+                        <img id="iconImg" ng-src="{{t.icon ? '/files/' + t.icon : 'assets/images/add_img_btn.png'}}" class="am-img-thumbnail am-img-bdrs" alt="点击上传">
+                    </label>
+                    <input id="icon" type="file" style="display:none" ng-file="t.file" fileChange="fileChanged(ngFile)">
+                </div>
+                <div class="am-hide-sm-only am-u-md-6">点击图片上传图标，大小不能超过1M</div>
+            </div>
+            <div class="am-g am-margin-top">
+                <div class="am-u-sm-4 am-u-md-2 am-text-right">
+                    <label for="name">名称：</label>
+                </div>
+                <div class="am-u-sm-8 am-u-md-6">
+                    <input id="name" type="text" maxlength="20" required ng-model="t.name">
+                </div>
+                <div class="am-hide-sm-only am-u-md-4">*必填</div>
+            </div>
+            <div class="am-g am-margin-top">
+                <div class="am-u-sm-4 am-u-md-2 am-text-right">
+                    <label for="description">描述：</label>
+                </div>
+                <div class="am-u-sm-8 am-u-md-8 am-u-end">
+                    <textarea id="description" maxlength="100" ng-model="t.description"></textarea>
+                </div>
+            </div>
+            <div class="am-g am-margin-top">
+                <div class="am-u-md-offset-2">
+                    <button class="am-btn am-btn-primary am-btn-xs" ng-disabled="docCategoryForm.$invalid" ng-click="save()">保存
+                    </button>
+                    <button class="am-btn am-btn-warning am-btn-xs" ng-click="delete(t)" ng-if="t.id">删除</button>
+                </div>
+            </div>
+        </form>
+        <hr>
+    </div>
+</div>

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lld360.cnc.repository.EnterpriseInfoDao">
+
+<insert id="insertOrUpdateInfo" parameterType="com.lld360.cnc.model.EnterpriseInfo">
+ INSERT INTO enterprise_info (id,user_id,logo_img,service,introduce,telephone,qr_code,slogan,create_time)
+   VALUES(#{id},#{userId},#{logoImg},#{service},#{introduce},#{telephone},#{qrCode},#{slogan},current_timestamp)
+   ON DUPLICATE KEY UPDATE 
+     logo_img = VALUES(logo_img),
+     service = VALUES(service),
+     introduce = VALUES(introduce),
+     telephone = VALUES(telephone),
+     qr_code = VALUES(qr_code),
+     slogan = VALUES(slogan),
+     update_time = current_timestamp
+</insert>
+<select id="findByUserId" parameterType="long" resultType="com.lld360.cnc.model.EnterpriseInfo">
+  SELECT 
+  id,user_id userId,logo_img logoImg,service,introduce,telephone,qr_code qrCode,slogan,create_time createTime,update_time updateTime
+  FROM enterprise_info
+  WHERE user_id =#{userId}
+</select>
+
+ <select id="searchWeb" parameterType="map" resultType="com.lld360.cnc.model.EnterpriseInfo">
+  SELECT 
+  ei.id,ec.name,ei.user_id userId,ei.logo_img logoImg,ei.service,ei.introduce,ei.telephone,ei.qr_code qrCode,ei.slogan,ei.create_time createTime,ei.update_time updateTime
+  FROM enterprise_info ei
+  join enterprise_certification ec ON ei.id = ec.id
+  <if test="limit != null">LIMIT #{limit}</if>
+  <if test="offset != null">OFFSET #{offset}</if>
+  </select>
+  
+  <select id="count" parameterType="map" resultType="long">
+  SELECT COUNT(1) 
+  FROM enterprise_info ei
+  join enterprise_certification ec ON ei.id = ec.id
+  </select>
+</mapper>
+

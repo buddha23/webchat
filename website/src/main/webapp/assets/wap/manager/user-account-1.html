@@ -1,0 +1,168 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=0" />
+<link rel="stylesheet" type="text/css" href="../../css/public.css">
+<link rel="stylesheet" type="text/css" href="../../css/style_mobile.css">
+<script type="text/javascript" src="../../js/min/jquery-3.0.0.min.js"></script>
+<script type="text/javascript" src="../../js/app.js"></script>
+<script type="text/javascript" src="../../js/mobile/layer.js"></script>
+<script type="text/javascript" src="../../js/jquery.leoDialog.js"></script>
+<script type="text/javascript">
+$(function(){
+	$('.page-form-style .form-input').focus(function(){
+		$(this).parent('li').addClass('current').siblings().removeClass('current');
+	});
+	
+	$('.chosen-list li').click(function(){
+		if($(this).hasClass('act')){
+			$(this).removeClass('act');
+		}else{
+			$(this).addClass('act').siblings().removeClass('act');
+		}
+	});
+	
+	var ld = leoDialog.window({
+		title: '提示',
+		modal: true,
+		//内容可以指定dom或者字符串
+		content: $('#dialog'),
+		buttons: {
+			//确认按钮
+			confirm : {
+				text: '确定',
+				action: function(){
+					alert('我点了确定');
+				}
+			},
+			//取消按钮
+			cancel : {
+				text: '取消',
+				action: function(){
+					leoDialog.closeAll();
+				}
+			}
+		}
+	});
+	
+	/*
+	var ld2 = leoDialog.alert({
+		title: '提示',
+		modal: true,
+		content: '哈哈哈',
+		buttons: {
+			//确认按钮
+			confirm : {
+				text: '好',
+				action: function(){
+					alert('我点了好');
+				}
+			}
+		}
+	});
+	*/
+	
+	/*
+	var ld3 = leoDialog.window({
+		window: false,
+		title: '提示',
+		modal: true,
+		content: '哈哈哈'
+	});
+	*/
+})
+</script>
+<title></title>
+</head>
+
+<body>
+<div class="container">
+	<header>
+		<div class="top">
+	    	<div class="menu-left">
+	    		<a id="prevPage" class="menu-item" href="javascript:history.back()"><i class="fa fa-chevron-left"></i></a>
+	        </div>
+	        
+	        <div class="menu-right">
+	    		<a class="menu-item menu-user" href="../usercenter.html"></a>
+	        </div>
+	    	
+	    	<div class="title">账号绑定</div>
+    	</div>
+    </header>
+    
+    <div class="content bg-white clearfix">
+        <div class="page">
+	        <div class="section tabs">
+	        	<div class="section-content">
+                	<div class="category-manage tabs">
+                    	<ul class="section-tab tabs-nav clearfix">
+                            <li class="tab-menu tabs-nav-item current">绑定手机号</li>
+                            <li class="tab-menu tabs-nav-item">第三方账号关联</li>
+                        </ul>
+                        <div class="tabs-panel">
+                        	<div class="tab">
+                            	<div class="page-form-style">
+                                    <form action="#" method="post">
+                                        <ul class="form-group">
+                                            <li class="clearfix">
+                                                <label>手机号</label>
+                                                <button class="captcha-btn" type="button">获取验证码</button>
+                                                <input class="form-input captcha" type="text">
+                                            </li>
+                                            <li class="clearfix">
+                                                <label>验证码</label>
+                                                <input class="form-input" type="password">
+                                            </li>
+                                            <li class="clearfix">
+                                                <label>密&nbsp;&nbsp;&nbsp;码</label>
+                                                <input class="form-input" type="password">
+                                            </li>
+                                            <li class="clearfix">
+                                                <label>确认密码</label>
+                                                <input class="form-input" type="password">
+                                            </li>
+                                        </ul>
+                                        
+                                        <div class="form-btns clearfix">
+                                            <div class="form-btns-full">
+                                                <button type="submit" class="btn-confirm">确定</button>
+                                            </div>
+                                        </div>
+                                        
+                                        <a class="form-tips" href="register.html">
+                                            <i class="fa fa-exclamation-circle"></i> 完成绑定手机号码，可通过点击“忘记密码”找回密码，并掌握文库最新资料信息。
+                                        </a>
+                                    </form>
+                                </div>
+                            </div>
+                            
+                            <div class="tab">
+                            	<div class="third-account-list">
+                                	<a class="third-account-item" href="javascript:;">QQ：未绑定</a>
+                                    <a class="third-account-item" href="javascript:;">微信：未绑定</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+	        </div>
+        </div>
+    </div>
+    
+    <footer>
+    </footer>
+</div>
+</div>
+
+<div id="dialog" class="account-dialog" action="#" method="post" style="display: none;">
+    <div class="tips">检测到该手机号已注册有站内账号，请选择保留一项。若选择当前账号，则原手机注册账号停用；若选择原手机账号，则当前账号停用。此操作不可逆，请谨慎选择：</div>
+	<div class="account-dialog-content">
+    	<div class="chosen-list">
+        	<li>保留当前账号</li>
+            <li>保留原手机账号</li>
+        </div>
+    </div>
+</div>
+</body>
+</html>

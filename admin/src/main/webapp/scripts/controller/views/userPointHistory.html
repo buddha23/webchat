@@ -1,0 +1,55 @@
+<div class="am-cf am-padding">
+    <div class="am-fl am-cf">
+        <strong class="am-text-primary am-text-lg">用户管理</strong> /
+        <small>用户积分列表</small>
+    </div>
+</div>
+
+<div class="am-g" ng-controller="userPointHistoryCtrl">
+
+    <div class="am-u-sm-12 am-u-md-9">
+        <div class="am-btn-toolbar">
+            <div class="am-btn-group am-btn-group-xs">
+                &nbsp;
+            </div>
+        </div>
+    </div>
+    <div class="am-u-sm-12 am-u-md-3">
+        <div class="am-input-group am-input-group-sm">
+            <input type="text" class="am-form-field" ng-model="searchKey" ng-keypress="onSearchKeyPress($event)">
+          <span class="am-input-group-btn">
+            <button class="am-btn am-btn-default" type="button" ng-click="doSearch()">搜索</button>
+          </span>
+        </div>
+    </div>
+
+    <div class="am-u-sm-12">
+        <table class="am-table table-main">
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>用户名</th>
+                <th>类型</th>
+                <th><a href="javascript:void(0);" ng-click="sortBy('point_change')">积分变动</a></th>
+                <th>说明</th>
+                <th>操作时间</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr ng-repeat="a in data.content">
+                <td>{{a.id}}</td>
+                <th><a href="#/userPointHistory/{{a.userId}}">{{a.userNickname}}</a></th>
+                <td>{{types[a.type] || '错误类型'}}</td>
+                <td>{{a.pointChange}}</td>
+                <td>{{a.description}}</td>
+                <td class="am-hide-sm-only">{{a.createTime | date:'yyyy-MM-dd HH:mm:ss'}}</td>
+            </tr>
+            </tbody>
+        </table>
+        <div>
+            <div class="am-fr">
+                <ng-pager page-change="getPage(page)" page-data="data" items="11"></ng-pager>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,62 @@
+<div class="am-cf am-padding">
+    <div class="am-fl am-cf">
+        <strong class="am-text-primary am-text-lg">后台管理</strong> /
+        <small>角色详情</small>
+    </div>
+</div>
+
+<div class="am-g" ng-controller="roleUpdateCtrl">
+    <div class="am-u-sm-12 am-padding-bottom-lg">
+        <div class="am-tab-panel am-fade am-active am-in" id="tab2">
+            <form class="am-form" name="userForm">
+                <div class="am-g am-margin-top">
+                    <div class="am-u-sm-4 am-u-md-2 am-text-right">
+                        角色代码
+                    </div>
+                    <div class="am-u-sm-8 am-u-md-5">
+                        <input type="text" class="am-input-sm" ng-model="data.role" ng-disabled="setStyle(userId)" onkeyup="value=value.replace(/[\W]/g,'')" maxlength="20">
+                    </div>
+                    <div class="am-hide-sm-only am-u-md-5">*必填，不可重复</div>
+                </div>
+
+                <div class="am-g am-margin-top">
+                    <div class="am-u-sm-4 am-u-md-2 am-text-right">
+                        角色名
+                    </div>
+                    <div class="am-u-sm-8 am-u-md-5">
+                        <input type="text" class="am-input-sm" ng-model="data.name" maxlength="30" required>
+                    </div>
+                    <div class="am-hide-sm-only am-u-md-5">角色名称</div>
+                </div>
+
+                <div class="am-g am-margin-top">
+                    <div class="am-u-sm-4 am-u-md-2 am-text-right">
+                        权限集合
+                    </div>
+                    <div class="am-u-sm-8 am-u-md-5 am-btn-group" data-am-button>
+                        <label ng-repeat="p in permissionList" class="{{checkClass(p.permit)}}">
+                            <input type="checkbox" name="role-perm" value="{{p.permit}}" ng-checked="isSelected(p.permit)">{{p.name}}
+                        </label>
+                    </div>
+                    <div class="am-hide-sm-only am-u-md-5">权限选择</div>
+                </div>
+                <div class="am-g am-margin-top">
+                    <div class="am-u-sm-4 am-u-md-2 am-text-right">
+                        描述
+                    </div>
+                    <div class="am-u-sm-8 am-u-md-5">
+                        <input type="text" class="am-input-sm" ng-model="data.description" maxlength="200" required>
+                    </div>
+                    <div class="am-hide-sm-only am-u-md-5">角色定义</div>
+                </div>
+
+                <div class="am-g am-margin-top">
+                    <div class="am-u-md-offset-2">
+                        <button type="button" class="am-btn am-btn-primary am-btn-xs" ng-click="save()">提交保存</button>
+                        <a class="am-btn am-btn-warning am-btn-xs" href="#/roleList">返回列表</a>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

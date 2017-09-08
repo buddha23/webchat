@@ -1,0 +1,29 @@
+<div class="am-cf am-padding">
+    <div class="am-fl am-cf">
+        <strong class="am-text-primary am-text-lg">后台管理</strong> /
+        <small>角色列表</small>
+    </div>
+</div>
+
+<div class="am-g" ng-controller="permissionCtrl">
+    <div class="am-u-sm-12">
+        <table class="am-table am-table-striped am-table-hover table-main">
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>权限名</th>
+                <th>权限代码</th>
+                <th>描述</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr ng-repeat="a in data">
+                <td>{{a.id}}</td>
+                <td>{{a.name}}</td>
+                <td>{{a.permit}}</td>
+                <td>{{a.description}}</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>

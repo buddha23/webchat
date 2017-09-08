@@ -1,0 +1,84 @@
+<div class="am-cf am-padding">
+    <div class="am-fl am-cf">
+        <strong class="am-text-primary am-text-lg">微信公众号菜单</strong> /
+        <small>菜单按钮管理</small>
+    </div>
+</div>
+
+<div class="am-g" ng-controller="wxMenuCtrl">
+    <div class="am-margin-top am-u-lg-6 am-u-md-12">
+        <div class="wx-btn-group" ng-repeat="btn in buttons">
+            <div class="wx-btn-lv1" ng-click="editBtn(btn)">{{btn.name}}<span class="am-icon-minus wx-btn-minus"
+                                                                              ng-click="delBtn($event, btn)"></span>
+            </div>
+            <div class="wx-btn-lv2" ng-repeat="b in btn.sub_button" ng-click="editBtn(b, true)">{{b.name}}
+                <span class="am-icon-minus wx-btn-minus" ng-click="delBtn($event, btn, b)"></span>
+            </div>
+            <div class="wx-btn-lv2 wx-btn-add" ng-show="!btn.type&&(!btn.sub_button||btn.sub_button.length<5)"
+                 ng-click="newBtn(btn)"><span class="am-icon-plus"></span></div>
+        </div>
+        <div class="wx-btn-group" ng-show="buttons.length<3">
+            <div class="wx-btn-lv1 wx-btn-add" ng-click="newBtn()"><span class="am-icon-plus"></span></div>
+        </div>
+    </div>
+
+    <div class="am-margin-top am-u-lg-6 am-u-md-12">
+        <form class="am-form" name="wxMenuBtn" ng-show="currentBtn">
+            <div class="am-g am-margin-top">
+                <div class="am-u-sm-4 am-u-md-2 am-text-right">
+                    按钮名称：
+                </div>
+                <div class="am-u-sm-8 am-u-md-4">
+                    <input type="text" class="am-input-sm" required ng-model="currentBtn.name" maxlength="7">
+                </div>
+                <div class="am-hide-sm-only am-u-md-6">*必填，不可重复</div>
+            </div>
+            <div class="am-g am-margin-top">
+                <div class="am-u-sm-4 am-u-md-2 am-text-right">
+                    类型：
+                </div>
+                <div class="am-u-sm-8 am-u-md-10">
+                    <div class="am-form-group">
+                        <label class="am-radio-inline"><input type="radio" name="type" ng-model="currentBtn.type"
+                                                              ng-disabled="currentBtn.parent"> 父菜单</label>
+                        <label class="am-radio-inline"><input type="radio" value="view" name="type"
+                                                              ng-model="currentBtn.type"> 链接</label>
+                        <label class="am-radio-inline"><input type="radio" value="click" name="type"
+                                                              ng-model="currentBtn.type"> 事件</label>
+                    </div>
+                </div>
+            </div>
+            <div class="am-g am-margin-top" ng-show="currentBtn.type=='view'">
+                <div class="am-u-sm-4 am-u-md-2 am-text-right">
+                    链接地址：
+                </div>
+                <div class="am-u-sm-8 am-u-md-4">
+                    <input type="url" class="am-input-sm" ng-model="currentBtn.url"
+                           ng-required="currentBtn.type=='view'" ng-disabled="currentBtn.type!='view'">
+                </div>
+                <div class="am-hide-sm-only am-u-md-6">*必填</div>
+            </div>
+            <div class="am-g am-margin-top" ng-show="currentBtn.type=='click'">
+                <div class="am-u-sm-4 am-u-md-2 am-text-right">
+                    事件值：
+                </div>
+                <div class="am-u-sm-8 am-u-md-4">
+                    <input type="text" class="am-input-sm" ng-model="currentBtn.key"
+                           ng-required="currentBtn.type=='click'" ng-disabled="currentBtn.type!='click'">
+                </div>
+                <div class="am-hide-sm-only am-u-md-6">*必填</div>
+            </div>
+            <div class="am-g am-margin-top">
+                <div class="am-u-md-offset-2">
+                    <button type="button" class="am-btn am-btn-primary am-btn-xs" ng-disabled="wxMenuBtn.$invalid"
+                            ng-click="confirmBtn()">确认
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <div class="am-u-md-12">
+        <button class="am-btn am-btn-primary am-btn-lg" ng-disabled="saving" ng-click="saveMenu()">{{saving || '保存菜单'}}</button>
+    </div>
+</div>

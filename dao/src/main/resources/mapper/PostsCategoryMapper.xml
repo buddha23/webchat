@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.lld360.cnc.repository.PostsCategoryDao">
+
+    <insert id="create" parameterType="com.lld360.cnc.model.PostsCategory">
+        INSERT INTO `posts_category` (`name`, `icon`, `description`, `sort`)
+        VALUES (#{name}, #{icon}, #{description},#{sort}) ;
+    </insert>
+
+    <update id="update" parameterType="com.lld360.cnc.model.PostsCategory">
+        UPDATE
+          `posts_category`
+        <set>
+            <if test="name != null">`name` = #{name},</if>
+            <if test="icon != null">`icon` = #{icon},</if>
+            <if test="description != null">`description` = #{description},</if>
+            <if test="sort != null">`sort` = #{sort},</if>
+        </set>
+        WHERE `id` = #{id} ;
+    </update>
+
+    <select id="getAllCategories" resultType="com.lld360.cnc.model.PostsCategory">
+        SELECT *
+        FROM `posts_category`
+        ORDER BY `sort`
+    </select>
+
+    <select id="getById" parameterType="int" resultType="com.lld360.cnc.model.PostsCategory">
+        SELECT *
+        FROM `posts_category`
+        WHERE id = #{id}
+    </select>
+
+    <select id="getDtoById" parameterType="int" resultType="com.lld360.cnc.dto.PostsCategoryDto">
+        SELECT
+            pc.*,
+            p.`id` lastPostsId,
+            p.`title` lastPostsTitle,
+            COUNT(p.`id`) postsNum,
+            IFNULL(SUM(abc.num), 0) commentNum
+        FROM `posts_category` pc
+        LEFT JOIN `posts` p ON p.`category_id` = pc.`id`
+        LEFT JOIN
+          (SELECT
+              `posts_id` pid,
+              COUNT(id) num
+            FROM
+              `posts_comment`
+            GROUP BY `posts_id`
+            ORDER BY `posts_id` DESC) abc ON abc.pid = p.`id`
+        WHERE pc.id = #{id}
+        GROUP BY pc.`id`
+    </select>
+
+    <delete id="delete" parameterType="int">
+        DELETE FROM `posts_category`
+        WHERE id = #{id}
+    </delete>
+
+    <select id="getAllCategories4Wap" resultType="com.lld360.cnc.dto.PostsCategoryDto">
+        SELECT
+            pc.*,
+            abc.pid lastPostsId,
+            abc.ptitle lastPostsTitle,
+            COUNT(abc.pid) postsNum,
+            IFNULL(SUM(abc.num), 0) commentNum
+        FROM
+            (SELECT
+                pc.`id` pcid,
+                p.`id` pid,
+                p.`title` ptitle,
+                COUNT(c.`id`) num
+            FROM `posts_category` pc
+            LEFT JOIN `posts` p ON p.`category_id` = pc.`id`
+            LEFT JOIN `posts_comment` c ON c.`posts_id` = p.`id`
+            GROUP BY p.`id`
+            ORDER BY p.`create_time` DESC) AS abc
+        LEFT JOIN `posts_category` pc ON pc.`id` = abc.pcid
+        GROUP BY pc.`id`
+        ORDER BY pc.`sort`;
+    </select>
+
+    <select id="getCategoriesByModerator" parameterType="long" resultType="com.lld360.cnc.model.PostsCategory">
+        SELECT pc.*
+        FROM `posts_category` pc
+        LEFT JOIN `posts_moderator` pm ON pm.`category_id` = pc.`id`
+        WHERE pm.`user_id` = #{userId}
+    </select>
+
+</mapper>

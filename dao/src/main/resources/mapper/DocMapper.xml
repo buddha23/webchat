@@ -1,0 +1,491 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.lld360.cnc.repository.DocDao">
+
+    <insert id="create" parameterType="com.lld360.cnc.model.Doc" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO
+            doc (
+                title,
+                summary,
+                category_id,
+                cost_score,
+                file_name,
+                file_path,
+                file_type,
+                file_size,
+                file_md5,
+                file_pages,
+                views,
+                uploader,
+                uploader_type,
+                create_time,
+                state
+            ) VALUES (
+                #{title},
+                #{summary},
+                #{categoryId},
+                #{costScore},
+                #{fileName},
+                #{filePath},
+                #{fileType},
+                #{fileSize},
+                #{fileMd5},
+                #{filePages},
+                #{views},
+                #{uploader},
+                #{uploaderType},
+                #{createTime},
+                #{state}
+            )
+    </insert>
+
+    <update id="update" parameterType="com.lld360.cnc.model.Doc">
+        UPDATE doc
+        <set>
+            <if test="title != null">title = #{title},</if>
+            <if test="summary != null">summary = #{summary},</if>
+            <if test="categoryId != null">category_id = #{categoryId},</if>
+            <if test="costScore != null">cost_score = #{costScore},</if>
+            <if test="fileName != null">file_name = #{fileName},</if>
+            <if test="filePath != null">file_path = #{filePath},</if>
+            <if test="fileType != null">file_type = #{fileType},</if>
+            <if test="fileSize != null">file_size = #{fileSize},</if>
+            <if test="fileMd5 != null">file_md5 = #{fileMd5},</if>
+            <if test="filePages != null">file_pages = #{filePages},</if>
+            <if test="views != null">views = #{views},</if>
+            <if test="uploader != null">uploader = #{uploader},</if>
+            <if test="uploaderType != null">uploader_type = #{uploaderType},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="state != null">state = #{state},</if>
+        </set>
+        WHERE id = #{id};
+    </update>
+
+    <delete id="delete" parameterType="long">
+        DELETE FROM doc
+        WHERE id = #{id}
+    </delete>
+
+    <update id="updateDocState">
+        UPDATE doc
+        SET state = #{state}
+        WHERE id = #{docId}
+    </update>
+
+    <update id="updateDocsState">
+        UPDATE doc
+        SET state = #{toState}
+        <where>
+            <if test="ids != null">
+                <foreach collection="ids" item="id" open="AND id IN(" separator="," close=")">#{id}</foreach>
+            </if>
+            <if test="fromState != null">
+                AND state = #{fromState}
+            </if>
+            <!-- (安全处理) -->
+            <if test="ids == null and fromState == null">id = -1</if>
+        </where>
+    </update>
+
+    <update id="updateDocCategory">
+        UPDATE doc
+        SET category_id = #{categoryId}
+        WHERE id = #{docId}
+    </update>
+
+    <!-- 定义全局查询的SQL变量语句 -->
+    <sql id="searchCondition">
+        <where>
+            <if test="title != null">AND d.title LIKE "%"#{title}"%"</if>
+            <if test="categoryId != null">AND d.category_id = #{categoryId}</if>
+            <if test="costScore != null">AND d.cost_score = #{costScore}</if>
+            <if test="fileName != null">AND d.file_name LIKE "%"#{fileName}"%"</if>
+            <if test="uploader != null">AND d.uploader = #{uploader}</if>
+            <if test="uploaderType != null">AND d.uploader_type = #{uploaderType}</if>
+            <if test="state != null">AND d.state = #{state}</if>
+            <if test="states != null"><foreach collection="states" item="s" open="AND d.state IN(" separator="," close=")">#{s}</foreach></if>
+            <if test="content != null"> AND (u.nickname REGEXP #{content} OR u.`name` REGEXP #{content} OR d.title REGEXP #{content})</if>
+            <if test="docType != null">AND d.file_type LIKE "%"#{docType}"%"</if>
+            <if test="c1 != null">AND c.fid=#{c1}</if>
+            <if test="c2 != null"> AND c.id=#{c2}</if>
+        </where>
+    </sql>
+    <!-- 用于select查询公用抽取的列 -->
+    <sql id="columns">
+	    <![CDATA[
+        d.id,
+        d.title,
+        d.summary,
+        d.category_id,
+        d.cost_score,
+        d.file_name,
+        d.file_path,
+        d.file_type,
+        d.file_size,
+        d.file_md5,
+        d.file_pages,
+        d.views,
+        d.uploader,
+        d.uploader_type,
+        d.create_time,
+        d.state
+        ]]>
+	</sql>
+
+    <sql id="columnsWithCategory">
+        <include refid="columns"/>,
+        c.id cid,
+        c.fid,
+        c.name cname,
+        c.icon cicon
+    </sql>
+
+    <sql id="columnsWithCategoryWeb">
+        <include refid="columns"/>,
+        c.id cid,
+        c.fid,
+        c.name cname,
+        c.icon cicon,
+        u.id uid,
+        u.nickname uNickname,
+        u.avatar uAvatar,
+        COUNT(dd.user_id) AS downloads,
+        IFNULL(u.nickname,"系统管理员")as uName
+    </sql>
+
+    <!-- admin文库管理/文档列表、报表/文档下载统计这两个地方使用这个查询条件 -->
+    <sql id="docReportSearchCondition">
+        <where>
+            <if test="content != null">AND (d.title LIKE "%"#{content}"%" OR d.file_name LIKE "%"#{content}"%" OR
+                u.nickname LIKE "%"#{content}"%" OR u.mobile LIKE "%"#{content}"%")
+            </if>
+            <if test="title != null">and d.title LIKE "%"#{title}"%"</if>
+            <if test="categoryId != null">and d.category_id = #{categoryId}</if>
+            <if test="costScore != null">and d.cost_score = #{costScore}</if>
+            <if test="fileName != null">and d.file_name LIKE "%"#{fileName}"%"</if>
+            <if test="uploader != null">and d.uploader = #{uploader}</if>
+            <if test="uploaderType != null">and d.uploader_type = #{uploaderType}</if>
+            <if test="state != null">and d.state = #{state}</if>
+            <if test="unstate != null">and d.state != #{unstate}</if>
+            <if test="beginTime != null">AND dd.create_time &gt;= #{beginTime}</if>
+            <if test="endTime != null">AND dd.create_time &lt;= #{endTime}</if>
+            <if test="useFor != null and useFor == 'report'">AND dd.doc_id &gt; 0</if>
+        </where>
+    </sql>
+
+    <select id="search" parameterType="map" resultMap="docMap">
+        SELECT
+        <include refid="columnsWithCategoryWeb"/>, COUNT(dd.doc_id) as downloads
+        FROM doc d
+        LEFT JOIN doc_category c ON d.category_id=c.id
+        LEFT JOIN doc_download dd ON d.id = dd.doc_id
+        LEFT JOIN user u ON u.id = d.`uploader`
+        <include refid="docReportSearchCondition"/>
+        GROUP BY d.id
+        <if test="sortBy == 'createTime'">ORDER BY d.create_time ${sortType}</if>
+        <if test="sortBy == 'views'">ORDER BY d.${sortBy} ${sortType}</if>
+        <if test="sortBy == 'downloads'">ORDER BY downloads ${sortType}</if>
+        <if test="limit != null">LIMIT #{limit}</if>
+        <if test="offset != null">OFFSET #{offset}</if>
+    </select>
+
+    <select id="searchForIndex" parameterType="map" resultMap="docMap">
+        SELECT
+        <include refid="columnsWithCategory"/>,
+        u.name uName,
+        u.nickname uNickname,
+        u.avatar uAvatar,
+        m.id AS m_id,
+        m.doc_id AS m_doc_id,
+        m.doc_page AS m_page,
+        m.path AS m_path
+        FROM doc d
+        LEFT JOIN user u ON d.uploader=u.id
+        LEFT JOIN doc_image m ON d.id=m.doc_id AND m.doc_page=1
+        LEFT JOIN doc_category c ON d.category_id=c.id
+        WHERE d.state = #{state}
+        <if test="fileType != null">AND d.file_type = #{fileType}</if>
+        <if test="fileType == 'jpg'">OR d.file_type IN ('png', 'jpeg', 'bmp', 'gif')</if>
+        <if test="fileType == 'doc' or fileType == 'ppt' or fileType == 'xls'">OR d.file_type = #{fileType}"x"</if>
+        <if test="sortBy != null and sortBy != ''">ORDER BY d.${sortBy} DESC</if>
+        <if test="limit != null">LIMIT #{limit}</if>
+        <if test="offset != null">OFFSET #{offset}</if>
+    </select>
+
+    <select id="count" parameterType="map" resultType="long">
+        SELECT count(DISTINCT d.id)
+        FROM doc d
+        LEFT JOIN doc_category c ON d.category_id=c.id
+        LEFT JOIN doc_download dd ON d.id = dd.doc_id
+        LEFT JOIN user u ON u.id = d.`uploader`
+        <include refid="docReportSearchCondition"/>
+    </select>
+
+    <select id="docByKeyWord" resultMap="docMap" parameterType="string">
+        SELECT *
+        FROM doc
+        WHERE state = 1
+              AND file_size IS NOT NULL
+              AND (file_name REGEXP #{keyword} OR title REGEXP #{keyword})
+        ORDER BY views DESC
+    </select>
+
+    <select id="countByKeyWord" resultType="java.lang.Long" parameterType="string">
+        SELECT COUNT(1)
+        FROM doc
+        WHERE file_size IS NOT NULL AND (file_name REGEXP #{keyword} OR title REGEXP #{keyword})
+    </select>
+
+    <select id="countDownloads" parameterType="map" resultType="long">
+        SELECT COUNT(id)
+        FROM doc_download
+        <where>
+            <if test="beginTime != null">AND create_time &gt;= #{beginTime}</if>
+            <if test="endTime != null">AND create_time &lt;= #{endTime}</if>
+        </where>
+    </select>
+
+    <select id="countUploadByUserAndMonth" resultType="java.lang.Long">
+        SELECT COUNT(1)
+        FROM doc
+        WHERE uploader_type = 2 AND uploader = #{userId} AND MONTH(create_time) = MONTH(#{month}) AND state = 1
+    </select>
+
+    <select id="find" parameterType="long" resultMap="docDetailMap">
+        SELECT
+        <include refid="columnsWithCategory"/>,
+        m.id AS m_id,
+        m.doc_id AS m_doc_id,
+        m.doc_page AS m_page,
+        m.path AS m_path,
+        dt.name AS tags
+        FROM doc d
+        LEFT JOIN doc_category c ON d.category_id=c.id
+        LEFT JOIN doc_image m ON d.id = m.doc_id
+        LEFT JOIN doc_x_tag dxt ON d.id = dxt.doc_id
+        LEFT JOIN doc_tag dt ON dxt.tag_id=dt.id
+        WHERE d.id = #{id}
+    </select>
+
+    <select id="countWeb" parameterType="map" resultType="long">
+        SELECT count(DISTINCT d.id)
+        FROM doc d
+        LEFT JOIN doc_category c ON d.category_id=c.id
+        LEFT JOIN doc_download dd ON dd.doc_id =d.id
+        LEFT JOIN `user` u ON u.id =d.uploader
+        <include refid="searchCondition"/>
+        AND d.state != 9
+    </select>
+
+    <select id="searchWeb" parameterType="map" resultMap="docMap">
+        SELECT
+        <include refid="columnsWithCategoryWeb"/>
+        <include refid="sortByKeywordsCount"/>
+        LEFT JOIN doc_category c ON d.category_id=c.id
+        LEFT JOIN doc_download dd ON dd.doc_id =d.id
+        LEFT JOIN `user` u ON u.id =d.uploader AND d.uploader_type = 2
+        <include refid="searchCondition"/>
+        GROUP BY d.id
+        ORDER BY
+        weight DESC
+        <if test="sortByCheck != null">,d.`state` DESC </if>
+        <if test="hotType == 'hotType'">, downloads DESC,d.create_time DESC</if>
+        <if test="limit != null">LIMIT #{limit}</if>
+        <if test="offset != null">OFFSET #{offset}</if>
+    </select>
+
+    <sql id="sortByKeywordsCount">
+        <if test="contentSort != null">
+            , weight
+            FROM (
+            SELECT *,
+            <foreach collection="contentSort" index="index" item="content_key" open="" separator="+" close="">
+                CASE WHEN d.title LIKE "%"#{content_key}"%" THEN 1 ELSE 0 END
+            </foreach>
+            AS weight
+            FROM doc d
+            ) d
+        </if>
+        <if test="contentSort == null">
+            ,0 AS weight FROM doc d
+        </if>
+    </sql>
+
+    <select id="findWeb" parameterType="long" resultMap="docMap">
+        SELECT
+        <include refid="columnsWithCategoryWeb"/>
+        FROM doc d
+        LEFT JOIN doc_category c ON d.category_id=c.id
+        LEFT JOIN doc_download dd ON dd.doc_id =d.id
+        LEFT JOIN `user` u ON u.id =d.uploader
+        WHERE d.id = #{id}
+    </select>
+
+    <!--Auther:QL-->
+    <!--获取用户的收藏文档-->
+    <select id="getCollects" parameterType="long" resultType="com.lld360.cnc.dto.DocDto">
+        SELECT
+        d.id,
+        d.title,
+        d.summary,
+        d.category_id categoryId,
+        d.cost_score costScore,
+        d.file_name fileName,
+        d.file_path filePath,
+        d.file_type fileType,
+        d.file_size fileSize,
+        d.file_md5 fileMd5,
+        d.file_pages filePages,
+        d.views,
+        d.uploader,
+        d.uploader_type uploaderType,
+        d.create_time createTime,
+        dc.create_time collectTime,
+        d.state,
+        IFNULL(u.`nickname`, '系统管理员') uploaderName
+        FROM doc_collect dc
+        JOIN doc d ON dc.doc_id = d.id
+        LEFT JOIN `user` u ON d.uploader = u.id AND d.uploader_type = 2
+        WHERE dc.user_id = #{userId} AND d.state != 9
+        <if test="limit != null">LIMIT #{limit}</if>
+        <if test="offset != null">OFFSET #{offset}</if>
+    </select>
+
+    <!--Auther:QL-->
+    <!--获取用户的下载文档-->
+    <select id="getDownloads" parameterType="map" resultType="com.lld360.cnc.dto.DocDto">
+        SELECT
+        d.id,
+        d.title,
+        d.summary,
+        d.category_id categoryId,
+        d.cost_score costScore,
+        d.file_name fileName,
+        d.file_path filePath,
+        d.file_type fileType,
+        d.file_size fileSize,
+        d.file_md5 fileMd5,
+        d.file_pages filePages,
+        d.views,
+        d.uploader,
+        d.uploader_type uploaderType,
+        d.create_time createTime,
+        dd.create_time downloadTime,
+        d.state,
+        IFNULL(u.`nickname`, '系统管理员') uploaderName
+        FROM doc_download dd
+        JOIN doc d ON dd.doc_id = d.id
+        LEFT JOIN `user` u ON d.uploader = u.id AND d.uploader_type = 2
+        WHERE dd.user_id = #{userId} AND d.state != 9
+        <if test="limit != null">LIMIT #{limit}</if>
+        <if test="offset != null">OFFSET #{offset}</if>
+    </select>
+
+
+    <!-- 结果集mapper -->
+    <resultMap id="docMap" type="com.lld360.cnc.model.Doc">
+        <id property="id" column="id"/>
+        <result property="title" column="title"/>
+        <result property="summary" column="summary"/>
+        <result property="categoryId" column="category_id"/>
+        <result property="costScore" column="cost_score"/>
+        <result property="fileName" column="file_name"/>
+        <result property="filePath" column="file_path"/>
+        <result property="fileType" column="file_type"/>
+        <result property="fileSize" column="file_size"/>
+        <result property="fileMd5" column="file_md5"/>
+        <result property="filePages" column="file_pages"/>
+        <result property="views" column="views"/>
+        <result property="downloads" column="downloads"/>
+        <result property="uploader" column="uploader"/>
+        <result property="uploaderType" column="uploader_type"/>
+        <result property="createTime" column="create_time"/>
+        <result property="state" column="state"/>
+        <association property="docCategory" javaType="com.lld360.cnc.model.DocCategory">
+            <id property="id" column="cid"/>
+            <result property="fid" column="fid"/>
+            <result property="name" column="cname"/>
+            <result property="icon" column="cicon"/>
+        </association>
+        <association property="user" javaType="com.lld360.cnc.model.User">
+            <id property="id" column="uid"/>
+            <result property="name" column="uName"/>
+            <result property="nickname" column="uNickname"/>
+            <result property="avatar" column="uAvatar"/>
+        </association>
+    </resultMap>
+
+    <resultMap id="docDetailMap" type="com.lld360.cnc.model.Doc" extends="docMap">
+        <collection property="images" ofType="com.lld360.cnc.model.DocImage">
+            <id property="id" column="m_id"/>
+            <result property="docId" column="m_doc_id"/>
+            <result property="docPage" column="m_page"/>
+            <result property="path" column="m_path"/>
+        </collection>
+        <collection property="tags" javaType="arraylist" ofType="string">
+            <result column="tags"/>
+        </collection>
+    </resultMap>
+
+    <select id="findByMd5" resultType="com.lld360.cnc.model.Doc">
+        SELECT *
+        FROM doc
+        WHERE file_md5 = #{md5}
+    </select>
+
+    <select id="findByType" resultType="com.lld360.cnc.model.Doc" parameterType="string">
+        SELECT *
+        FROM doc
+        WHERE file_type = #{type}
+    </select>
+
+    <select id="findByTypes" resultType="com.lld360.cnc.model.Doc" parameterType="collection">
+        SELECT
+        <include refid="columns"/>
+        FROM doc d
+        <foreach collection="types" item="type" open=" WHERE d.file_type IN(" separator="," close=")">
+            #{type}
+        </foreach>
+    </select>
+
+    <select id="findDisposingDocs" resultType="com.lld360.cnc.model.Doc" parameterType="collection">
+        SELECT
+        <include refid="columns"/>
+        FROM doc d
+        WHERE d.state=2
+    </select>
+
+    <select id="sumScoreOfDoc" resultType="int" parameterType="long">
+        SELECT (
+                   SELECT IFNULL(SUM(score_change), 0)
+                   FROM user_score_history
+                   WHERE `type` = 1 AND object_id = #{docId}
+               ) + (
+                   SELECT IFNULL(SUM(ush.score_change), 0)
+                   FROM doc_download dd
+                       JOIN user_score_history ush ON dd.id = ush.object_id AND ush.type = 3
+                   WHERE doc_id = #{docId}
+               ) AS total
+    </select>
+
+    <select id="searchViewsByCategoryId" parameterType="integer" resultType="long">
+        SELECT IFNULL(SUM(d.`views`), 0)
+        FROM doc_category c1
+            LEFT JOIN doc_category c2 ON c1.`id` = c2.`fid`
+            LEFT JOIN doc d ON d.`category_id` = c2.`id`
+        WHERE c1.`fid` IS NULL AND c1.id = #{categoryId}
+        GROUP BY c1.`id`
+    </select>
+
+    <select id="searchUploadNum" parameterType="map" resultType="long">
+        SELECT COUNT(1)
+        FROM doc_category c1
+        LEFT JOIN doc_category c2 ON c1.`id` = c2.`fid`
+        LEFT JOIN doc d ON d.`category_id` = c2.`id`
+        WHERE c1.`fid` IS NULL
+        <if test="categoryId != null">AND c1.`id` = #{categoryId}</if>
+        <if test="searchTime != null">AND DATE(d.`create_time`) = DATE(#{searchTime})</if>
+    </select>
+
+</mapper>

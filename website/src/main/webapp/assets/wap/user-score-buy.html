@@ -1,0 +1,107 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=0" />
+<link rel="stylesheet" type="text/css" href="../css/public.css">
+<link rel="stylesheet" type="text/css" href="../css/style_mobile.css">
+<script type="text/javascript" src="../js/min/jquery-1.11.2.min.js"></script>
+<script type="text/javascript" src="../js/app.js"></script>
+<script>
+$(function(){
+	$('.buy-payment li,.buy-list li').click(function(){
+		if($(this).hasClass('chk')){
+			$(this).removeClass('chk');
+		}else{
+			$(this).addClass('chk').siblings().removeClass('chk');
+		}
+	})
+})
+</script>
+<title></title>
+</head>
+
+<body>
+<div class="container">
+	<header>
+    	<a id="prevPage" class="prev" href="javascript:history.back()">
+        	<i class="fa fa-chevron-left"></i>
+        </a>
+        
+    	<div class="menu"></div>
+    	
+    	<div class="title">积分充值</div>
+    </header>
+    
+    <div class="content clearfix">
+    	<div class="score-buy">
+	    	<div class="buy-header">快速充值</div>
+	        <ul class="buy-list clearfix">
+	        	<li>
+	        		<div class="buy-box">
+	        			<div class="buy-title">10分</div>
+	        			<div class="buy-meta">10.00元</div>
+	        		</div>
+	        	</li>
+	        	<li>
+	        		<div class="buy-box">
+	        			<div class="buy-title">20分</div>
+	        			<div class="buy-meta">20.00元</div>
+	        		</div>
+	        	</li>
+	        	<li>
+	        		<div class="buy-box">
+	        			<div class="buy-title">30分</div>
+	        			<div class="buy-meta">30.00元</div>
+	        		</div>
+	        	</li>
+	        	<li>
+	        		<div class="buy-box">
+	        			<div class="buy-title">50分</div>
+	        			<div class="buy-meta">50.00元</div>
+	        		</div>
+	        	</li>
+	        	<li>
+	        		<div class="buy-box">
+	        			<div class="buy-title">100分</div>
+	        			<div class="buy-meta">100.00元</div>
+	        		</div>
+	        	</li>
+	        	<li>
+	        		<div class="buy-box">
+	        			<div class="buy-title">200分</div>
+	        			<div class="buy-meta">200.00元</div>
+	        		</div>
+	        	</li>
+	        </ul>
+	        
+	        <div class="buy-header">自定义充值</div>
+	        <div class="buy-wrapper">
+	        	<input type="text" class="input-full ui-input-wap" placeholder="请输入充值金额，单位/元" />
+	        </div>
+            
+            <div class="buy-header">选择支付方式</div>
+	        <div class="buy-wrapper">
+	        	<ul class="buy-payment clearfix">
+                    <li class="alipay">
+                        <div class="mask"></div>
+                    </li>
+                    <li class="wechatpay">
+                        <div class="mask"></div>
+                    </li>
+                </ul>
+	        </div>
+	        
+	        <div class="buy-wrapper" style="padding-bottom: 30px;">
+	        	<button class="button btn-green btn-large input-full" type="button">确认支付</button>
+	        	<button class="button btn-light btn-large input-full margintop15" type="button">返回</button>
+	        </div>
+        </div>
+    </div>
+    
+    <footer>
+    	
+    </footer>
+</div>
+</body>
+</html>

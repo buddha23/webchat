@@ -1,0 +1,29 @@
+<div class="am-cf am-padding">
+    <div class="am-fl am-cf">
+        <strong class="am-text-primary am-text-lg">系统错误日志</strong> /
+        <small>错误日志管理</small>
+    </div>
+</div>
+
+<div class="am-g" ng-controller="logDetailCtrl">
+    <div class="am-u-sm-12 am-padding-bottom-lg">
+        <div class="am-tab-panel am-fade am-active am-in">
+            <h1>{{data.message}}</h1>
+            <p>{{data.platform}} - {{data.occurTime | date:'yyyy-MM-dd HH:mm'}}</p>
+            <hr>
+            <div>
+                <span>URL: {{data.url}}</span><br>
+                <code>PARAMS: {{data.params}}</code><br>
+                <div ng-bind-html="data.detail|trusthtml"></div>
+                <!--{{data.detail}}-->
+            </div>
+        </div>
+        <div class="am-margin-top-lg">
+            <a class="am-btn am-btn-secondary am-btn-xs" ui-sref="systemLogList()">返回列表</a>
+            <button class="am-btn am-btn-danger am-btn-xs" ng-click="delete()">删除日志</button>
+        </div>
+        <div class="am-fr">
+            <ng-pager page-change="getCommentsPage(page)" page-data="comments" items="9"></ng-pager>
+        </div>
+    </div>
+</div>

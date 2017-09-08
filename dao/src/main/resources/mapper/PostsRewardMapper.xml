@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.lld360.cnc.repository.PostsRewardDao">
+
+    <insert id="create" parameterType="com.lld360.cnc.model.PostsReward" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO `posts_reward` (
+           `posts_id`,
+           `type`,
+           `amount`,
+           `state`,
+           `finish_time`
+        ) VALUES(
+            #{postsId},
+            #{type},
+            #{amount},
+            #{state},
+            #{finishTime}
+        );
+    </insert>
+
+    <update id="update" parameterType="com.lld360.cnc.model.PostsReward">
+        UPDATE
+          `posts_reward`
+        <set>
+            <if test="state != null">`state` = #{state},</if>
+            <if test="state != null">`comment_id` = #{commentId},</if>
+            <if test="state != null">`finish_time` = #{finishTime}</if>
+        </set>
+        WHERE `posts_id` = #{postsId} ;
+    </update>
+
+</mapper>

@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lld360.cnc.repository.UserStatementDao">
+
+    <!-- 定义全局查询的SQL变量语句 -->
+    <sql id="searchCondition">
+        <where>
+            <if test="userId != null">AND user_id = #{userId}</if>
+            <if test="tradeTime != null">AND trade_time = #{tradeTime}</if>
+            <if test="updateTime != null">AND update_time = #{updateTime}</if>
+            <if test="tradeAmount != null">AND trade_amount = #{tradeAmount}</if>
+            <if test="tradeState != null and tradeState != ''">AND trade_state LIKE "%"#{tradeState}"%"</if>
+            <if test="tradeRemark != null and tradeRemark != ''">AND trade_remark LIKE "%"#{tradeRemark}"%"</if>
+            <if test="innerTradeNo != null and innerTradeNo != ''">AND inner_trade_no LIKE "%"#{innerTradeNo}"%"</if>
+            <if test="tradeNo != null and tradeNo != ''">AND trade_no LIKE "%"#{tradeNo}"%"</if>
+            <if test="payType != null and payType != ''">AND pay_type LIKE "%"#{payType}"%"</if>
+        </where>
+    </sql>
+
+    <sql id="searchDetailCondition">
+        <where>
+            <if test="userId != null">AND user_id = #{userId}</if>
+            <if test="searchkey != null">AND u.nickname like "%"#{searchkey}"%" OR u.mobile like "%"#{searchkey}"%"</if>
+            <if test="beginTime != null and beginTime != ''">AND trade_time > #{beginTime}</if>
+            <if test="endTime != null and endTime != ''">AND #{endTime} > trade_time</if>
+            <if test="tradeType != null and tradeType != '' and tradeType > 0">AND us.trade_type = #{tradeType}</if>
+        </where>
+    </sql>
+
+    <!-- 通用查询结果列-->
+    <sql id="columns">
+        <![CDATA[
+        id,
+        user_id,
+        trade_time,
+        trade_amount,
+        trade_state,
+        trade_remark,
+        inner_trade_no,
+        trade_no,
+        pay_type,
+        buy_score,
+        present_score,
+        update_time,
+        trade_type
+        ]]>
+    </sql>
+
+    <sql id="selectColumns">
+        SELECT
+        <include refid="columns"/>
+        FROM user_statement
+    </sql>
+
+    <select id="find" parameterType="java.lang.Long" resultMap="userStatementMap">
+        <include refid="selectColumns"/>
+        WHERE inner_trade_no = #{innerTradeNo}
+    </select>
+
+    <select id="findByInnerTradeNo" parameterType="string" resultMap="userStatementMap">
+        <include refid="selectColumns"/>
+        WHERE inner_trade_no = #{innerTradeNo}
+    </select>
+
+    <insert id="create" parameterType="com.lld360.cnc.model.UserStatement" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO user_statement (
+            user_id,
+            trade_time,
+            trade_amount,
+            trade_state,
+            trade_remark,
+            inner_trade_no,
+            trade_no,
+            pay_type,
+            buy_score,
+            present_score,
+            update_time,
+            trade_type
+        ) VALUES (
+            #{userId},
+            #{tradeTime},
+            #{tradeAmount},
+            #{tradeState},
+            #{tradeRemark},
+            #{innerTradeNo},
+            #{tradeNo},
+            #{payType},
+            #{buyScore},
+            #{presentScore},
+            now(),
+            #{tradeType}
+        )
+    </insert>
+
+    <update id="update" parameterType="com.lld360.cnc.model.UserStatement">
+        UPDATE user_statement
+        <trim prefix="set">
+            <if test="tradeTime != null">trade_time = #{tradeTime},</if>
+            <if test="tradeAmount != null">trade_amount = #{tradeAmount},</if>
+            <if test="tradeState != null">trade_state = #{tradeState},</if>
+            <if test="tradeRemark != null">trade_remark = #{tradeRemark},</if>
+            <if test="innerTradeNo != null">inner_trade_no = #{innerTradeNo},</if>
+            <if test="tradeNo != null">trade_no = #{tradeNo},</if>
+            <if test="payType != null">pay_type = #{payType},</if>
+            <if test="buyScore != null">buy_score = #{buyScore},</if>
+            <if test="presentScore != null">present_score = #{presentScore},</if>
+        </trim>
+        update_time = now() WHERE id = #{id} AND update_time = #{updateTime};
+    </update>
+
+    <delete id="delete" parameterType="java.lang.Long">
+        DELETE FROM user_statement WHERE id = #{id}
+    </delete>
+
+    <select id="count" parameterType="map" resultType="long">
+        SELECT count(1)
+        FROM user_statement
+        <include refid="searchCondition"/>
+    </select>
+
+    <select id="search" parameterType="map" resultMap="userStatementMap">
+        <include refid="selectColumns"/>
+        <include refid="searchCondition"/>
+        <if test="limit != null">LIMIT #{limit} OFFSET #{offset}</if>
+    </select>
+
+    <select id="searchDetail" parameterType="map" resultMap="userStatementMap">
+        SELECT us.*, u.`nickname`, u.`mobile`
+        FROM user_statement us
+        LEFT JOIN user u ON us.`user_id` = u.`id`
+        <include refid="searchDetailCondition"/>
+        ORDER BY us.`update_time` DESC
+        <if test="limit != null">LIMIT #{limit} OFFSET #{offset}</if>
+    </select>
+
+    <select id="count4Detail" parameterType="map" resultType="long">
+        SELECT count(1)
+        FROM user_statement us
+        LEFT JOIN user u ON us.`user_id` = u.`id`
+        <include refid="searchDetailCondition"/>
+    </select>
+    
+    <select id="searchTotleMoney" parameterType="map" resultType="long">
+        SELECT
+          IFNULL(SUM(trade_amount), 0)
+        FROM `user_statement`
+        <where>
+            <if test="userId != null">AND user_id = #{userId}</if>
+            <if test="searchTime != null">AND DATE(`trade_time`) = DATE(#{searchTime})</if>
+        </where>
+    </select>
+
+    <select id="dailyPayCount" parameterType="date" resultType="decimal">
+        SELECT
+          IFNULL(SUM(`trade_amount`), 0) amount
+        FROM
+          `user_statement`
+        WHERE DATE(`trade_time`) = DATE(#{date})
+    </select>
+
+    <select id="monthPayCount" parameterType="date" resultType="decimal">
+        SELECT
+        IFNULL(SUM(`trade_amount`), 0) amount
+        FROM
+        `user_statement`
+        WHERE MONTH(`trade_time`) = MONTH(#{date})
+    </select>
+
+    <!-- 结果集mapper -->
+    <resultMap id="userStatementMap" type="com.lld360.cnc.dto.UserStatementDto">
+        <result property="id" column="id"/>
+        <result property="userId" column="user_id"/>
+        <result property="tradeTime" column="trade_time"/>
+        <result property="tradeAmount" column="trade_amount"/>
+        <result property="tradeState" column="trade_state"/>
+        <result property="tradeRemark" column="trade_remark"/>
+        <result property="innerTradeNo" column="inner_trade_no"/>
+        <result property="tradeNo" column="trade_no"/>
+        <result property="payType" column="pay_type"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="buyScore" column="buy_score"/>
+        <result property="presentScore" column="present_score"/>
+        <result property="nickName" column="nickname"/>
+        <result property="mobile" column="mobile"/>
+        <result property="tradeType" column="trade_type"/>
+    </resultMap>
+
+</mapper>

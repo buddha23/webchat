@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lld360.cnc.repository.DailyStatisticsReportDao">
+    <sql id="searchCondition">
+        <where>
+            <if test="beginTime != null">AND statistics_date &gt;= #{beginTime}</if>
+            <if test="endTime != null">AND statistics_date &lt;= #{endTime}</if>
+            <if test="statisticsDate != null">AND DATE(statistics_date) = DATE(#{statisticsDate})</if>
+        </where>
+    </sql>
+
+    <insert id="create" parameterType="com.lld360.cnc.model.DailyStatisticsReport">
+        INSERT INTO daily_statistics_report(
+            statistics_date,
+            pc_logins,
+            mobile_logins,
+            pc_regists,
+            mobile_regists,
+            score_buy,
+            course_daily_views,
+            course_totle_views,
+            post_daily_views,
+            post_totle_views,
+            post_daily_increments,
+            comment_daily_increment,
+            doc_daily_active,
+            posts_daily_active,
+            soft_daily_active,
+            video_daily_active,
+            course_daily_active
+        )VALUES (
+            #{statisticsDate},
+            #{pcLogins},
+            #{mobileLogins},
+            #{pcRegists},
+            #{mobileRegists},
+            #{scoreBuy},
+            #{courseDailyViews},
+            #{courseTotleViews},
+            #{postDailyViews},
+            #{postTotleViews},
+            #{postDailyIncrements},
+            #{commentDailyIncrement},
+            #{docDailyActive},
+            #{postsDailyActive},
+            #{softDailyActive},
+            #{videoDailyActive},
+            #{courseDailyActive}
+        )
+    </insert>
+
+    <select id="search" parameterType="map" resultMap="resultMap">
+        SELECT *
+        FROM `daily_statistics_report`
+        <include refid="searchCondition"/>
+        ORDER BY `statistics_date`
+    </select>
+
+    <select id="searchPostsReport" parameterType="map" resultMap="resultMap">
+        SELECT
+        ${units} AS lookTime,
+        SUM(course_daily_views) course_daily_views,
+        SUM(post_daily_views) post_daily_views,
+        SUM(post_daily_increments) post_daily_increments,
+        SUM(comment_daily_increment) comment_daily_increment,
+        SUM(doc_daily_active) doc_daily_active,
+        SUM(posts_daily_active) posts_daily_active,
+        SUM(soft_daily_active) soft_daily_active,
+        SUM(video_daily_active) video_daily_active,
+        SUM(course_daily_active) course_daily_active,
+        SUM(`video_daily_active`) video_daily_active
+        FROM `daily_statistics_report`
+        <include refid="searchCondition"/>
+        GROUP BY lookTime
+        ORDER BY lookTime ASC
+    </select>
+
+    <select id="searchLastReport" resultMap="resultMap">
+        SELECT *
+        FROM `daily_statistics_report`
+        ORDER BY `statistics_date` DESC
+        LIMIT 1 OFFSET 0
+    </select>
+
+    <!-- 结果集mapper -->
+    <resultMap id="resultMap" type="com.lld360.cnc.model.DailyStatisticsReport">
+        <result property="statisticsDate" column="statistics_date"/>
+        <result property="pcLogins" column="pc_logins"/>
+        <result property="mobileLogins" column="mobile_logins"/>
+        <result property="pcRegists" column="pc_regists"/>
+        <result property="mobileRegists" column="mobile_regists"/>
+        <result property="scoreBuy" column="score_buy"/>
+        <result property="courseDailyViews" column="course_daily_views"/>
+        <result property="courseTotleViews" column="course_totle_views"/>
+        <result property="postDailyViews" column="post_daily_views"/>
+        <result property="postTotleViews" column="post_totle_views"/>
+        <result property="postDailyIncrements" column="post_daily_increments"/>
+        <result property="commentDailyIncrement" column="comment_daily_increment"/>
+        <result property="docDailyActive" column="doc_daily_active"/>
+        <result property="postsDailyActive" column="posts_daily_active"/>
+        <result property="softDailyActive" column="soft_daily_active"/>
+        <result property="videoDailyActive" column="video_daily_active"/>
+        <result property="courseDailyActive" column="course_daily_active"/>
+        <result property="lookTime" column="lookTime"/>
+    </resultMap>
+</mapper>

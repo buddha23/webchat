@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.lld360.cnc.repository.VodBuysDao">
+
+    <!-- 定义全局查询的SQL变量语句 -->
+    <sql id="searchCondition">
+        <where>
+            <if test="volumeId != null">AND vb.volume_id = #{volumeId}</if>
+            <if test="userId != null">AND vb.user_id = #{userId}</if>
+            <if test="costScore != null">AND vb.cost_score = #{costScore}</if>
+            <if test="createTime != null">AND vb.create_time = #{createTime}</if>
+            <if test="buyType != null and buyType != 0">AND vb.type = #{buyType}</if>
+            <if test="key != null">AND v.`name` REGEXP #{key}</if>
+        </where>
+    </sql>
+
+    <!-- 用于select查询公用抽取的列 -->
+    <sql id="columns">
+	    <![CDATA[
+        vb.id,
+        vb.volume_id,
+        vb.user_id,
+        vb.cost_score,
+        vb.create_time,
+        vb.remark,
+        vb.`type`
+        ]]>
+	</sql>
+
+    <select id="search" parameterType="map" resultMap="vodbuysMap">
+        SELECT
+        <include refid="columns"/>,
+        IFNULL(u.`nickname`, u.`name`) userName,
+        v.`name` volumeName
+        FROM vod_buys vb
+        LEFT JOIN `user` u ON vb.`user_id` = u.`id`
+        LEFT JOIN `vod_volumes` v ON vb.`volume_id` = v.`id`
+        <include refid="searchCondition"/>
+        ORDER BY vb.`create_time` DESC
+        <if test="limit != null">LIMIT #{limit}</if>
+        <if test="offset != null">OFFSET #{offset}</if>
+    </select>
+
+    <select id="count" parameterType="map" resultType="long">
+        SELECT count(1)
+        FROM vod_buys vb
+        LEFT JOIN `user` u ON vb.`user_id` = u.`id`
+        LEFT JOIN `vod_volumes` v ON vb.`volume_id` = v.`id`
+        <include refid="searchCondition"/>
+    </select>
+
+    <select id="find" parameterType="long" resultMap="vodbuysMap">
+        SELECT
+        <include refid="columns"/>
+        FROM vod_buys vb
+        WHERE vb.id = #{id}
+    </select>
+
+    <insert id="create" parameterType="com.lld360.cnc.model.VodBuys" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO
+        vod_buys (
+            volume_id,
+            user_id,
+            cost_score,
+            create_time,
+            remark,
+            `type`
+        ) VALUES (
+            #{volumeId},
+            #{userId},
+            #{costScore},
+            #{createTime},
+            #{remark},
+            #{type}
+        )
+    </insert>
+
+    <update id="update" parameterType="com.lld360.cnc.model.VodBuys">
+        UPDATE vod_buys
+        <set>
+            <if test="volumeId != null">volume_id = #{volumeId},</if>
+            <if test="userId != null">user_id = #{userId},</if>
+            <if test="costScore != null">cost_score = #{costScore},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            <if test="type != null">`type` = #{type},</if>
+        </set>
+        WHERE id = #{id};
+    </update>
+
+    <delete id="delete" parameterType="long">
+        DELETE FROM vod_buys
+        WHERE id = #{id}
+    </delete>
+
+    <select id="hasBuy" resultType="java.lang.Boolean">
+        SELECT COUNT(id) > 0 FROM vod_buys WHERE user_id = #{userId} AND volume_id = #{volumeId}
+    </select>
+
+    <!-- 结果集mapper -->
+    <resultMap id="vodbuysMap" type="com.lld360.cnc.model.VodBuys">
+        <result property="id" column="id"/>
+        <result property="volumeId" column="volume_id"/>
+        <result property="userId" column="user_id"/>
+        <result property="costScore" column="cost_score"/>
+        <result property="createTime" column="create_time"/>
+        <result property="remark" column="remark"/>
+        <result property="type" column="type"/>
+        <result property="volumeName" column="volumeName"/>
+        <result property="userName" column="userName"/>
+    </resultMap>
+
+</mapper> 

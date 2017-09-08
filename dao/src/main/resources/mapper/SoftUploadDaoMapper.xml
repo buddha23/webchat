@@ -1,0 +1,320 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lld360.cnc.repository.SoftUploadDao">
+   <!-- 定义全局查询的SQL变量语句 -->
+    <sql id="searchCondition">
+        <where>
+            <if test="title != null">AND d.title LIKE "%"#{title}"%"</if>
+            <if test="softCategoryId != null">AND d.soft_category_id = #{categoryId}</if>
+            <if test="costScore != null">AND d.cost_score = #{costScore}</if>
+            <if test="uploader != null">AND d.uploader = #{uploader}</if>
+            <if test="uploaderType != null">AND d.uploader_type = #{uploaderType}</if>
+            <if test="state != null">AND d.state = #{state}</if>
+            <if test="states != null">
+                <foreach collection="states" item="s" open="AND d.state IN(" separator="," close=")">#{s}</foreach>
+            </if>
+            <if test="content != null">
+                AND (u.nickname REGEXP #{content} OR u.`name` REGEXP #{content} OR d.title REGEXP #{content})
+            </if>
+            <if test="c1 != null">
+                AND c.fid=#{c1}
+            </if>
+            <if test="c2 != null">
+                AND c.id=#{c2}
+            </if>
+        </where>
+    </sql>
+
+    <sql id="columns">
+	    <![CDATA[
+        d.uuid,
+        d.title,
+        d.soft_category_id,
+        d.cost_score,
+        d.views,
+        d.downloads,
+        d.uploader,
+        d.uploader_type,
+        d.description,
+        d.specification,
+        d.create_time,
+        d.state
+        ]]>
+	</sql>
+	
+	<sql id="columnsWithCategory">
+        <include refid="columns"/>,
+        c.id cid,
+        c.fid,
+        c.name cname,
+        c.icon cicon
+    </sql>
+	 <sql id="columnsWithCategoryWeb">
+        <include refid="columns"/>,
+        c.id cid,
+        c.fid,
+        c.name cname,
+        c.icon cicon,
+        u.id uid,
+        u.nickname uNickname,
+        u.avatar uAvatar,
+        IFNULL(u.nickname,"系统管理员")as uName
+    </sql>
+    
+      <sql id="sortByKeywordsCount">
+        <if test="contentSort != null">
+            , weight
+            FROM (
+            SELECT *,
+            <foreach collection="contentSort" index="index" item="content_key" open="" separator="+" close="">
+                CASE WHEN d.title LIKE "%"#{content_key}"%" THEN 1 ELSE 0 END
+            </foreach>
+            AS weight
+            FROM soft_upload d
+            ) d
+        </if>
+        <if test="contentSort == null">
+            ,0 AS weight FROM soft_upload d
+        </if>
+    </sql>
+    
+       <!-- admin文库管理/文档列表、报表/文档下载统计这两个地方使用这个查询条件 -->
+    <sql id="docReportSearchCondition">
+        <where>
+            <if test="content != null">AND (d.title LIKE "%"#{content}"%")</if>
+            <if test="title != null">AND d.title LIKE "%"#{title}"%"</if>
+            <if test="softCategoryId != null">AND d.soft_category_id = #{softCategoryId}</if>
+            <if test="costScore != null">AND d.cost_score = #{costScore}</if>
+            <if test="uploader != null">AND d.uploader = #{uploader}</if>
+            <if test="uploaderType != null">AND d.uploader_type = #{uploaderType}</if>
+            <if test="state != null and state != 0">AND d.state = #{state}</if>
+            <if test="unstate != null">AND d.state != #{unstate}</if>
+            <if test="beginTime != null">AND dd.create_time &gt;= #{beginTime}</if>
+            <if test="endTime != null">AND dd.create_time &lt;= #{endTime}</if>
+        </where>
+    </sql>
+    
+ <select id="find" parameterType="long" resultMap="softMap">
+        SELECT
+        <include refid="columnsWithCategory"/>
+        FROM soft_upload d
+        LEFT JOIN soft_category c ON d.soft_category_id=c.id
+        WHERE d.uuid = #{uuId}
+  </select>
+  
+  
+  
+    <insert id="create" parameterType="com.lld360.cnc.model.SoftUpload">
+        INSERT INTO
+            soft_upload (
+                uuid,
+                title,
+                soft_category_id,
+                cost_score,
+                views,
+                downloads,
+                uploader,
+                uploader_type,
+                description,
+                specification,
+                create_time,
+                state
+            ) VALUES (
+            #{uuId},
+            #{title},
+            #{softCategoryId},
+            #{costScore},
+            #{views},
+            #{downloads},
+            #{uploader},
+            #{uploaderType},
+            #{description},
+            #{specification},
+            #{createTime},
+            #{state}
+        )
+    </insert>
+    
+   <update id="update" parameterType="com.lld360.cnc.model.SoftUpload">
+        UPDATE soft_upload
+        <set>
+            <if test="title != null">title = #{title},</if>
+            <if test="softCategoryId != null">soft_category_id = #{softCategoryId},</if>
+            <if test="costScore != null">cost_score = #{costScore},</if>
+            <if test="views != null">views = #{views},</if>
+            <if test="downloads != null">downloads = #{downloads},</if>
+            <if test="uploader != null">uploader = #{uploader},</if>
+            <if test="uploaderType != null">uploader_type = #{uploaderType},</if>
+            <if test="description != null">description = #{description},</if>
+            <if test="specification != null">specification = #{specification},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="state != null">state = #{state},</if>
+        </set>
+        WHERE uuid = #{uuId};
+    </update>
+    
+     <select id="countWeb" parameterType="map" resultType="long">
+        SELECT count(DISTINCT d.uuid)
+        FROM soft_upload d
+        LEFT JOIN soft_category c ON d.soft_category_id=c.id
+        LEFT JOIN `user` u ON u.id =d.uploader
+        <include refid="searchCondition"/>
+        AND d.state != 9
+    </select>
+    
+       <select id="searchWeb" parameterType="map" resultMap="softMap">
+        SELECT
+        <include refid="columnsWithCategoryWeb"/>
+        <include refid="sortByKeywordsCount"/>
+        LEFT JOIN soft_category c ON d.soft_category_id=c.id
+        LEFT JOIN `user` u ON u.id =d.uploader AND d.uploader_type = 2
+        <include refid="searchCondition"/>
+        ORDER BY <if test="sortByCheck != null"> d.`state` DESC,</if> weight DESC
+        <if test="hotType == 'hotType'">, downloads DESC,d.create_time DESC</if>
+        <if test="limit != null">LIMIT #{limit}</if>
+        <if test="offset != null">OFFSET #{offset}</if>
+    </select>
+    
+    <select id="searchForIndex" parameterType="map" resultMap="softMap">
+        SELECT
+        <include refid="columnsWithCategory"/>,
+        u.name uName,
+        u.nickname uNickname,
+        u.avatar uAvatar
+        FROM soft_upload d
+        LEFT JOIN user u ON d.uploader=u.id
+        LEFT JOIN soft_category c ON d.soft_category_id=c.id
+        WHERE d.state = #{state}
+        <if test="sortBy != null and sortBy != ''">ORDER BY d.${sortBy} DESC</if>
+        <if test="limit != null">LIMIT #{limit}</if>
+        <if test="offset != null">OFFSET #{offset}</if>
+    </select>
+    
+    
+      <select id="findWeb" parameterType="long" resultMap="softMap">
+        SELECT
+        <include refid="columnsWithCategoryWeb"/>
+        FROM soft_upload d
+        LEFT JOIN soft_category c ON d.soft_category_id=c.id
+        LEFT JOIN `user` u ON u.id =d.uploader
+        WHERE d.uuid = #{uuId}
+    </select>
+    
+        <!--获取用户的下载文档-->
+    <select id="getDownloads" parameterType="map" resultType="com.lld360.cnc.dto.SoftUploadDto">
+        SELECT
+        d.uuid uuId,
+        d.title,
+        d.soft_category_id softCategoryId,
+        d.cost_score costScore,
+        d.views,
+        d.uploader,
+        d.uploader_type uploaderType,
+        d.create_time createTime,
+        dd.create_time downloadTime,
+        d.state,
+        IFNULL(u.`nickname`, '系统管理员') uploaderName
+        FROM soft_download dd
+        JOIN soft_upload d ON dd.uuid= d.uuid
+        LEFT JOIN `user` u ON d.uploader = u.id AND d.uploader_type = 2
+        WHERE dd.user_id = #{userId} AND d.state != 9
+        <if test="limit != null">LIMIT #{limit}</if>
+        <if test="offset != null">OFFSET #{offset}</if>
+    </select>
+    
+     <select id="search" parameterType="map" resultMap="softMap">
+        SELECT
+        <include refid="columnsWithCategoryWeb"/>
+        FROM soft_upload d
+        LEFT JOIN soft_category c ON d.soft_category_id=c.id
+        LEFT JOIN user u ON u.id = d.`uploader`
+        <include refid="docReportSearchCondition"/>
+        GROUP BY d.uuid
+        <if test="sortBy == 'createTime'">ORDER BY d.create_time ${sortType}</if>
+        <if test="sortBy == 'views'">ORDER BY d.${sortBy} ${sortType}</if>
+        <if test="sortBy == 'downloads'">ORDER BY downloads ${sortType}</if>
+        <if test="limit != null">LIMIT #{limit}</if>
+        <if test="offset != null">OFFSET #{offset}</if>
+    </select>
+    
+     <!--获取用户的收藏文档-->
+    <select id="getCollects" parameterType="map" resultType="com.lld360.cnc.dto.SoftUploadDto">
+        SELECT
+        d.uuid uuId,
+        d.title,
+        d.soft_category_id softCategoryId,
+        d.cost_score costScore,
+        d.views,
+        d.uploader,
+        d.uploader_type uploaderType,
+        d.create_time createTime,
+        dc.create_time collectTime,
+        d.state,
+        IFNULL(u.`nickname`, '系统管理员') uploaderName
+        FROM soft_collect dc
+        JOIN soft_upload d ON dc.uuid = d.uuid
+        LEFT JOIN `user` u ON d.uploader = u.id AND d.uploader_type = 2
+        WHERE dc.user_id = #{userId} AND d.state != 9
+        <if test="limit != null">LIMIT #{limit}</if>
+        <if test="offset != null">OFFSET #{offset}</if>
+    </select>
+    
+       <select id="sumScoreOfSoft" resultType="int" parameterType="long">
+         SELECT IFNULL(SUM(score_change), 0)
+                   FROM user_score_history
+                   WHERE `type` = 10 AND object_id = #{uuId} 
+    </select>
+    
+    <delete id="delete" parameterType="long">
+        DELETE FROM soft_upload
+        WHERE uuid = #{uuId}
+      </delete>
+      
+      <select id="count" parameterType="map" resultType="long">
+        SELECT count(DISTINCT d.uuid)
+        FROM soft_upload d
+        LEFT JOIN soft_category c ON d.soft_category_id=c.id
+        LEFT JOIN user u ON u.id = d.`uploader`
+        <include refid="docReportSearchCondition"/>
+    </select>
+    
+    <update id="updateSoftState">
+        UPDATE soft_upload
+        SET state = #{state}
+        WHERE uuid = #{uuId}
+    </update>
+
+
+    <select id="countUploadByUserAndMonth" resultType="java.lang.Long">
+        SELECT COUNT(1)
+        FROM soft_upload
+        WHERE uploader_type = 2 AND uploader = #{userId} AND MONTH(create_time) = MONTH(#{month}) AND state = 1
+    </select>
+  <!-- 结果集mapper -->
+    <resultMap id="softMap" type="com.lld360.cnc.model.SoftUpload">
+        <id property="uuId" column="uuid"/>
+        <result property="title" column="title"/>
+        <result property="softCategoryId" column="soft_category_id"/>
+        <result property="costScore" column="cost_score"/>
+        <result property="views" column="views"/>
+        <result property="downloads" column="downloads"/>
+        <result property="uploader" column="uploader"/>
+        <result property="uploaderType" column="uploader_type"/>
+        <result property="description" column="description"/>
+        <result property="specification" column="specification"/>
+        <result property="createTime" column="create_time"/>
+        <result property="state" column="state"/> 
+        <association property="softCategory" javaType="com.lld360.cnc.model.SoftCategory">
+            <id property="id" column="cid"/>
+            <result property="fid" column="fid"/>
+            <result property="name" column="cname"/>
+            <result property="icon" column="cicon"/>
+        </association>
+        <association property="user" javaType="com.lld360.cnc.model.User">
+            <id property="id" column="uid"/>
+            <result property="name" column="uName"/>
+            <result property="nickname" column="uNickname"/>
+            <result property="avatar" column="uAvatar"/>
+        </association>
+    </resultMap>
+</mapper>

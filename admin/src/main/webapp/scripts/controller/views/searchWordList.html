@@ -1,0 +1,69 @@
+<div class="am-cf am-padding">
+    <div class="am-fl am-cf">
+        <strong class="am-text-primary am-text-lg">词条管理</strong> /
+        <small>搜索词条列表</small>
+    </div>
+</div>
+
+<div class="am-g" ng-controller="searchWordListCtrl">
+    <div class="am-u-sm-12 am-u-md-9">
+        <div class="am-btn-toolbar">
+            <div class="am-btn-group am-btn-group-xs">
+                <button type="button" ng-click="doBatchClearZero()" class="am-btn am-btn-default"><span class="am-icon-trash-o"></span> 批量清零</button>
+            </div>
+        </div>
+    </div>
+    <div class="am-u-sm-12 am-u-md-3">
+        <div class="am-input-group am-input-group-sm">
+
+
+            <input type="search" class="am-form-field" ng-model="searchKey" ng-keypress="onSearchKeyPress($event)">
+            <span class="am-input-group-btn">
+                <button class="am-btn am-btn-default" type="button" ng-click="doSearch()">搜索</button>
+
+            </span>
+
+        </div>
+    </div>
+
+    <div class="am-u-sm-12">
+        <table class="am-table am-table-striped am-table-hover table-main">
+            <thead>
+            <tr>
+                <th class="table-check"><input type="checkbox" ng-click="all(checkAll,data.content)"  ng-model="checkAll"></th>
+                <th>ID</th>
+                <th>名称</th>
+                <th>搜索量</th>
+                <th>操作</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr ng-repeat="w in data.content">
+                <td><input type="checkbox"  ng-model="isChecked"  ng-click="chk(w.id,isChecked)"  ng-checked="checkAll"></td>
+                <td>{{w.id}}</td>
+                <td>{{w.name}}</td>
+                <td>{{w.counts}}</td>
+                <td>
+                    <div class="am-btn-toolbar">
+                        <div class="am-btn-group am-btn-group-xs">
+
+                            <button class="am-btn am-btn-default am-btn-xs am-text-danger am-hide-sm-only" ng-click="doOneClearZero(w)">
+                                <span class="am-icon-trash-o"></span>清零
+                            </button>
+                        </div>
+                    </div>
+                </td>
+
+            </tr>
+            </tbody>
+        </table>
+        <div>
+            <div class="am-fl">
+
+            </div>
+            <div class="am-fr">
+                <ng-pager page-change="getPage(page)" page-data="data" items="11"></ng-pager>
+            </div>
+        </div>
+    </div>
+</div>

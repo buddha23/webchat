@@ -1,0 +1,54 @@
+<div class="am-cf am-padding">
+    <div class="am-fl am-cf">
+        <strong class="am-text-primary am-text-lg">用户管理</strong> /
+        <small>反馈详情</small>
+    </div>
+</div>
+
+<div class="am-g" ng-controller="userSuggestDetailCtrl">
+    <div class="am-u-sm-12 am-padding-bottom-lg" ng-class="{'error':data.state===-1}">
+        <div class="am-tab-panel am-fade am-active am-in" id="tab2">
+            <form class="am-form" name="userForm">
+
+                <div class="am-g am-margin-top">
+                    <div class="am-u-sm-4 am-u-md-2 am-text-right">
+                        用户
+                    </div>
+                    <div class="am-u-sm-8 am-u-md-4">
+                        <a href="#/user/{{data.userId}}">{{data.uNickname}}</a>
+                    </div>
+                    <div class="am-u-sm-4 am-u-md-6"></div>
+                    <!--名字也不咋的嘛  O(∩_∩)O~-->
+                </div>
+                <hr>
+                <div class="am-g am-margin-top-sm">
+                    <div class="am-u-sm-4 am-u-md-2 am-text-right admin-form-text">
+                        反馈内容
+                    </div>
+                    <div class="am-u-sm-4 am-u-md-4">
+                        <div ng-bind-html="data.content|trusthtml"></div>
+                    </div>
+                    <div class="am-u-sm-4 am-u-md-6"></div>
+                    <!--这家伙问的都是些什么问题啊? o(╯□╰)o-->
+                </div>
+                <hr>
+                <div class="am-g am-margin-top-sm">
+                    <div class="am-u-sm-4 am-u-md-2 am-text-right admin-form-text">
+                        回复内容
+                    </div>
+                    <div class="am-u-sm-4 am-u-md-4">
+                        <textarea rows="10" ng-model="data.reply"></textarea>
+                    </div>
+                    <div class="am-u-sm-4 am-u-md-6"></div>
+                    <!--随便给他回几句吧 ╮(╯_╰)╭-->
+                </div>
+                <div class="am-g am-margin-top">
+                    <div class="am-u-md-offset-2">
+                        <button ng-if="data.state!==-1 && (adminPermissions.indexOf('user:w') != -1 || admin.isRoot)" type="button" class="am-btn am-btn-primary am-btn-xs" ng-click="save()" ng-disabled="userForm.$invalid">提交保存</button>
+                        <a class="am-btn am-btn-warning am-btn-xs" ui-sref="userSuggest()">返回列表</a>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

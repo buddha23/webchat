@@ -1,0 +1,175 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=0" />
+<title></title>
+<link rel="stylesheet" type="text/css" href="../css/public.css">
+<link rel="stylesheet" type="text/css" href="../css/style_mobile.css">
+<link rel="stylesheet" type="text/css" href="../css/swiper.css">
+<link rel="stylesheet" href="../plugins/froalaEditor/css/froala_editor.pkgd.min.css" type="text/css">
+<script type="text/javascript" src="../js/min/jquery-1.11.2.min.js"></script>
+<script type="text/javascript" src="../js/min/swiper.jquery.min.js"></script>
+<script type="text/javascript" src="../js/app.js"></script>
+<!-- froala editor -->
+<script src="../plugins/froalaEditor/js/froala_editor.min.js"></script>
+<script src="../plugins/froalaEditor/js/languages/zh_cn.js"></script>
+<script src="../plugins/froalaEditor/js/plugins/align.min.js"></script>
+<script src="../plugins/froalaEditor/js/plugins/colors.min.js"></script>
+<script src="../plugins/froalaEditor/js/plugins/draggable.min.js"></script>
+<script src="../plugins/froalaEditor/js/plugins/code_view.min.js"></script>
+<script src="../plugins/froalaEditor/js/plugins/code_beautifier.min.js"></script>
+<script src="../plugins/froalaEditor/js/plugins/font_size.min.js"></script>
+<script src="../plugins/froalaEditor/js/plugins/font_family.min.js"></script>
+<script src="../plugins/froalaEditor/js/plugins/fullscreen.min.js"></script>
+<script src="../plugins/froalaEditor/js/plugins/image.min.js"></script>
+<script src="../plugins/froalaEditor/js/plugins/image_manager.min.js"></script>
+<script src="../plugins/froalaEditor/js/plugins/table.min.js"></script>
+<script>
+$(function(){
+	$('.float-btns .question-btn').click(function(){
+		$('.window').show(0, function(){
+			disable_scroll(); 
+			jQuery('body').css('overflow-y','hidden');
+		});
+	});
+	
+	$('.window .window-close').click(function(){
+		$('.window').hide(0, function(){
+			enable_scroll(); 
+			jQuery('body').css('overflow-y','visible');
+		});
+	});
+	
+	$('#edit').froalaEditor({
+		height: 200,
+		language: "zh_cn",
+		toolbarButtonsXS: ['bold', 'italic', 'underline', 'insertImage']
+		//imageUploadURL: "${ctx}/upload/uploadImage"
+	});
+	
+	var mySwiper = new Swiper ('.swiper-container', {
+		pagination: '.swiper-pagination',
+        paginationClickable: '.swiper-pagination',
+        nextButton: '.swiper-button-next',
+        prevButton: '.swiper-button-prev',
+		loop: true,
+		autoplay: 4000
+	})
+})
+</script>
+<style>
+ .swiper-container {
+        width: 100%;
+    }
+    .swiper-slide {
+        text-align: center;
+        font-size: 18px;
+        background: #fff;
+
+        /* Center slide text vertically */
+        display: -webkit-box;
+        display: -ms-flexbox;
+        display: -webkit-flex;
+        display: flex;
+        -webkit-box-pack: center;
+        -ms-flex-pack: center;
+        -webkit-justify-content: center;
+        justify-content: center;
+        -webkit-box-align: center;
+        -ms-flex-align: center;
+        -webkit-align-items: center;
+        align-items: center;
+    }
+	.swiper-container img{
+		width: 100%;
+	}
+</style>
+</head>
+
+<body>
+<div class="container">
+    <header>
+		<div class="top">
+	    	<div class="menu-left">
+	    		<a id="prevPage" class="menu-item" href="javascript:history.back()"><i class="fa fa-chevron-left"></i></a>
+	        </div>
+	        
+	        <div class="menu-right">
+	    		<a class="menu-item menu-user" href="index.html#usercenter" onclick="location.reload()"></a>
+	        </div>
+	    	
+	    	<div class="title">大牛数控</div>
+    	</div>
+    	
+    </header>
+    
+    <div class="content clearfix">
+    	<div class="page-qa">
+        	<div class="swiper-container">
+                <div class="swiper-wrapper">
+                    <div class="swiper-slide">
+                        <img src="../images/demo/0.jpg"  alt=""/>
+                    </div>
+                    <div class="swiper-slide">
+                        <img src="../images/banner/banner_mobile1.jpg"  alt=""/>
+                    </div>
+                    <div class="swiper-slide">
+                    	<img src="../images/banner/banner_mobile2.jpg"  alt=""/>
+                    </div>
+                </div>
+                <!-- 如果需要分页器 -->
+                <div class="swiper-pagination"></div>
+            </div>
+            
+        	<div class="qa-toolbar">
+                <a class="qa-toolbar-tab act" href="Q&A.html">全部</a>
+                <a class="qa-toolbar-tab" href="Q&A-mine.html">我的提问</a>
+            </div>
+            
+        	<div class="qa-category">
+            	<ul class="qa-category-list bg-white clearfix">
+                	<a href="Q&A-list.html">
+                    	<div class="qa-category-pic"><img src="../images/demo/logo1.png" alt=""/></div>
+                        <div class="qa-category-info">
+                        	<div class="qa-category-name">三菱数控</div>
+                            <div class="qa-category-meta"><em class="meta-label">帖子：</em>10200 <em class="meta-label marginleft15">活跃：</em>2919020</div>
+                            <div class="qa-category-meta"><em class="meta-label">最新：</em>四轴用ATAN怎么找正</div>
+                        </div>
+                    </a>
+                    <a href="Q&A-list.html">
+                    	<div class="qa-category-pic"><img src="../images/demo/logo2.png" alt=""/></div>
+                        <div class="qa-category-info">
+                        	<div class="qa-category-name">西门子数控</div>
+                            <div class="qa-category-meta"><em class="meta-label">帖子：</em>8825 <em class="meta-label marginleft15">活跃：</em>993087</div>
+                            <div class="qa-category-meta"><em class="meta-label">最新：</em>四轴用ATAN怎么找正</div>
+                        </div>
+                    </a>
+                    <a href="Q&A-list.html">
+                    	<div class="qa-category-pic"><img src="../images/demo/logo3.png" alt=""/></div>
+                        <div class="qa-category-info">
+                        	<div class="qa-category-name">山崎马扎克</div>
+                            <div class="qa-category-meta"><em class="meta-label">帖子：</em>10200 <em class="meta-label marginleft15">活跃：</em>2919020</div>
+                            <div class="qa-category-meta"><em class="meta-label">最新：</em>四轴用ATAN怎么找正</div>
+                        </div>
+                    </a>
+                    <a href="Q&A-list.html">
+                    	<div class="qa-category-pic"><img src="../images/demo/logo4.png" alt=""/></div>
+                        <div class="qa-category-info">
+                        	<div class="qa-category-name">CAXA</div>
+                            <div class="qa-category-meta"><em class="meta-label">帖子：</em>8825 <em class="meta-label marginleft15">活跃：</em>993087</div>
+                            <div class="qa-category-meta"><em class="meta-label">最新：</em>四轴用ATAN怎么找正</div>
+                        </div>
+                    </a>
+                </ul>
+            </div>
+        </div>
+    </div>
+    
+    <footer>
+    </footer>
+</div>
+
+
+</body>
+</html>

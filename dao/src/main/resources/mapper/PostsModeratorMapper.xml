@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- 版主表操作 -->
+<mapper namespace="com.lld360.cnc.repository.PostsModeratorDao">
+
+    <insert id="create" parameterType="com.lld360.cnc.model.Moderator">
+        INSERT INTO `posts_moderator` (category_id, user_id, authorizer, create_time, remarks, state)
+        VALUES (#{categoryId}, #{userId}, #{authorizerId}, #{createTime}, #{remarks}, #{state})
+    </insert>
+
+    <delete id="delete">
+        DELETE FROM `posts_moderator`
+        WHERE category_id = #{category} AND user_id = #{user}
+    </delete>
+
+    <update id="update" parameterType="com.lld360.cnc.dto.ModeratorDto">
+        UPDATE `posts_moderator`
+        <set>
+            <if test="state != null">state = #{state},</if>
+            <if test="authorizerId != null">authorizer = #{authorizerId},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+        </set>
+        WHERE user_id = #{userId} AND category_id = #{categoryId};
+    </update>
+
+    <select id="findModerator" resultType="com.lld360.cnc.dto.ModeratorDto">
+        SELECT
+        m.category_id,
+        c.`name` AS categoryName,
+        m.user_id,
+        u.`name`,
+        u.`nickname`,
+        m.authorizer,
+        a.`name` AS authorizerName,
+        m.create_time,
+        m.state
+        FROM `posts_moderator` m
+        LEFT JOIN `posts_category`  c ON m.`category_id` = c.`id`
+        LEFT JOIN `user` u ON m.`user_id` = u.`id`
+        LEFT JOIN `admin` a ON m.`authorizer` = a.`id`
+        WHERE m.category_id = #{category} AND m.user_id = #{user}
+    </select>
+
+    <select id="findModeratorsByCategory" resultType="com.lld360.cnc.dto.ModeratorDto">
+        SELECT
+        m.category_id,
+        c.`name` AS categoryName,
+        m.user_id,
+        u.`name`,
+        u.`nickname`,
+        m.authorizer,
+        a.`name` AS authorizerName,
+        m.create_time,
+        m.state
+        FROM `posts_moderator` m
+        JOIN `posts_category` c ON m.`category_id` = c.`id`
+        JOIN `user` u ON m.`user_id` = u.`id`
+        JOIN `admin` a ON m.`authorizer` = a.`id`
+        WHERE c.id = #{id}
+    </select>
+
+
+</mapper>

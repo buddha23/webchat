@@ -1,0 +1,90 @@
+<div class="am-cf am-padding">
+    <div class="am-fl am-cf">
+        <strong class="am-text-primary am-text-lg">数控课堂</strong> /
+        <small>视频列表</small>
+    </div>
+</div>
+
+<div class="am-g" ng-controller="volumeListCtrl">
+    <div class="am-u-sm-12 am-u-md-4">
+        <div class="am-btn-toolbar">
+            <div class="am-btn-group am-btn-group-xs">
+                <a href="#/volume/0" ui-sref="volumeDetail({id:0})" class="am-btn am-btn-default"><span class="am-icon-plus" ng-if="adminPermissions.indexOf('video:w') != -1 || admin.isRoot"></span> 新增</a>
+                <!--<button type="button" class="am-btn am-btn-default"><span class="am-icon-trash-o"></span> 删除</button>-->
+            </div>
+        </div>
+    </div>
+    <div class="am-u-sm-12 am-u-md-8">
+        <div class="am-form am-text-right">
+            <label for="vodTagSelect">标签分类:</label>
+            <select id="vodTagSelect" style="width: 20%; display: inline-block;" ng-model="params.tagId">
+                <option value="0">不限</option>
+                <option ng-repeat="t in allTag" value="{{t.id}}">{{t.name}}</option>
+            </select>
+            <input type="text" style="width: auto; display: inline-block;" ng-model="searchKey" ng-keypress="onSearchKeyPress($event)">
+            <button class="am-btn am-btn-default" type="button" ng-click="doSearch()">搜索</button>
+        </div>
+    </div>
+
+    <div class="am-u-sm-12">
+        <table class="am-table am-table-striped am-table-hover table-main">
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>标题</th>
+                <th>章数</th>
+                <th>节数</th>
+                <th>时长</th>
+                <th>花费(牛人币)</th>
+                <th><a href="javascript:void(0);" ng-click="sortBy('buys')">购买量</a></th>
+                <th>浏览量</th>
+                <th><a href="javascript:void(0);" ng-click="sortBy('createTime')">创建时间</a></th>
+                <th>操作</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr ng-repeat="a in data.content">
+                <td>{{a.id}}</td>
+                <td><a href="#/volume/{{a.id}}" style="display:block; width: 300px; overflow: hidden;white-space: nowrap;text-overflow: ellipsis;" title="{{a.url}}">{{a.name}}</a></td>
+                <td>{{a.chapterCount}}</td>
+                <td>{{a.sectionCount}}</td>
+                <td>{{a.duration}}</td>
+                <td>{{a.costScore}}</td>
+                <td class="am-hide-sm-only">{{a.buysCount}}</td>
+                <td class="am-hide-sm-only">{{a.views}}</td>
+                <td class="am-hide-sm-only">{{a.createTime | date:'yyyy-MM-dd HH:mm'}}</td>
+                <td>
+                    <div class="am-btn-toolbar">
+                        <div class="am-btn-group am-btn-group-xs">
+                            <a class="am-btn am-btn-default am-btn-xs am-text-secondary" ui-sref="volumeDetail({id:a.id})" ng-if="adminPermissions.indexOf('video:w') != -1 || admin.isRoot">
+                                <span class="am-icon-pencil-square-o"></span> 编辑
+                            </a>
+                            <button class="am-btn am-btn-default am-btn-xs am-text-success am-hide-sm-only" ng-click="vodBeginMsg(a)" ng-if="adminPermissions.indexOf('video:w') != -1 || admin.isRoot">
+                                <span class="am-icon-wechat"></span> 开课提醒
+                            </button>
+                            <button class="am-btn am-btn-default am-btn-xs am-text-success am-hide-sm-only" ng-click="vodUpdateMsg(a)" ng-if="adminPermissions.indexOf('video:w') != -1 || admin.isRoot">
+                                <span class="am-icon-weixin"></span> 更新通知
+                            </button>
+                            <button class="am-btn am-btn-default am-btn-xs am-text-danger am-hide-sm-only" ng-click="delete(a)" ng-if="adminPermissions.indexOf('video:w') != -1 || admin.isRoot">
+                                <span class="am-icon-trash-o"></span> 删除
+                            </button>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+        <div>
+            <div class="am-fl">
+            </div>
+            <div class="am-fr">
+                <div style="display: inline-block; margin-right: 10px">
+                    <small>共</small> <span style="color: #f08080;">{{data.totalElements}}</span> <small>条数据</small>
+                </div>
+                <div style="display: inline-block;">
+                    <ng-pager page-change="getPage(page)" page-data="data" items="11"></ng-pager>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

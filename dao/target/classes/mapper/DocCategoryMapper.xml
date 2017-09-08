@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.lld360.cnc.repository.DocCategoryDao">
+
+    <!-- 定义全局查询的SQL变量语句 -->
+    <sql id="searchCondition">
+        <where>
+            <if test="fid != null">fid = #{fid}</if>
+            <if test="name != null">`name` like "%"#{name}"%"</if>
+        </where>
+    </sql>
+    <!-- 用于select查询公用抽取的列 -->
+    <sql id="columns">
+	    <![CDATA[
+        f.id, f.fid, f.icon, f.name, f.description,
+        c.id cid,
+        c.fid cfid,
+        c.icon cicon,
+        c.name cname,
+        c.`description` cdescription
+        ]]>
+	</sql>
+
+    <select id="find" parameterType="int" resultMap="docCategoryMap">
+        SELECT
+        <include refid="columns"/>
+        FROM doc_category f
+        LEFT JOIN doc_category c ON f.id=c.fid
+        WHERE f.id = #{id}
+    </select>
+
+    <select id="findAll" resultMap="docCategoryMap">
+        SELECT
+        <include refid="columns"/>
+        FROM
+        doc_category f
+        LEFT JOIN doc_category c ON f.`id` = c.fid
+        WHERE f.fid IS NULL
+    </select>
+
+    <select id="findAllCategory" resultType="com.lld360.cnc.model.DocCategory">
+        SELECT
+        <include refid="columns"/>
+        FROM
+        doc_category
+    </select>
+
+    <select id="findForIndex" resultMap="docCategoryMap">
+        <!--按阅读量排列-->
+        SELECT c1.*, SUM(d.views) AS sm
+        FROM doc_category c1
+        LEFT JOIN doc_category c2 ON c2.`fid` = c1.`id`
+        LEFT JOIN doc d ON c2.id = d.`category_id`
+        WHERE LENGTH(c1.`icon`) > 0
+        AND c1.`fid` IS NULL
+        GROUP BY c1.`id`
+        ORDER BY sm DESC
+        LIMIT 27 OFFSET 0
+    </select>
+
+    <select id="findByName" resultMap="docCategoryMap" parameterType="string">
+        SELECT *
+        FROM doc_category
+        WHERE name = #{name}
+    </select>
+
+    <select id="findByFid" resultType="com.lld360.cnc.model.DocCategory" parameterType="java.lang.Integer">
+        SELECT *
+        FROM doc_category
+        <where>
+            <if test="_parameter == null">fid IS NULL</if>
+            <if test="_parameter != null">fid = #{fid}</if>
+        </where>
+    </select>
+
+    <select id="findSelfAndAllParents" resultType="com.lld360.cnc.model.DocCategory" parameterType="int">
+        SELECT t2.*
+        FROM (
+                 SELECT
+                     @r              AS _id,
+                     (SELECT @r := fid
+                      FROM doc_category
+                      WHERE id = @r) AS fid
+                 FROM
+                     (SELECT @r := #{id}) vars, doc_category
+                 WHERE @r IS NOT NULL) t1
+            JOIN doc_category t2 ON t1._id = t2.id
+        ORDER BY t1._id ASC
+    </select>
+
+    <insert id="create" parameterType="com.lld360.cnc.model.DocCategory" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO
+            doc_category (
+                fid,
+                icon,
+                `name`,
+                description
+            ) VALUES (
+            #{fid},
+            #{icon},
+            #{name},
+            #{description}
+        )
+    </insert>
+
+    <update id="update" parameterType="com.lld360.cnc.model.DocCategory">
+        UPDATE doc_category
+        <set>
+            <if test="fid != null">fid = #{fid},</if>
+            <if test="icon != null">icon = #{icon},</if>
+            <if test="name != null">`name` = #{name},</if>
+            <if test="description != null">description = #{description},</if>
+        </set>
+        WHERE id = #{id};
+    </update>
+
+    <delete id="delete" parameterType="int">
+        DELETE FROM doc_category
+        WHERE id = #{id}
+    </delete>
+
+    <select id="find4SiteMap" resultMap="docCategoryMap">
+        SELECT id
+        FROM
+            doc_category
+        WHERE fid IS NULL
+        ORDER BY id
+    </select>
+
+    <resultMap id="docCategoryMap" type="com.lld360.cnc.model.DocCategory">
+        <id column="id" property="id"/>
+        <result column="fid" property="fid"/>
+        <result column="icon" property="icon"/>
+        <result column="name" property="name"/>
+        <result column="description" property="description"/>
+        <collection property="children" ofType="com.lld360.cnc.model.DocCategory">
+            <id column="cid" property="id"/>
+            <result column="cfid" property="fid"/>
+            <result column="cicon" property="icon"/>
+            <result column="cname" property="name"/>
+            <result column="cdescription" property="description"/>
+        </collection>
+    </resultMap>
+
+    <resultMap id="indexCategoryMap" type="com.lld360.cnc.model.DocCategoryForIndex">
+        <id column="id" property="id"/>
+        <result column="fid" property="fid"/>
+        <result column="icon" property="icon"/>
+        <result column="name" property="name"/>
+        <result column="description" property="description"/>
+        <result column="cid" property="cid"/>
+        <result column="cfid" property="cfid"/>
+        <result column="cicon" property="cicon"/>
+        <result column="cname" property="cname"/>
+        <result column="cdescription" property="cdescription"/>
+    </resultMap>
+
+    <!-- 版主表操作 -->
+    <!--<select id="findDocCategoriesByModerator" resultMap="docCategoryMap" parameterType="long">-->
+    <!--SELECT-->
+    <!--<include refid="columns"/>-->
+    <!--FROM moderator m-->
+    <!--JOIN `user` u ON m.`user_id` = u.`id` AND m.user_id = #{userId}-->
+    <!--JOIN doc_category f ON m.`category_id` = f.`id` AND f.fid IS NULL-->
+    <!--LEFT JOIN doc_category c ON c.fid=f.id-->
+    <!--</select>-->
+    <select id="findDocCategoriesByNotModerator" resultMap="docCategoryMap">
+        SELECT c1.*
+        FROM doc_category c1
+        WHERE c1.`fid` IS NULL
+        AND c1.`id` NOT IN
+        <foreach collection="list" item="ids" open="(" separator="," close=")">#{ids}</foreach>
+    </select>
+
+</mapper> 

@@ -1,0 +1,128 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=0"/>
+    <link rel="stylesheet" type="text/css" href="../css/public.css">
+    <link rel="stylesheet" type="text/css" href="../css/style_mobile.css">
+    <script type="text/javascript" src="../js/min/jquery-1.11.2.min.js"></script>
+    <script type="text/javascript" src="../js/app.js"></script>
+    <title></title>
+    <style>
+        .invite {
+        }
+
+        .invite .invite-header {
+            position: relative;
+            border-bottom: 1px solid #eee;
+            overflow: hidden;
+        }
+
+        .invite .invite-header img {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+        }
+
+        .invite .invite-header nav {
+            margin: 15px 15px 15px 75px;
+            line-height: 1.2;
+        }
+
+        .invite .invite-header nav h1 {
+            font-size: 18px;
+        }
+
+        .invite .invite-header nav p {
+            margin-top: 10px;
+            color: #999;
+        }
+
+        .invite .invite-content .invite-title {
+            text-align: center;
+            font-size: 16px;
+        }
+
+        .invite .invite-content .invite-subtitle {
+            margin-top: 5px;
+            text-align: center;
+            color: #ff8400;
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .invite .invite-content .invite-code {
+            background: #f8f8f8;
+            margin: 30px 30px 0;
+            padding: 10px;
+            text-align: center;
+            font-size: 14px;
+            font-size: 16px;
+        }
+
+        .invite .invite-content .invite-meta {
+            text-align: center;
+            margin-top: 5px;
+            color: #999;
+        }
+
+        .invite .invite-content .invite-tips {
+            color: #999;
+            margin-top: 20px;
+        }
+
+        .invite .invite-content .invite-qr {
+            width: 150px;
+            height: 150px;
+            margin: 20px auto;
+            display: block;
+        }
+
+        .invite .invite-wrapper {
+            padding: 20px;
+        }
+    </style>
+</head>
+
+<body>
+<div class="container">
+    <div class="content clearfix">
+        <div class="invite">
+            <div class="invite-header bg-white">
+                <img src="../images/logo_video.jpg" width="48" height="48" alt=""/>
+                <nav>
+                    <h1>大牛数控直播课堂</h1>
+                    <p>邀请码</p>
+                </nav>
+            </div>
+
+            <!-- 邀请续费 -->
+            <div class="invite-content content-wrapper">
+                <div class="invite-title">(礼品卡) 加工中心课程</div>
+                <div class="invite-subtitle"><i class="fa fa-cny"></i> 100</div>
+                <div class="invite-meta">有效日期：2017-07-27</div>
+                <div class="invite-code">8858-3419-3252-8795</div>
+                <div class="invite-wrapper">
+                    <div class="button btn-blue input-full btn-large"><i class="fa fa-check"></i> 立即续费</div>
+                </div>
+                <div class="invite-tips">
+                    <p>使用须知：</p>
+                    <p>一经使用不能退换，有效期至2017年12月31日</p>
+                </div>
+            </div>
+
+            <!-- 邀请码无效 -->
+            <div class="invite-content content-wrapper" style="display: none;">
+                <img class="invite-qr" src="../images/qr_video.png" width="120" height="120" alt=""/>
+                <div class="invite-meta">邀请码无效</div>
+                <div class="invite-tips">
+                    <p>使用须知：</p>
+                    <p>一经使用不能退换，有效期至2017年12月31日</p>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+</body>
+</html>

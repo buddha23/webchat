@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- 版主表操作 -->
+<mapper namespace="com.lld360.cnc.repository.DocModeratorDao">
+
+    <select id="findAllModerators" resultType="com.lld360.cnc.model.Moderator">
+        SELECT *
+        FROM `moderator`
+        WHERE state = 1
+        GROUP BY user_id
+    </select>
+
+    <select id="findModeratorsByCategory" resultType="com.lld360.cnc.dto.ModeratorDto">
+        SELECT
+        m.category_id,
+        c.`name` AS categoryName,
+        m.user_id,
+        u.`name`,
+        u.`nickname`,
+        m.authorizer,
+        a.`name` AS authorizerName,
+        m.create_time,
+        m.state
+        FROM moderator m
+        JOIN doc_category c ON m.`category_id` = c.`id`
+        JOIN `user` u ON m.`user_id` = u.`id`
+        JOIN `admin` a ON m.`authorizer` = a.`id`
+        WHERE c.id = #{id} AND c.`fid` IS NULL
+    </select>
+
+    <!--<select id="findDocCategoriesByModerator" resultMap="docCategoryMap" parameterType="long">-->
+    <!--SELECT-->
+    <!--<include refid="columns"/>-->
+    <!--FROM moderator m-->
+    <!--JOIN `user` u ON m.`user_id` = u.`id` AND m.user_id = #{userId}-->
+    <!--JOIN doc_category f ON m.`category_id` = f.`id` AND f.fid IS NULL-->
+    <!--LEFT JOIN doc_category c ON c.fid=f.id-->
+    <!--</select>-->
+
+    <select id="findDocCategoriesByModerator" resultType="com.lld360.cnc.dto.ModeratorDto">
+        SELECT
+        m.category_id categoryId,
+        m.user_id     userId,
+        m.`create_time`,
+        m.`state`,
+        m.`remarks`,
+        m.authorizer,
+        c.`name` AS   categoryName,
+        c.`icon` AS   categoryIcon,
+        u.`name`,
+        u.`nickname`,
+        a.`name` AS   authorizerName
+        FROM moderator m
+        LEFT JOIN doc_category c ON m.`category_id` = c.`id` AND c.fid IS NULL
+        LEFT JOIN `user` u ON m.`user_id` = u.`id`
+        LEFT JOIN `admin` a ON m.`authorizer` = a.`id`
+        WHERE m.user_id = #{userId}
+    </select>
+
+    <select id="findModerator" resultType="com.lld360.cnc.dto.ModeratorDto">
+        SELECT
+        m.category_id,
+        c.`name` AS categoryName,
+        m.user_id,
+        u.`name`,
+        u.`nickname`,
+        m.authorizer,
+        a.`name` AS authorizerName,
+        m.create_time,
+        m.state
+        FROM moderator m
+        LEFT JOIN doc_category c ON m.`category_id` = c.`id`
+        LEFT JOIN `user` u ON m.`user_id` = u.`id`
+        LEFT JOIN `admin` a ON m.`authorizer` = a.`id`
+        WHERE m.category_id = #{category} AND m.user_id = #{user}
+    </select>
+
+    <select id="isNowModerator" resultType="java.lang.Boolean">
+        SELECT COUNT(1) > 0 AS isModerator
+        FROM moderator
+        WHERE state = #{state} AND user_id = #{userId}
+    </select>
+
+    <select id="isCategoryModerator" resultType="java.lang.Boolean">
+        SELECT COUNT(1) > 0 AS isModerator
+        FROM moderator
+        WHERE category_id = #{category} AND user_id = #{user}
+    </select>
+
+    <select id="isDocModerator" resultType="java.lang.Boolean">
+        SELECT COUNT(d.id) AS isDocModerator
+        FROM moderator m
+        JOIN `user` u ON m.`user_id` = u.`id` AND u.`id` = #{userId}
+        JOIN doc_category c ON m.`category_id` = c.`id`
+        JOIN doc_category z ON c.`id` = z.`fid`
+        JOIN doc d ON (z.`id` = d.`category_id` OR c.`id` = d.`category_id`) AND d.`id` = #{docId}
+    </select>
+
+    <insert id="createModerator" parameterType="com.lld360.cnc.model.Moderator">
+        INSERT INTO moderator (category_id, user_id, authorizer, create_time, remarks, state)
+        VALUES (#{categoryId}, #{userId}, #{authorizerId}, #{createTime}, #{remarks}, #{state})
+    </insert>
+
+    <delete id="deleteModerator">
+        DELETE FROM moderator
+        WHERE category_id = #{category} AND user_id = #{user}
+    </delete>
+
+    <select id="findModeratorByUserid" parameterType="long" resultType="com.lld360.cnc.dto.ModeratorDto">
+        SELECT
+          m.category_id,
+          c.`name` AS categoryName,
+          m.user_id,
+          u.`name`,
+          u.`nickname`,
+          m.authorizer,
+          a.`name` AS authorizerName,
+          m.create_time,
+          m.state,
+          IFNULL(s.`contribution_score`, 0) moderatorScore
+        FROM moderator m
+        LEFT JOIN doc_category c ON m.`category_id` = c.`id`
+        LEFT JOIN `user` u ON m.`user_id` = u.`id`
+        LEFT JOIN `admin` a ON m.`authorizer` = a.`id`
+        LEFT JOIN `moderator_score` s ON m.`user_id` = s.`user_id`
+        WHERE m.user_id = #{userId}
+        GROUP BY m.`user_id`
+    </select>
+
+    <select id="findModerators" parameterType="map" resultType="com.lld360.cnc.dto.ModeratorDto">
+        SELECT
+        m.*,
+        u.`nickname`,
+        u.`name`,
+        u.`mobile`,
+        u.`qq`,
+        u.`mail_address`,
+        c.`name` categoryName,
+        s.`contribution_score` moderatorScore
+        FROM moderator m
+        LEFT JOIN `user` u ON m.`user_id` = u.`id`
+        LEFT JOIN doc_category c ON m.`category_id` = c.`id`
+        LEFT JOIN `moderator_score` s ON m.`user_id` = s.`user_id`
+        <where>
+            <if test="state != null">AND m.`state` = #{state}</if>
+            <if test="key != null">AND (u.`name` LIKE "%"#{key}"%" OR c.`name` LIKE "%"#{key}"%" OR u.`nickname` LIKE "%"#{key}"%" OR u.`mobile` LIKE "%"#{key}"%")</if>
+        </where>
+        ORDER BY m.`user_id`, m.`create_time`
+        <if test="limit != null">limit #{limit}</if>
+        <if test="offset != null">offset #{offset}</if>
+    </select>
+
+    <select id="count4Moderators" parameterType="map" resultType="java.lang.Long">
+        SELECT
+        count(1)
+        FROM moderator m
+        LEFT JOIN `user` u ON m.`user_id` = u.`id`
+        LEFT JOIN doc_category c ON m.`category_id` = c.`id`
+        <where>
+            <if test="state != null">AND m.`state` = #{state}</if>
+            <if test="key != null">AND (u.`name` LIKE "%"#{key}"%" OR c.`name` LIKE "%"#{key}"%")</if>
+        </where>
+    </select>
+
+    <update id="updateModetators" parameterType="com.lld360.cnc.dto.ModeratorDto">
+        UPDATE moderator
+        <set>
+            <if test="state != null">state = #{state},</if>
+            <if test="authorizerId != null">authorizer = #{authorizerId},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+        </set>
+        WHERE user_id = #{userId} AND category_id = #{categoryId};
+    </update>
+
+</mapper>

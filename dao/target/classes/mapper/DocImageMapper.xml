@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.lld360.cnc.repository.DocImageDao">
+
+    <!-- 定义全局查询的SQL变量语句 -->
+    <sql id="searchCondition">
+        <where>
+            <if test="docId != null">doc_id = #{docId}</if>
+            <if test="docPage != null">doc_page = #{docPage}</if>
+            <if test="path != null">path like "%"#{path}"%"</if>
+        </where>
+    </sql>
+    <!-- 用于select查询公用抽取的列 -->
+    <sql id="columns">
+	    <![CDATA[
+        id,
+        doc_id,
+        doc_page,
+        path
+        ]]>
+	</sql>
+
+    <select id="search" parameterType="map" resultMap="docimageMap">
+        SELECT
+        <include refid="columns"/>
+        FROM doc_image
+        <include refid="searchCondition"/>
+        <if test="limit != null">LIMIT #{limit}</if>
+        <if test="offset != null">OFFSET #{offset}</if>
+    </select>
+
+    <select id="count" parameterType="map" resultType="long">
+        SELECT count(1)
+        FROM doc_image
+        <include refid="searchCondition"/>
+    </select>
+
+    <select id="find" parameterType="long" resultMap="docimageMap">
+        SELECT
+        <include refid="columns"/>
+        FROM doc_image
+        WHERE id = #{id}
+    </select>
+
+    <select id="findByDocId" resultType="com.lld360.cnc.model.DocImage" parameterType="long">
+        SELECT
+        <include refid="columns"/>
+        FROM doc_image
+        WHERE doc_id=#{docId}
+    </select>
+
+    <insert id="create" parameterType="com.lld360.cnc.model.DocImage" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO
+            doc_image (
+                doc_id,
+                doc_page,
+                path
+            ) VALUES (
+            #{docId},
+            #{docPage},
+            #{path}
+        )
+    </insert>
+    <insert id="save" parameterType="arraylist">
+        INSERT INTO doc_image(doc_id, doc_page, path) VALUES
+        <foreach collection="list" item="img" separator=",">
+            (#{img.docId}, #{img.docPage}, #{img.path})
+        </foreach>
+    </insert>
+
+    <update id="update" parameterType="com.lld360.cnc.model.DocImage">
+        UPDATE doc_image
+        <set>
+            <if test="docId != null">doc_id = #{docId},</if>
+            <if test="docPage != null">doc_page = #{docPage},</if>
+            <if test="path != null">path = #{path},</if>
+        </set>
+        WHERE id = #{id};
+    </update>
+
+    <delete id="delete" parameterType="long">
+        DELETE FROM doc_image
+        WHERE id = #{id}
+    </delete>
+
+    <delete id="deleteByDocId">
+        DELETE FROM doc_image
+        WHERE doc_id = #{docId}
+    </delete>
+
+
+    <!-- 结果集mapper -->
+    <resultMap id="docimageMap" type="com.lld360.cnc.model.DocImage">
+        <result property="id" column="id"/>
+        <result property="docId" column="doc_id"/>
+        <result property="docPage" column="doc_page"/>
+        <result property="path" column="path"/>
+    </resultMap>
+
+</mapper> 

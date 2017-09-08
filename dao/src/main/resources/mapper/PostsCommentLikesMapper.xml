@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.lld360.cnc.repository.PostsCommentLikeDao">
+
+    <insert id="create" parameterType="com.lld360.cnc.model.PostsCommentLike">
+        INSERT INTO `posts_comment_like` (`user_id`, `comment_id`)
+        VALUES (#{userId}, #{commentId}) ;
+    </insert>
+
+    <delete id="delete" parameterType="com.lld360.cnc.model.PostsCommentLike">
+        DELETE FROM `posts_comment_like`
+        WHERE `user_id` = #{userId} AND `comment_id` = #{commentId};
+    </delete>
+
+    <select id="isExist" parameterType="com.lld360.cnc.model.PostsCommentLike" resultType="boolean">
+        SELECT COUNT(1) > 0 FROM `posts_comment_like` WHERE `user_id` = #{userId} AND `comment_id` = #{commentId};
+    </select>
+
+</mapper>

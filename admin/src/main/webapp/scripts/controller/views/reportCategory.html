@@ -1,0 +1,70 @@
+<script type="text/javascript" src="scripts/components/My97DatePicker/WdatePicker.js"></script>
+<div class="am-cf am-padding">
+    <div class="am-fl am-cf">
+        <strong class="am-text-primary am-text-lg">报表</strong> /
+        <small>文库统计报表</small>
+    </div>
+</div>
+
+<div class="am-g" ng-controller="reportCategoryCtrl">
+    <div class="am-u-sm-12 am-u-md-12">
+        <div class="am-btn-toolbar">
+            <div class="am-btn-group am-btn-group-xs">
+                <div class="am-btn-group am-btn-group-xs">
+                    <label for="beginDate">时间段：</label>
+                    <input type="text" class="text-input" placeholder="起始日期" ng-model="beginTime" id="beginDate" onclick="WdatePicker({readOnly:true, dateFmt:'yyyy-MM-dd HH:mm:ss',maxDate:'#F{$dp.$D(\'endDate\')||\'%y-%M-%d\'}'})" onchange=""/>
+                    至 <input type="text" class="text-input" placeholder="截止日期" ng-model="endTime" id="endDate" onclick="WdatePicker({readOnly:true, dateFmt:'yyyy-MM-dd HH:mm:ss',minDate:'#F{$dp.$D(\'beginDate\',{d:+1})}',maxDate:'%y-%M-%d'})" onchange=""/>
+
+                    <label for="timeUnit" style="margin-left: 10px">时间单位：</label>
+                    <select id="timeUnit">
+                        <option value="DATE" selected>按天</option>
+                        <option value="MONTH">按月</option>
+                        <option value="YEAR">按年</option>
+                    </select>
+                    <br>
+                    <label class="am-margin-top am-margin-left">版块：</label>
+                    <span class="am-margin-left" ng-repeat="a in categorys">
+                        <input type="checkbox" id="{{a.name}}" ng-model="checkAll" ng-checked="isSelected(a.id)" ng-click="chose($event,a.id)">{{a.name}}</span>
+                    <span class="am-btn-group-btn" style="margin-left: 20px;pxheight: 39px;">
+                        <button class="am-btn am-btn-default" type="button" ng-click="doSearch()">搜索</button>
+                    </span>
+                    <br>
+                    <label for="looktype" class="am-margin-top am-margin-left" style="margin-left: 10px">查看类型：</label>
+                    <span id="looktype">
+                    <button class="am-btn am-btn-primary" type="button" id="lookviews" ng-click="lookviews()">浏览量</button>
+                    <button class="am-btn am-btn-default" type="button" id="lookuploads" ng-click="lookuploads()">上传量</button>
+                    <button class="am-btn am-btn-default" type="button" id="lookdownloads" ng-click="lookdownloads()">下载量</button>
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="line" class="am-u-sm-12 am-margin-left am-margin-top" style="height: 480px;"></div>
+    <hr>
+    <div class="am-u-sm-12">
+        <p>表格数据汇总:</p>
+        <table class="am-table table-main">
+            <thead>
+            <tr>
+                <th>日期</th>
+                <th ng-repeat="a in option.legend.data">{{a}}</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr ng-repeat="trdata in showData track by $index">
+                <td>{{trdata.lookTime}}</td>
+                <td ng-repeat="a in trdata.data track by $index">
+                    {{a | zero2t}}
+                </td>
+            </tr>
+            </tbody>
+        </table>
+        <div class="am-fr">
+            <div style="display: inline-block;">
+                <ng-pager page-change="getPage(page)" page-data="pData" items="11"></ng-pager>
+            </div>
+        </div>
+    </div>
+</div>
+

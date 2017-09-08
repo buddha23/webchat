@@ -1,0 +1,77 @@
+<script type="text/javascript" src="scripts/components/My97DatePicker/WdatePicker.js"></script>
+<div class="am-cf am-padding">
+    <div class="am-fl am-cf">
+        <strong class="am-text-primary am-text-lg">报表</strong> /
+        <small>用户注册&登录报表</small>
+    </div>
+</div>
+
+<div class="am-g" ng-controller="reportLoginCtrl">
+    <div class="am-u-sm-12 am-u-md-9">
+        <div class="am-btn-toolbar">
+            <div class="am-btn-group am-btn-group-xs">
+                <div class="am-btn-group am-btn-group-xs">
+                    <label for="beginDate">时间段：</label>
+                    <input type="text" class="text-input" placeholder="起始日期" ng-model="beginTime" id="beginDate"
+                           onclick="WdatePicker({readOnly:true, dateFmt:'yyyy-MM-dd HH:mm:ss',maxDate:'#F{$dp.$D(\'endDate\')||\'%y-%M-%d\'}'})"
+                           onchange=""/>
+                    至 <input type="text" class="text-input" placeholder="截止日期" ng-model="endTime" id="endDate"
+                             onclick="WdatePicker({readOnly:true, dateFmt:'yyyy-MM-dd HH:mm:ss',minDate:'#F{$dp.$D(\'beginDate\',{d:+1})}',maxDate:'%y-%M-%d'})"
+                             onchange=""/>
+
+                    <label for="timeUnit" style="margin-left: 10px">时间单位：</label>
+                    <select id="timeUnit">
+                        <option value="DATE" selected>按天</option>
+                        <option value="MONTH">按月</option>
+                        <option value="YEAR">按年</option>
+                    </select>
+
+                    <span class="am-btn-group-btn" style="margin-left: 20px;pxheight: 39px;">
+                        <button class="am-btn am-btn-default" type="button" ng-click="doSearch()">搜索</button>
+                    </span>
+                    <br>
+                    <label for="looktype" class="am-margin-top am-margin-left" style="margin-left: 10px">查看类型：</label>
+                    <span id="looktype">
+                        <button class="am-btn am-btn-primary" type="button" id="lookregist" ng-click="lookregist()">查看注册</button>
+                        <button class="am-btn am-btn-default" type="button" id="looklogin" ng-click="looklogin()">查看登录</button>
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="line" class="am-u-sm-12 am-margin-left am-margin-top" style="height: 480px;"></div>
+    <hr>
+    <div class="am-u-sm-12">
+        <p>
+            <label>表格数据汇总:</label>
+            <label style="margin-left:20px;">(注册总人数) 网站: {{webTotle}} 人</label>
+            <label style="margin-left:20px;">手机: {{mobileTotle}} 人</label>
+            <label style="margin-left:20px;">二维码扫描: {{qrcodeTotle}} 人</label>
+        </p>
+        <table class="am-table table-main">
+            <thead>
+            <tr>
+                <th>日期</th>
+                <th>电脑端</th>
+                <th>手机端</th>
+                <th>合计</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr ng-repeat="a in showData">
+                <td>{{a.lookTime}}</td>
+                <td>{{a.pcNums | zero2t}}</td>
+                <td>{{a.mobileNum | zero2t}}</td>
+                <td>{{a.pcNums+a.mobileNum}}</td>
+            </tr>
+            </tbody>
+        </table>
+        <div class="am-fr">
+            <div style="display: inline-block;">
+                <ng-pager page-change="getPage(page)" page-data="pData" items="11"></ng-pager>
+            </div>
+        </div>
+    </div>
+</div>
+

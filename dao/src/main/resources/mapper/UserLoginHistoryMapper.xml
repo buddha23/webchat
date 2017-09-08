@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lld360.cnc.repository.UserLoginHistoryDao">
+
+    <sql id="column">
+        l.id,
+        l.user_id userId,
+        l.ip,
+        l.platform,
+        l.login_time loginTime
+    </sql>
+
+    <sql id="searchCondition">
+        <where>
+            <if test="userId != null">AND user_id = #{userId}</if>
+            <if test="platform != null">AND platform = #{platform}</if>
+            <if test="searchTime != null">AND DATE(login_time)= DATE(#{searchTime})</if>
+            <if test="beginTime != null">AND login_time &gt;= #{beginTime}</if>
+            <if test="endTime != null">AND login_time &lt;= #{endTime}</if>
+        </where>
+    </sql>
+
+    <insert id="create" parameterType="com.lld360.cnc.model.UserLoginHistory" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO user_login_history (
+            user_id,
+            ip,
+            platform,
+            login_time
+        )VALUES(
+            #{userId},
+            #{ip},
+            #{platform},
+            #{loginTime}
+        )
+    </insert>
+
+    <select id="search" parameterType="map" resultType="com.lld360.cnc.dto.UserLoginHistoryDto">
+        SELECT
+        <include refid="column"/>
+        FROM user_login_history l
+        <include refid="searchCondition"/>
+    </select>
+
+    <select id="searchUserLoginHistory" parameterType="map" resultType="com.lld360.cnc.dto.UserLoginHistoryDto">
+        SELECT DISTINCT
+        u.`id` userId,
+        u.`mobile`,
+        u.`last_login` lastLogin,
+        IFNULL(u.`nickname`, u.`name`) userNickname,
+        webNum.pcLoginNum,
+        mobNum.mobileLoginNum
+        FROM user u
+        JOIN user_login_history l ON l.`user_id` = u.`id`
+        LEFT JOIN
+        (SELECT
+        user_id,
+        COUNT(1) AS pcLoginNum
+        FROM user_login_history
+        WHERE platform = 'web'
+        <if test="beginTime != null">AND login_time &gt;= #{beginTime}</if>
+        <if test="endTime != null">AND login_time &lt;= #{endTime}</if>
+        GROUP BY `user_id`) AS webNum
+        ON u.`id` = webNum.user_id
+        LEFT JOIN
+        (SELECT
+        user_id,
+        COUNT(1) AS mobileLoginNum
+        FROM user_login_history
+        WHERE platform = 'mobile'
+        <if test="beginTime != null">AND login_time &gt;= #{beginTime}</if>
+        <if test="endTime != null">AND login_time &lt;= #{endTime}</if>
+        GROUP BY `user_id`) AS mobNum
+        ON u.`id` = mobNum.user_id
+        <where>
+            <if test="searchKey != null">AND u.mobile LIKE "%"#{searchKey}"%" OR u.`nickname` LIKE "%"#{searchKey}"%"</if>
+        </where>
+        <if test="sortBy == 'totle'">ORDER BY webNum.pcLoginNum + mobNum.mobileLoginNum ${sortType}</if>
+        <if test="sortBy == '' or sortBy = null">ORDER BY u.last_login DESC</if>
+        <if test="limit != null">LIMIT #{limit}</if>
+        <if test="offset != null">OFFSET #{offset}</if>
+    </select>
+
+    <select id="searchCount4LoginHistory" resultType="long">
+        SELECT
+        COUNT(DISTINCT user_id)
+        FROM user_login_history l
+        LEFT JOIN user u ON l.`user_id` = u.`id`
+        <if test="searchKey != null">WHERE u.mobile LIKE "%"#{searchKey}"%" OR u.`nickname` LIKE "%"#{searchKey}"%"</if>
+    </select>
+
+    <select id="count" parameterType="map" resultType="long">
+        SELECT count(1)
+        FROM user_login_history
+        <include refid="searchCondition"/>
+    </select>
+
+    <select id="searchLoginReport" parameterType="map" resultType="com.lld360.cnc.model.ReportData">
+        SELECT
+        ${units} AS lookTime,
+        COUNT(1) AS userNum
+        FROM user_login_history
+        <include refid="searchCondition"/>
+        GROUP BY lookTime
+        ORDER BY lookTime ASC
+    </select>
+
+</mapper>

@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.lld360.cnc.repository.AdminOperateLogDao">
+
+    <!-- 定义全局查询的SQL变量语句 -->
+    <sql id="searchCondition">
+        <where>
+            <if test="name != null and name != ''">
+                AND l.`name`=#{name}
+            </if>
+            <if test="method != null and method != ''">
+                AND l.method=#{method}
+            </if>
+            <if test="successed != null">l.successed = #{successed}</if>
+            <if test="exception != null and exception == '1'">
+                AND l.exception NOT NULL
+            </if>
+            <if test="adminId != null">l.admin_id = #{adminId}</if>
+            <if test="ip != null and ip != ''">
+                AND l.ip LIKE "%"#{ip}"%"
+            </if>
+            <if test="time != null">AND l.create_time &gt;= #{time}</if>
+            <if test="time != null">AND l.create_time &lt;= #{time}</if>
+        </where>
+    </sql>
+    <!-- 用于select查询公用抽取的列 -->
+    <sql id="columns">
+	    <![CDATA[
+        l.id,
+        l.name,
+        l.method,
+        l.args,
+        l.successed,
+        l.return_value AS returnValue,
+        l.exception,
+        l.admin_id AS adminId,
+        l.url,
+        l.ip,
+        l.create_time AS createTime,
+        a.id AS adminId,
+        a.name AS adminName
+        ]]>
+	</sql>
+
+    <select id="search" parameterType="map" resultType="AdminOperateLog">
+        SELECT
+        <include refid="columns"/>
+        FROM admin_operate_log l
+        LEFT JOIN admin a ON l.admin_id=a.id
+        <include refid="searchCondition"/>
+        ORDER BY l.id DESC
+        <if test="limit != null">LIMIT #{limit}</if>
+        <if test="offset != null">OFFSET #{offset}</if>
+    </select>
+
+    <select id="count" parameterType="map" resultType="long">
+        SELECT count(1)
+        FROM admin_operate_log l
+        LEFT JOIN admin a ON l.admin_id=a.id
+        <include refid="searchCondition"/>
+    </select>
+
+    <select id="find" parameterType="long" resultType="AdminOperateLog">
+        SELECT
+        <include refid="columns"/>
+        FROM admin_operate_log l
+        LEFT JOIN admin a ON l.admin_id=a.id
+        WHERE id = #{id}
+    </select>
+
+    <insert id="create" parameterType="adminoperatelog" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO
+            admin_operate_log (
+                `name`,
+                method,
+                args,
+                successed,
+                return_value,
+                exception,
+                admin_id,
+                url,
+                ip,
+                create_time
+            ) VALUES (
+            #{name} ,
+            #{method} ,
+            #{args} ,
+            #{successed} ,
+            #{returnValue} ,
+            #{exception} ,
+            #{adminId} ,
+            #{url} ,
+            #{ip} ,
+            #{createTime}
+        )
+    </insert>
+
+    <update id="update" parameterType="adminoperatelog">
+        UPDATE admin_operate_log
+        <set>
+            <if test="name != null">name = #{name},</if>
+            <if test="method != null">method = #{method},</if>
+            <if test="args != null">args = #{args},</if>
+            <if test="successed != null">successed = #{successed},</if>
+            <if test="returnValue != null">return_value = #{returnValue},</if>
+            <if test="exception != null">exception = #{exception},</if>
+            <if test="adminId != null">admin_id = #{adminId},</if>
+            <if test="url != null">url = #{url},</if>
+            <if test="ip != null">ip = #{ip},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+        </set>
+        WHERE id = #{id};
+    </update>
+
+
+    <delete id="delete" parameterType="long">
+        DELETE FROM admin_operate_log
+        WHERE id = #{id}
+    </delete>
+
+</mapper> 

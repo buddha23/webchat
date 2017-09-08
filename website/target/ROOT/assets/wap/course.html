@@ -1,0 +1,165 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=0" />
+<link rel="stylesheet" type="text/css" href="../css/public.css">
+<link rel="stylesheet" type="text/css" href="../css/style_mobile.css">
+<script type="text/javascript" src="../js/min/jquery-1.11.2.min.js"></script>
+<script type="text/javascript" src="../js/app.js"></script>
+<title></title>
+<script>
+	$(function(){
+		var category = (function(){
+			var _menuState = false;
+			return{
+				openMenu: function(){
+					$('.category-list').show();
+					$('.course-list').hide();
+					_menuState = true;
+				},
+				closeMenu: function(){
+					$('.category-list').hide();
+					$('.course-list').show();
+					_menuState = false;
+				},
+				getMenuState: function(){
+					return _menuState;
+				}
+			}
+		})();
+		
+		//demo
+		$('.toolbar-filter').click(function(){
+			if(!category.getMenuState())
+				category.openMenu();
+			else
+				category.closeMenu();
+		});
+		
+		$('.category-list a').click(function(){
+			category.closeMenu();
+		})
+	})
+</script>
+</head>
+
+<body>
+<div class="container">
+	<header>
+		<div class="top">
+	    	<div class="menu-left">
+	    		<a id="prevPage" class="menu-item" href="javascript:history.back()"><i class="fa fa-chevron-left"></i></a>
+	        </div>
+	        
+	        <div class="menu-right">
+	    		<a class="menu-item menu-user" href="index.html#usercenter" onclick="location.reload()"></a>
+	        </div>
+	    	
+	    	<div class="title">CNC数控技术</div>
+    	</div>
+        
+    </header>
+    
+    <div class="content clearfix">
+        <div class="page-course">
+        	<div class="quick-nav bg-white">
+            	<a href="javascript:;">
+                	<div class="quick-icon icon-1"></div>
+                    <div class="quick-name">编程设计</div>
+                </a>
+            	<a href="javascript:;">
+                	<div class="quick-icon icon-2"></div>
+                    <div class="quick-name">数控维修</div>
+                </a>
+                <a href="javascript:;">
+                	<div class="quick-icon icon-3"></div>
+                    <div class="quick-name">独门绝技</div>
+                </a>
+                <a href="javascript:;">
+                	<div class="quick-icon icon-4"></div>
+                    <div class="quick-name">匠人笔记</div>
+                </a>
+            </div>
+        
+        	<div class="category-toolbar margintop15">
+        		<div class="toolbar-info">分类： 机器人软件 - 全部 </div>
+        		<a class="toolbar-filter" href="javascript:;">筛选<i class="fa fa-angle-down"></i></a>
+        	</div>
+        	<div class="category-list bg-white" style="display: none">
+    			<a class="clearfix" href="javascript:;">
+    				<div class="category-icon"></div>
+    				<div class="category-title">全部</div>
+    			</a>
+    			<a class="clearfix" href="javascript:;">
+    				<div class="category-icon"></div>
+    				<div class="category-title">模拟仿真</div>
+    			</a>
+    			<a class="clearfix" href="javascript:;">
+    				<div class="category-icon"></div>
+    				<div class="category-title">PLC编程</div>
+    			</a>
+    			<a class="clearfix" href="javascript:;">
+    				<div class="category-icon"></div>
+    				<div class="category-title">编程建模</div>
+    			</a>
+    			<a class="clearfix" href="javascript:;">
+    				<div class="category-icon"></div>
+    				<div class="category-title">系统调试</div>
+    			</a>
+    			<a class="clearfix" href="javascript:;">
+    				<div class="category-icon"></div>
+    				<div class="category-title">机器人软件</div>
+    			</a>
+    			<a class="clearfix" href="javascript:;">
+    				<div class="category-icon"></div>
+    				<div class="category-title">后处理</div>
+    			</a>
+    			<a class="clearfix" href="javascript:;">
+    				<div class="category-icon"></div>
+    				<div class="category-title">图纸合集</div>
+    			</a>
+    		</div>
+        	<div class="course-list bg-white">
+        		<a class="course-item clearfix" href="video-intro.html">
+    				<img class="course-img" src="../images/demo/ex_1.jpg">
+        			<div class="course-info">
+        				<div class="course-title">教程&作品 THE LOST WORLD / WORKS & TUTORIAL</div>
+        				<div class="course-meta"><span>课时：10</span><span class="marginleft15">浏览：100</span></div>
+						<div class="course-price free">免费</div>
+        			</div>
+        		</a>
+        		<a class="course-item clearfix" href="video-intro.html">
+    				<img class="course-img" src="../images/demo/ex_2.jpg">
+        			<div class="course-info">
+        				<div class="course-title">ZERO FIVE（5号机）——迪拜外墙清洁机器人概念设计</div>
+        				<div class="course-meta"><span>课时：10</span><span class="marginleft15">浏览：100</span></div>
+						<div class="course-price cost">200 牛人币</div>
+        			</div>
+        		</a>
+        		<a class="course-item clearfix" href="video-intro.html">
+    				<img class="course-img" src="../images/demo/ex_3.jpg">
+        			<div class="course-info">
+        				<div class="course-title">stylemafia web proposal</div>
+        				<div class="course-meta"><span>课时：10</span><span class="marginleft15">浏览：100</span></div>
+						<div class="course-price cost">200 牛人币</div>
+        			</div>
+        		</a>
+        		<a class="course-item clearfix" href="video-intro.html">
+    				<img class="course-img" src="../images/demo/ex_4.jpg">
+        			<div class="course-info">
+        				<div class="course-title">【字言字语】设计中常用的日系字体推荐与总结</div>
+        				<div class="course-meta"><span>课时：10</span><span class="marginleft15">浏览：100</span></div>
+						<div class="course-price cost">200 牛人币</div>
+        			</div>
+        		</a>
+        		<a class="course-more" href="javascript:;">查看更多</a>
+        	</div>
+        </div>
+    </div>
+    
+    <footer>
+    </footer>
+</div>
+</body>
+</html>

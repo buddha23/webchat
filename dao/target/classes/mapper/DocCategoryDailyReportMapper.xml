@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lld360.cnc.repository.DocCategoryDailyReportDao">
+
+    <sql id="searchCondition">
+        <where>
+            <if test="categoryId != null">AND category_id = #{categoryId}</if>
+            <if test="statisticsDate != null">AND DATE(statistics_date) = DATE(#{statisticsDate})</if>
+        </where>
+    </sql>
+
+    <insert id="create" parameterType="com.lld360.cnc.model.DocCategoryDailyReport">
+        INSERT INTO category_daily_statistics(
+          statistics_date,
+          category_id,
+          daily_views,
+          totle_views,
+          daily_downloads,
+          daily_uploads
+        )VALUES (
+          #{statisticsDate},
+          #{categoryId},
+          #{dailyViews},
+          #{totleViews},
+          #{dailyDownloads},
+          #{dailyUploads}
+        )
+    </insert>
+
+    <select id="searchByParam" parameterType="map" resultMap="dailyReportMap">
+        SELECT *
+        FROM category_daily_statistics
+        <include refid="searchCondition"/>
+        ORDER BY `statistics_date` DESC
+    </select>
+    
+    <select id="searchCategoryList" resultType="com.lld360.cnc.model.DocCategory">
+        SELECT DISTINCT
+          c.*
+        FROM category_daily_statistics cd
+        LEFT JOIN doc_category c ON cd.`category_id` = c.`id`
+        WHERE c.`icon` IS NOT NULL
+        ORDER BY cd.`statistics_date` DESC,cd.`totle_views` DESC
+    </select>
+
+    <select id="searchCategoryReport" parameterType="map" resultMap="dailyReportMap">
+        SELECT
+        ${units} AS lookTime,
+        c.`name`,
+        SUM(daily_views) daily_views,
+        SUM(daily_downloads) daily_downloads,
+        SUM(daily_uploads) daily_uploads
+        FROM category_daily_statistics cd
+        LEFT JOIN doc_category c ON cd.`category_id` = c.`id`
+        <where>
+            <if test="beginTime != null">AND statistics_date &gt;= #{beginTime}</if>
+            <if test="endTime != null">AND statistics_date &lt;= #{endTime}</if>
+            <if test="categoryId != null">AND category_id = #{categoryId}</if>
+        </where>
+        GROUP BY lookTime
+        ORDER BY statistics_date
+    </select>
+
+    <resultMap id="dailyReportMap" type="com.lld360.cnc.model.DocCategoryDailyReport">
+        <id property="id" column="id"/>
+        <result property="statisticsDate" column="statistics_date"/>
+        <result property="categoryId" column="category_id"/>
+        <result property="dailyViews" column="daily_views"/>
+        <result property="totleViews" column="totle_views"/>
+        <result property="dailyDownloads" column="daily_downloads"/>
+        <result property="dailyUploads" column="daily_uploads"/>
+        <result property="lookTime" column="lookTime"/>
+        <result property="categoryName" column="name"/>
+    </resultMap>
+</mapper>

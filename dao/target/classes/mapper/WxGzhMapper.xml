@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.lld360.cnc.repository.WxGzhDao">
+
+    <!-- 定义全局查询的SQL变量语句 -->
+    <sql id="searchCondition">
+        <where>
+            <if test="name != null">name like "%"#{name}"%"</if>
+            <if test="userName != null">user_name like "%"#{userName}"%"</if>
+            <if test="alias != null">alias like "%"#{alias}"%"</if>
+            <if test="appid != null">appid = #{appid}</if>
+            <if test="serviceType != null">service_type = #{serviceType}</if>
+            <if test="verifyType != null">verify_type = #{verifyType}</if>
+            <if test="openStore != null">open_store = #{openStore}</if>
+            <if test="openScan != null">open_scan = #{openScan}</if>
+            <if test="openPay != null">open_pay = #{openPay}</if>
+            <if test="openCard != null">open_card = #{openCard}</if>
+            <if test="openShake != null">open_shake = #{openShake}</if>
+            <if test="authorizered != null">authorizered = #{authorizered}</if>
+        </where>
+    </sql>
+    <!-- 用于select查询公用抽取的列 -->
+    <sql id="columns">
+        <![CDATA[
+        id ,
+        `name`,
+        icon,
+        qrcode_url,
+        user_name,
+        alias ,
+        appid,
+        appsecret,
+        encoding_aes_key,
+        authorizer_access_token,
+        authorizer_access_token_expired_time ,
+        authorizer_refresh_token,
+        permission_set,
+        service_type,
+        verify_type,
+        open_store ,
+        open_scan,
+        open_pay,
+        open_card,
+        open_shake,
+        authorizered,
+        create_time,
+        update_time
+        ]]>
+    </sql>
+
+    <select id="search" parameterType="map" resultType="com.lld360.cnc.model.WxGzh">
+        SELECT
+        <include refid="columns"/>
+        FROM wxgzh
+        <include refid="searchCondition"/>
+        <if test="limit != null">LIMIT #{limit}</if>
+        <if test="offset != null">OFFSET #{offset}</if>
+    </select>
+
+    <select id="count" parameterType="map" resultType="long">
+        SELECT count(1)
+        FROM wxgzh
+        <include refid="searchCondition"/>
+    </select>
+
+    <select id="find" parameterType="long" resultType="com.lld360.cnc.model.WxGzh">
+        SELECT
+        <include refid="columns"/>
+        FROM wxgzh
+        WHERE id = #{id}
+    </select>
+
+    <select id="findByAppId" parameterType="string" resultType="com.lld360.cnc.model.WxGzh">
+        SELECT
+        <include refid="columns"/>
+        FROM wxgzh
+        WHERE appid = #{appId}
+    </select>
+
+    <insert id="create" parameterType="com.lld360.cnc.model.WxGzh" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO
+            wxgzh (
+                name,
+                icon,
+                qrcode_url,
+                user_name,
+                alias,
+                appid,
+                appsecret,
+                encoding_aes_key,
+                authorizer_access_token,
+                authorizer_access_token_expired_time,
+                authorizer_refresh_token,
+                permission_set,
+                service_type,
+                verify_type,
+                open_store,
+                open_scan,
+                open_pay,
+                open_card,
+                open_shake,
+                authorizered,
+                create_time,
+                update_time
+            ) VALUES (
+            #{name},
+            #{icon},
+            #{qrcodeUrl},
+            #{userName},
+            #{alias},
+            #{appid},
+            #{appsecret},
+            #{encodingAesKey},
+            #{authorizerAccessToken},
+            #{authorizerAccessTokenExpiredTime},
+            #{authorizerRefreshToken},
+            #{permissionSet},
+            #{serviceType},
+            #{verifyType},
+            #{openStore},
+            #{openScan},
+            #{openPay},
+            #{openCard},
+            #{openShake},
+            #{authorizered},
+            #{createTime},
+            #{updateTime}
+        )
+    </insert>
+
+    <update id="update" parameterType="com.lld360.cnc.model.WxGzh">
+        UPDATE wxgzh
+        <set>
+            <if test="name != null">name = #{name},</if>
+            <if test="icon != null">icon = #{icon},</if>
+            <if test="qrcodeUrl != null">qrcode_url = #{qrcodeUrl},</if>
+            <if test="userName != null">user_name = #{userName},</if>
+            <if test="alias != null">alias = #{alias},</if>
+            <if test="appid != null">appid = #{appid},</if>
+            <if test="appsecret != null">appsecret = #{appsecret},</if>
+            <if test="encodingAesKey != null">encoding_aes_key = #{encodingAesKey},</if>
+            <if test="authorizerAccessToken != null">authorizer_access_token = #{authorizerAccessToken},</if>
+            <if test="authorizerAccessTokenExpiredTime != null">
+                authorizer_access_token_expired_time = #{authorizerAccessTokenExpiredTime},
+            </if>
+            <if test="authorizerRefreshToken != null">authorizer_refresh_token = #{authorizerRefreshToken},</if>
+            <if test="permissionSet != null">permission_set = #{permissionSet},</if>
+            <if test="serviceType != null">service_type = #{serviceType},</if>
+            <if test="verifyType != null">verify_type = #{verifyType},</if>
+            <if test="openStore != null">open_store = #{openStore},</if>
+            <if test="openScan != null">open_scan = #{openScan},</if>
+            <if test="openPay != null">open_pay = #{openPay},</if>
+            <if test="openCard != null">open_card = #{openCard},</if>
+            <if test="openShake != null">open_shake = #{openShake},</if>
+            <if test="authorizered != null">authorizered = #{authorizered},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </set>
+        WHERE id = #{id};
+    </update>
+
+    <update id="updateAuthorized">
+        UPDATE wxgzh
+        SET authorizered = #{authorized}
+        WHERE appid = #{appId}
+    </update>
+
+    <delete id="delete" parameterType="long">
+        DELETE FROM wxgzh
+        WHERE id = #{id}
+    </delete>
+
+
+    <!-- 结果集mapper -->
+    <resultMap id="wxgzhMap" type="com.lld360.cnc.model.WxGzh">
+        <id property="id" column="id"/>
+        <result property="name" column="name"/>
+        <result property="icon" column="icon"/>
+        <result property="qrcodeUrl" column="qrcode_url"/>
+        <result property="userName" column="user_name"/>
+        <result property="alias" column="alias"/>
+        <result property="appid" column="appid"/>
+        <result property="appsecret" column="appsecret"/>
+        <result property="encodingAesKey" column="encoding_aes_key"/>
+        <result property="authorizerAccessToken" column="authorizer_access_token"/>
+        <result property="authorizerAccessTokenExpiredTime" column="authorizer_access_token_expired_time"/>
+        <result property="authorizerRefreshToken" column="authorizer_refresh_token"/>
+        <result property="permissionSet" column="permission_set"/>
+        <result property="serviceType" column="service_type"/>
+        <result property="verifyType" column="verify_type"/>
+        <result property="openStore" column="open_store"/>
+        <result property="openScan" column="open_scan"/>
+        <result property="openPay" column="open_pay"/>
+        <result property="openCard" column="open_card"/>
+        <result property="openShake" column="open_shake"/>
+        <result property="authorizered" column="authorizered"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+    </resultMap>
+
+</mapper> 
