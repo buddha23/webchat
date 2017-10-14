@@ -18,14 +18,11 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-war-plugin</artifactId>
-        <version>3.5</version>
+        <version>2.6</version>
         <executions>
           <execution>
             <id>copy-war</id>
             <phase>package</phase>
-            <goals>
-              <goal>copy</goal>
-            </goals>
             <configuration>
               <artifactItems>
                 <artifactItem>
@@ -37,7 +34,7 @@
               </artifactItems>
               <!--   <outputDirectory>${dist.console.war.dir}</outputDirectory>   -->
               <!--指定war包保存地址-->
-              <outputDirectory>D:\Javaee\mypackage</outputDirectory>
+              <outputDirectory>\root\Javaee\</outputDirectory>
               <includes>
                 <include>*.war</include>
               </includes>
