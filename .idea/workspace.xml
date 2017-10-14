@@ -1,24 +1,40 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="fbebfe25-20eb-49d8-8bc9-9065e58af0a6" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/vcs.xml" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/.classpath" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/.project" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/bin/crawler/search/SearchBKeyword.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/bin/crawler/timerManager/SearchTask.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/bin/crawler/timerManager/TimerManager.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/bin/log4j.properties" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/bin/main/AppletClient.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/bin/system/LoadConfig.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/bin/util/FileUtils.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/bin/util/XmlUtil.class" afterPath="" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/misc.xml" afterPath="$PROJECT_DIR$/.idea/misc.xml" />
+    <list default="true" id="fbebfe25-20eb-49d8-8bc9-9065e58af0a6" name="Default" comment="fwz">
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/java/cn/codingxiaxw/dao/SeckillDao.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/java/cn/codingxiaxw/dao/SuccessKilledDao.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/java/cn/codingxiaxw/dao/cache/RedisDao.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/java/cn/codingxiaxw/dto/Exposer.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/java/cn/codingxiaxw/dto/SeckillExecution.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/java/cn/codingxiaxw/dto/SeckillResult.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/java/cn/codingxiaxw/entity/Seckill.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/java/cn/codingxiaxw/entity/SuccessKilled.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/java/cn/codingxiaxw/enums/SeckillStatEnum.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/java/cn/codingxiaxw/exception/RepeatKillException.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/java/cn/codingxiaxw/exception/SeckillCloseException.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/java/cn/codingxiaxw/exception/SeckillException.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/java/cn/codingxiaxw/service/SeckillService.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/java/cn/codingxiaxw/service/impl/SeckillServiceImpl.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/java/cn/codingxiaxw/web/SeckillController.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/resources/jdbc.properties" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/resources/mapper/SeckillDao.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/resources/mapper/SuccessKilledDao.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/resources/mybatis-config.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/resources/spring/spring-dao.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/resources/spring/spring-service.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/resources/spring/spring-web.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/sql/schema.sql" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/webapp/WEB-INF/jsp/common/head.jsp" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/webapp/WEB-INF/jsp/common/tag.jsp" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/webapp/WEB-INF/jsp/detail.jsp" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/webapp/WEB-INF/jsp/list.jsp" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/webapp/resource/script/seckill.js" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/test/java/cn/codingxiaxw/dao/SeckillDaoTest.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/test/java/cn/codingxiaxw/dao/SuccessKilledDaoTest.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/test/java/cn/codingxiaxw/dao/cache/RedisDaoTest.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/test/java/cn/codingxiaxw/service/SeckillServiceTest.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/README.md" afterPath="$PROJECT_DIR$/README.md" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/pom.xml" afterPath="$PROJECT_DIR$/pom.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/resources/wx.properties" afterPath="$PROJECT_DIR$/src/main/resources/wx.properties" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/webapp/WEB-INF/web.xml" afterPath="$PROJECT_DIR$/src/main/webapp/WEB-INF/web.xml" />
     </list>
     <ignored path="demo.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -816,12 +832,20 @@
       <workItem from="1504874753842" duration="310000" />
       <workItem from="1504933032267" duration="3146000" />
       <workItem from="1505047084166" duration="87000" />
-      <workItem from="1507970021594" duration="115000" />
+      <workItem from="1507970021594" duration="302000" />
     </task>
+    <task id="LOCAL-00001" summary="fwz">
+      <created>1507970156667</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1507970156668</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="5942000" />
+    <option name="totallyTimeSpent" value="6129000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="0" width="1932" height="1038" extended-state="0" />
@@ -872,6 +896,10 @@
   </component>
   <component name="VcsContentAnnotationSettings">
     <option name="myLimit" value="2678400000" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="fwz" />
+    <option name="LAST_COMMIT_MESSAGE" value="fwz" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager />
